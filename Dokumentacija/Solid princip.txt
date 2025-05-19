@@ -1,0 +1,14 @@
+1.  Single Responsibility Principle - Princip pojedinačne odgovornosti
+	Klase kao što su Član, Trener, Recepcioner, Administrator nasljeđuju osnovnu klasu Osoba, a svaka proširena klasa ima specifične odgovornosti (npr. Član rukuje treninzima i rezervacijama, Trener ima specijalnosti, Administrator ima funkciju pregleda prijava itd.). Dakle poenta je da svaka klasa upravlja sa informacijama koje se nalaze samo unutar nje što i jeste slučaj.
+
+2. Open/Closed Principle - Princip otvoreno/zatvoreno
+        Klase bi trebale biti otvorene za proširenje ali zatvorene za modifikaciju, odnosno da dodavanje novih atributa i funkcionalnosti ne izaziva potrebu za izmjenama u nekim drugim klasama.
+
+3.  Liskov Substitution Principle - Liskov princip zamjene
+	Objekti podklasa treba da se mogu koristiti umjesto objekata nadklasa bez narušavanja tačnosti programa. Što je u našem slučaju zadovoljeno.
+
+4. Interface Segregation Principle - Princip izoliranja interfejsa
+	Ovaj princip govori da korisnici ne trebaju biti pritisnuti interfejsima koje ne koriste, ovaj princip nije narušen jer nemamo interfejse.
+
+5. Dependency Inversion Principle - Princip inverzije ovisnosti
+	Klase ne zavise od drugih klasa nego od interfejsa što je zadovoljeno.
