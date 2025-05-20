@@ -22,7 +22,8 @@ namespace Aplikacija.Controllers
         // GET: Termin
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Termin.ToListAsync());
+            var applicationDbContext = _context.Termin.Include(t => t.Trener);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Termin/Details/5
@@ -34,7 +35,8 @@ namespace Aplikacija.Controllers
             }
 
             var termin = await _context.Termin
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(t => t.Trener)
+                .FirstOrDefaultAsync(m => m.IdTermin == id);
             if (termin == null)
             {
                 return NotFound();
@@ -46,6 +48,7 @@ namespace Aplikacija.Controllers
         // GET: Termin/Create
         public IActionResult Create()
         {
+            ViewData["TrenerId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email");
             return View();
         }
 
@@ -54,7 +57,7 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Datum,Vrijeme,Vrsta")] Termin termin)
+        public async Task<IActionResult> Create([Bind("IdTermin,Datum,Vrijeme,Vrsta,TrenerId")] Termin termin)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +65,7 @@ namespace Aplikacija.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["TrenerId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", termin.TrenerId);
             return View(termin);
         }
 
@@ -78,6 +82,7 @@ namespace Aplikacija.Controllers
             {
                 return NotFound();
             }
+            ViewData["TrenerId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", termin.TrenerId);
             return View(termin);
         }
 
@@ -86,9 +91,9 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Datum,Vrijeme,Vrsta")] Termin termin)
+        public async Task<IActionResult> Edit(int id, [Bind("IdTermin,Datum,Vrijeme,Vrsta,TrenerId")] Termin termin)
         {
-            if (id != termin.Id)
+            if (id != termin.IdTermin)
             {
                 return NotFound();
             }
@@ -102,7 +107,7 @@ namespace Aplikacija.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TerminExists(termin.Id))
+                    if (!TerminExists(termin.IdTermin))
                     {
                         return NotFound();
                     }
@@ -113,6 +118,7 @@ namespace Aplikacija.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["TrenerId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", termin.TrenerId);
             return View(termin);
         }
 
@@ -125,7 +131,8 @@ namespace Aplikacija.Controllers
             }
 
             var termin = await _context.Termin
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(t => t.Trener)
+                .FirstOrDefaultAsync(m => m.IdTermin == id);
             if (termin == null)
             {
                 return NotFound();
@@ -151,7 +158,7 @@ namespace Aplikacija.Controllers
 
         private bool TerminExists(int id)
         {
-            return _context.Termin.Any(e => e.Id == id);
+            return _context.Termin.Any(e => e.IdTermin == id);
         }
     }
 }

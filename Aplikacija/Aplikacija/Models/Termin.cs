@@ -1,15 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Aplikacija.Models
 {
     public class Termin
     {
         [Key]
-        public int Id { get; set; }
-        public DateOnly Datum { get; set; }
-        public TimeOnly Vrijeme { get; set; }
-        public VrstaTreninga Vrsta { get; set; }
-        public Korisnik Trener { get; set; }
+        public int IdTermin { get; set; }
+
+        [Required]
+        public required DateOnly Datum { get; set; }
+        [Required]
+        public required TimeOnly Vrijeme { get; set; }
+        [Required]
+        public required VrstaTreninga Vrsta { get; set; }
+
+
+        public int TrenerId { get; set; }
+        [ForeignKey("TrenerId")]
+        public required Korisnik Trener { get; set; }
+
 
         public bool ProvjeraTermina(DateOnly datum, TimeOnly vrijeme, VrstaTreninga vrsta)
         {

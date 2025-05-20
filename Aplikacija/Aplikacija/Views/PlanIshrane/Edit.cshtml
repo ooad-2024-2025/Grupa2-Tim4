@@ -12,7 +12,37 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="IdPlanishrane" />
+            <div class="form-group">
+                <label asp-for="Ciljevi" class="control-label"></label>
+                <select asp-for="Ciljevi" class="form-control"></select>
+                <span asp-validation-for="Ciljevi" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Plan" class="control-label"></label>
+                <input asp-for="Plan" class="form-control" />
+                <span asp-validation-for="Plan" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DatumGenerisanja" class="control-label"></label>
+                <input asp-for="DatumGenerisanja" class="form-control" />
+                <span asp-validation-for="DatumGenerisanja" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Kilaza" class="control-label"></label>
+                <input asp-for="Kilaza" class="form-control" />
+                <span asp-validation-for="Kilaza" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Godine" class="control-label"></label>
+                <input asp-for="Godine" class="form-control" />
+                <span asp-validation-for="Godine" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClanId" class="control-label"></label>
+                <select asp-for="ClanId" class="form-control" asp-items="ViewBag.ClanId"></select>
+                <span asp-validation-for="ClanId" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

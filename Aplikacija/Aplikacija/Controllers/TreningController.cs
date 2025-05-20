@@ -10,22 +10,23 @@ using Aplikacija.Models;
 
 namespace Aplikacija.Controllers
 {
-    public class KorisnikController : Controller
+    public class TreningController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public KorisnikController(ApplicationDbContext context)
+        public TreningController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Korisnik
+        // GET: Trening
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Korisnik.ToListAsync());
+            var applicationDbContext = _context.Trening.Include(t => t.Clan).Include(t => t.Trener);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Korisnik/Details/5
+        // GET: Trening/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +34,45 @@ namespace Aplikacija.Controllers
                 return NotFound();
             }
 
-            var korisnik = await _context.Korisnik
-                .FirstOrDefaultAsync(m => m.IdKorisnik == id);
-            if (korisnik == null)
+            var trening = await _context.Trening
+                .Include(t => t.Clan)
+                .Include(t => t.Trener)
+                .FirstOrDefaultAsync(m => m.IdTrening == id);
+            if (trening == null)
             {
                 return NotFound();
             }
 
-            return View(korisnik);
+            return View(trening);
         }
 
-        // GET: Korisnik/Create
+        // GET: Trening/Create
         public IActionResult Create()
         {
+            ViewData["ClanId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email");
+            ViewData["TrenerId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email");
             return View();
         }
 
-        // POST: Korisnik/Create
+        // POST: Trening/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdKorisnik,Ime,Prezime,Username,Password,Email,Tip")] Korisnik korisnik)
+        public async Task<IActionResult> Create([Bind("IdTrening,Datum,Vrijeme,Tip,ClanId,TrenerId")] Trening trening)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(korisnik);
+                _context.Add(trening);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(korisnik);
+            ViewData["ClanId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", trening.ClanId);
+            ViewData["TrenerId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", trening.TrenerId);
+            return View(trening);
         }
 
-        // GET: Korisnik/Edit/5
+        // GET: Trening/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +80,24 @@ namespace Aplikacija.Controllers
                 return NotFound();
             }
 
-            var korisnik = await _context.Korisnik.FindAsync(id);
-            if (korisnik == null)
+            var trening = await _context.Trening.FindAsync(id);
+            if (trening == null)
             {
                 return NotFound();
             }
-            return View(korisnik);
+            ViewData["ClanId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", trening.ClanId);
+            ViewData["TrenerId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", trening.TrenerId);
+            return View(trening);
         }
 
-        // POST: Korisnik/Edit/5
+        // POST: Trening/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdKorisnik,Ime,Prezime,Username,Password,Email,Tip")] Korisnik korisnik)
+        public async Task<IActionResult> Edit(int id, [Bind("IdTrening,Datum,Vrijeme,Tip,ClanId,TrenerId")] Trening trening)
         {
-            if (id != korisnik.IdKorisnik)
+            if (id != trening.IdTrening)
             {
                 return NotFound();
             }
@@ -97,12 +106,12 @@ namespace Aplikacija.Controllers
             {
                 try
                 {
-                    _context.Update(korisnik);
+                    _context.Update(trening);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!KorisnikExists(korisnik.IdKorisnik))
+                    if (!TreningExists(trening.IdTrening))
                     {
                         return NotFound();
                     }
@@ -113,10 +122,12 @@ namespace Aplikacija.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(korisnik);
+            ViewData["ClanId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", trening.ClanId);
+            ViewData["TrenerId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", trening.TrenerId);
+            return View(trening);
         }
 
-        // GET: Korisnik/Delete/5
+        // GET: Trening/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,34 +135,36 @@ namespace Aplikacija.Controllers
                 return NotFound();
             }
 
-            var korisnik = await _context.Korisnik
-                .FirstOrDefaultAsync(m => m.IdKorisnik == id);
-            if (korisnik == null)
+            var trening = await _context.Trening
+                .Include(t => t.Clan)
+                .Include(t => t.Trener)
+                .FirstOrDefaultAsync(m => m.IdTrening == id);
+            if (trening == null)
             {
                 return NotFound();
             }
 
-            return View(korisnik);
+            return View(trening);
         }
 
-        // POST: Korisnik/Delete/5
+        // POST: Trening/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var korisnik = await _context.Korisnik.FindAsync(id);
-            if (korisnik != null)
+            var trening = await _context.Trening.FindAsync(id);
+            if (trening != null)
             {
-                _context.Korisnik.Remove(korisnik);
+                _context.Trening.Remove(trening);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool KorisnikExists(int id)
+        private bool TreningExists(int id)
         {
-            return _context.Korisnik.Any(e => e.IdKorisnik == id);
+            return _context.Trening.Any(e => e.IdTrening == id);
         }
     }
 }

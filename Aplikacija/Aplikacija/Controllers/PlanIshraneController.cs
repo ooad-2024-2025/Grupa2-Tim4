@@ -22,7 +22,8 @@ namespace Aplikacija.Controllers
         // GET: PlanIshrane
         public async Task<IActionResult> Index()
         {
-            return View(await _context.PlanIshrane.ToListAsync());
+            var applicationDbContext = _context.PlanIshrane.Include(p => p.Clan);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: PlanIshrane/Details/5
@@ -34,7 +35,8 @@ namespace Aplikacija.Controllers
             }
 
             var planIshrane = await _context.PlanIshrane
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(p => p.Clan)
+                .FirstOrDefaultAsync(m => m.IdPlanishrane == id);
             if (planIshrane == null)
             {
                 return NotFound();
@@ -46,6 +48,7 @@ namespace Aplikacija.Controllers
         // GET: PlanIshrane/Create
         public IActionResult Create()
         {
+            ViewData["ClanId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email");
             return View();
         }
 
@@ -54,7 +57,7 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id")] PlanIshrane planIshrane)
+        public async Task<IActionResult> Create([Bind("IdPlanishrane,Ciljevi,Plan,DatumGenerisanja,Kilaza,Godine,ClanId")] PlanIshrane planIshrane)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +65,7 @@ namespace Aplikacija.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ClanId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", planIshrane.ClanId);
             return View(planIshrane);
         }
 
@@ -78,6 +82,7 @@ namespace Aplikacija.Controllers
             {
                 return NotFound();
             }
+            ViewData["ClanId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", planIshrane.ClanId);
             return View(planIshrane);
         }
 
@@ -86,9 +91,9 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id")] PlanIshrane planIshrane)
+        public async Task<IActionResult> Edit(int id, [Bind("IdPlanishrane,Ciljevi,Plan,DatumGenerisanja,Kilaza,Godine,ClanId")] PlanIshrane planIshrane)
         {
-            if (id != planIshrane.Id)
+            if (id != planIshrane.IdPlanishrane)
             {
                 return NotFound();
             }
@@ -102,7 +107,7 @@ namespace Aplikacija.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PlanIshraneExists(planIshrane.Id))
+                    if (!PlanIshraneExists(planIshrane.IdPlanishrane))
                     {
                         return NotFound();
                     }
@@ -113,6 +118,7 @@ namespace Aplikacija.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ClanId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", planIshrane.ClanId);
             return View(planIshrane);
         }
 
@@ -125,7 +131,8 @@ namespace Aplikacija.Controllers
             }
 
             var planIshrane = await _context.PlanIshrane
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(p => p.Clan)
+                .FirstOrDefaultAsync(m => m.IdPlanishrane == id);
             if (planIshrane == null)
             {
                 return NotFound();
@@ -151,7 +158,7 @@ namespace Aplikacija.Controllers
 
         private bool PlanIshraneExists(int id)
         {
-            return _context.PlanIshrane.Any(e => e.Id == id);
+            return _context.PlanIshrane.Any(e => e.IdPlanishrane == id);
         }
     }
 }

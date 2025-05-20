@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Aplikacija.Models.Termin>
+﻿@model IEnumerable<Aplikacija.Models.Trening>
 
 @{
     ViewData["Title"] = "Index";
@@ -19,7 +19,10 @@
                 @Html.DisplayNameFor(model => model.Vrijeme)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Vrsta)
+                @Html.DisplayNameFor(model => model.Tip)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Clan)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Trener)
@@ -37,15 +40,18 @@
                 @Html.DisplayFor(modelItem => item.Vrijeme)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Vrsta)
+                @Html.DisplayFor(modelItem => item.Tip)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Clan.Email)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Trener.Email)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.IdTermin">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdTermin">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdTermin">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.IdTrening">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdTrening">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdTrening">Delete</a>
             </td>
         </tr>
 }

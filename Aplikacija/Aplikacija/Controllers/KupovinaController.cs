@@ -22,7 +22,8 @@ namespace Aplikacija.Controllers
         // GET: Kupovina
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Kupovina.ToListAsync());
+            var applicationDbContext = _context.Kupovina.Include(k => k.Korisnik);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Kupovina/Details/5
@@ -34,7 +35,8 @@ namespace Aplikacija.Controllers
             }
 
             var kupovina = await _context.Kupovina
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(k => k.Korisnik)
+                .FirstOrDefaultAsync(m => m.IdKupovina == id);
             if (kupovina == null)
             {
                 return NotFound();
@@ -46,6 +48,7 @@ namespace Aplikacija.Controllers
         // GET: Kupovina/Create
         public IActionResult Create()
         {
+            ViewData["IdKorisnik"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email");
             return View();
         }
 
@@ -54,7 +57,7 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id")] Kupovina kupovina)
+        public async Task<IActionResult> Create([Bind("IdKupovina,DatumKupovine,Artikal,Cijena,Racun,IdKorisnik")] Kupovina kupovina)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +65,7 @@ namespace Aplikacija.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["IdKorisnik"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", kupovina.IdKorisnik);
             return View(kupovina);
         }
 
@@ -78,6 +82,7 @@ namespace Aplikacija.Controllers
             {
                 return NotFound();
             }
+            ViewData["IdKorisnik"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", kupovina.IdKorisnik);
             return View(kupovina);
         }
 
@@ -86,9 +91,9 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id")] Kupovina kupovina)
+        public async Task<IActionResult> Edit(int id, [Bind("IdKupovina,DatumKupovine,Artikal,Cijena,Racun,IdKorisnik")] Kupovina kupovina)
         {
-            if (id != kupovina.Id)
+            if (id != kupovina.IdKupovina)
             {
                 return NotFound();
             }
@@ -102,7 +107,7 @@ namespace Aplikacija.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!KupovinaExists(kupovina.Id))
+                    if (!KupovinaExists(kupovina.IdKupovina))
                     {
                         return NotFound();
                     }
@@ -113,6 +118,7 @@ namespace Aplikacija.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["IdKorisnik"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", kupovina.IdKorisnik);
             return View(kupovina);
         }
 
@@ -125,7 +131,8 @@ namespace Aplikacija.Controllers
             }
 
             var kupovina = await _context.Kupovina
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(k => k.Korisnik)
+                .FirstOrDefaultAsync(m => m.IdKupovina == id);
             if (kupovina == null)
             {
                 return NotFound();
@@ -151,7 +158,7 @@ namespace Aplikacija.Controllers
 
         private bool KupovinaExists(int id)
         {
-            return _context.Kupovina.Any(e => e.Id == id);
+            return _context.Kupovina.Any(e => e.IdKupovina == id);
         }
     }
 }

@@ -22,7 +22,8 @@ namespace Aplikacija.Controllers
         // GET: PrijavaZaZaposljavanje
         public async Task<IActionResult> Index()
         {
-            return View(await _context.PrijavaZaZaposljavanje.ToListAsync());
+            var applicationDbContext = _context.PrijavaZaZaposljavanje.Include(p => p.Korisnik);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: PrijavaZaZaposljavanje/Details/5
@@ -34,7 +35,8 @@ namespace Aplikacija.Controllers
             }
 
             var prijavaZaZaposljavanje = await _context.PrijavaZaZaposljavanje
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(p => p.Korisnik)
+                .FirstOrDefaultAsync(m => m.IdPrijava == id);
             if (prijavaZaZaposljavanje == null)
             {
                 return NotFound();
@@ -46,6 +48,7 @@ namespace Aplikacija.Controllers
         // GET: PrijavaZaZaposljavanje/Create
         public IActionResult Create()
         {
+            ViewData["KorisnikId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email");
             return View();
         }
 
@@ -54,7 +57,7 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id")] PrijavaZaZaposljavanje prijavaZaZaposljavanje)
+        public async Task<IActionResult> Create([Bind("IdPrijava,Ime,Prezime,Email,CV,Pregledano,KorisnikId")] PrijavaZaZaposljavanje prijavaZaZaposljavanje)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +65,7 @@ namespace Aplikacija.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["KorisnikId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", prijavaZaZaposljavanje.KorisnikId);
             return View(prijavaZaZaposljavanje);
         }
 
@@ -78,6 +82,7 @@ namespace Aplikacija.Controllers
             {
                 return NotFound();
             }
+            ViewData["KorisnikId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", prijavaZaZaposljavanje.KorisnikId);
             return View(prijavaZaZaposljavanje);
         }
 
@@ -86,9 +91,9 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id")] PrijavaZaZaposljavanje prijavaZaZaposljavanje)
+        public async Task<IActionResult> Edit(int id, [Bind("IdPrijava,Ime,Prezime,Email,CV,Pregledano,KorisnikId")] PrijavaZaZaposljavanje prijavaZaZaposljavanje)
         {
-            if (id != prijavaZaZaposljavanje.Id)
+            if (id != prijavaZaZaposljavanje.IdPrijava)
             {
                 return NotFound();
             }
@@ -102,7 +107,7 @@ namespace Aplikacija.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PrijavaZaZaposljavanjeExists(prijavaZaZaposljavanje.Id))
+                    if (!PrijavaZaZaposljavanjeExists(prijavaZaZaposljavanje.IdPrijava))
                     {
                         return NotFound();
                     }
@@ -113,6 +118,7 @@ namespace Aplikacija.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["KorisnikId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", prijavaZaZaposljavanje.KorisnikId);
             return View(prijavaZaZaposljavanje);
         }
 
@@ -125,7 +131,8 @@ namespace Aplikacija.Controllers
             }
 
             var prijavaZaZaposljavanje = await _context.PrijavaZaZaposljavanje
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(p => p.Korisnik)
+                .FirstOrDefaultAsync(m => m.IdPrijava == id);
             if (prijavaZaZaposljavanje == null)
             {
                 return NotFound();
@@ -151,7 +158,7 @@ namespace Aplikacija.Controllers
 
         private bool PrijavaZaZaposljavanjeExists(int id)
         {
-            return _context.PrijavaZaZaposljavanje.Any(e => e.Id == id);
+            return _context.PrijavaZaZaposljavanje.Any(e => e.IdPrijava == id);
         }
     }
 }
