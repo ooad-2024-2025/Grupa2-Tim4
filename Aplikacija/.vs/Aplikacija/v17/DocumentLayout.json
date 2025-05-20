@@ -1,12 +1,258 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|c:\\users\\user\\documents\\github\\grupa2-tim4\\aplikacija\\aplikacija\\models\\prijavazazaposljavanje.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|solutionrelative:aplikacija\\models\\prijavazazaposljavanje.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|c:\\users\\user\\documents\\github\\grupa2-tim4\\aplikacija\\aplikacija\\models\\kupovina.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|solutionrelative:aplikacija\\models\\kupovina.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|c:\\users\\user\\documents\\github\\grupa2-tim4\\aplikacija\\aplikacija\\models\\korisnik.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|solutionrelative:aplikacija\\models\\korisnik.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|c:\\users\\user\\documents\\github\\grupa2-tim4\\aplikacija\\aplikacija\\controllers\\planishranecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|solutionrelative:aplikacija\\controllers\\planishranecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|c:\\users\\user\\documents\\github\\grupa2-tim4\\aplikacija\\aplikacija\\controllers\\prijavazazaposljavanjecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|solutionrelative:aplikacija\\controllers\\prijavazazaposljavanjecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|c:\\users\\user\\documents\\github\\grupa2-tim4\\aplikacija\\aplikacija\\controllers\\kupovinacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|solutionrelative:aplikacija\\controllers\\kupovinacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|c:\\users\\user\\documents\\github\\grupa2-tim4\\aplikacija\\aplikacija\\models\\planishrane.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|solutionrelative:aplikacija\\models\\planishrane.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|c:\\users\\user\\documents\\github\\grupa2-tim4\\aplikacija\\aplikacija\\models\\termin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|solutionrelative:aplikacija\\models\\termin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|c:\\users\\user\\documents\\github\\grupa2-tim4\\aplikacija\\aplikacija\\models\\tipcilja.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|solutionrelative:aplikacija\\models\\tipcilja.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|c:\\users\\user\\documents\\github\\grupa2-tim4\\aplikacija\\aplikacija\\models\\tipkorisnika.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|solutionrelative:aplikacija\\models\\tipkorisnika.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|c:\\users\\user\\documents\\github\\grupa2-tim4\\aplikacija\\aplikacija\\models\\vrstatreninga.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|solutionrelative:aplikacija\\models\\vrstatreninga.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|c:\\users\\user\\documents\\github\\grupa2-tim4\\aplikacija\\aplikacija\\models\\trening.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|solutionrelative:aplikacija\\models\\trening.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|c:\\users\\user\\documents\\github\\grupa2-tim4\\aplikacija\\aplikacija\\controllers\\korisnikcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|solutionrelative:aplikacija\\controllers\\korisnikcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|c:\\users\\user\\documents\\github\\grupa2-tim4\\aplikacija\\aplikacija\\controllers\\termincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C294AE20-5113-4D09-9792-79FF29BF3B26}|Aplikacija\\Aplikacija.csproj|solutionrelative:aplikacija\\controllers\\termincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "PlanIshraneController.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Controllers\\PlanIshraneController.cs",
+              "RelativeDocumentMoniker": "Aplikacija\\Controllers\\PlanIshraneController.cs",
+              "ToolTip": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Controllers\\PlanIshraneController.cs",
+              "RelativeToolTip": "Aplikacija\\Controllers\\PlanIshraneController.cs",
+              "ViewState": "AgIAAGcAAAAAAAAAAAAwwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:23:20.339Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "PrijavaZaZaposljavanjeController.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Controllers\\PrijavaZaZaposljavanjeController.cs",
+              "RelativeDocumentMoniker": "Aplikacija\\Controllers\\PrijavaZaZaposljavanjeController.cs",
+              "ToolTip": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Controllers\\PrijavaZaZaposljavanjeController.cs",
+              "RelativeToolTip": "Aplikacija\\Controllers\\PrijavaZaZaposljavanjeController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:21:31.832Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "KupovinaController.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Controllers\\KupovinaController.cs",
+              "RelativeDocumentMoniker": "Aplikacija\\Controllers\\KupovinaController.cs",
+              "ToolTip": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Controllers\\KupovinaController.cs",
+              "RelativeToolTip": "Aplikacija\\Controllers\\KupovinaController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:20:51.576Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Termin.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\Termin.cs",
+              "RelativeDocumentMoniker": "Aplikacija\\Models\\Termin.cs",
+              "ToolTip": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\Termin.cs",
+              "RelativeToolTip": "Aplikacija\\Models\\Termin.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:18:59.256Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Korisnik.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\Korisnik.cs",
+              "RelativeDocumentMoniker": "Aplikacija\\Models\\Korisnik.cs",
+              "ToolTip": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\Korisnik.cs",
+              "RelativeToolTip": "Aplikacija\\Models\\Korisnik.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:18:53.112Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "PrijavaZaZaposljavanje.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\PrijavaZaZaposljavanje.cs",
+              "RelativeDocumentMoniker": "Aplikacija\\Models\\PrijavaZaZaposljavanje.cs",
+              "ToolTip": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\PrijavaZaZaposljavanje.cs",
+              "RelativeToolTip": "Aplikacija\\Models\\PrijavaZaZaposljavanje.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:12:05.757Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Kupovina.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\Kupovina.cs",
+              "RelativeDocumentMoniker": "Aplikacija\\Models\\Kupovina.cs",
+              "ToolTip": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\Kupovina.cs",
+              "RelativeToolTip": "Aplikacija\\Models\\Kupovina.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAIwAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:11:39.032Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "TipKorisnika.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\TipKorisnika.cs",
+              "RelativeDocumentMoniker": "Aplikacija\\Models\\TipKorisnika.cs",
+              "ToolTip": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\TipKorisnika.cs",
+              "RelativeToolTip": "Aplikacija\\Models\\TipKorisnika.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:18:48.327Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "VrstaTreninga.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\VrstaTreninga.cs",
+              "RelativeDocumentMoniker": "Aplikacija\\Models\\VrstaTreninga.cs",
+              "ToolTip": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\VrstaTreninga.cs",
+              "RelativeToolTip": "Aplikacija\\Models\\VrstaTreninga.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:19:35.289Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Trening.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\Trening.cs",
+              "RelativeDocumentMoniker": "Aplikacija\\Models\\Trening.cs",
+              "ToolTip": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\Trening.cs",
+              "RelativeToolTip": "Aplikacija\\Models\\Trening.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:11:49.064Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "TipCilja.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\TipCilja.cs",
+              "RelativeDocumentMoniker": "Aplikacija\\Models\\TipCilja.cs",
+              "ToolTip": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\TipCilja.cs",
+              "RelativeToolTip": "Aplikacija\\Models\\TipCilja.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:09:22.644Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "PlanIshrane.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\PlanIshrane.cs",
+              "RelativeDocumentMoniker": "Aplikacija\\Models\\PlanIshrane.cs",
+              "ToolTip": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Models\\PlanIshrane.cs",
+              "RelativeToolTip": "Aplikacija\\Models\\PlanIshrane.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:11:22.722Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "KorisnikController.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Controllers\\KorisnikController.cs",
+              "RelativeDocumentMoniker": "Aplikacija\\Controllers\\KorisnikController.cs",
+              "ToolTip": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Controllers\\KorisnikController.cs",
+              "RelativeToolTip": "Aplikacija\\Controllers\\KorisnikController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:13:28.075Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "TerminController.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Controllers\\TerminController.cs",
+              "RelativeDocumentMoniker": "Aplikacija\\Controllers\\TerminController.cs",
+              "ToolTip": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Controllers\\TerminController.cs",
+              "RelativeToolTip": "Aplikacija\\Controllers\\TerminController.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAAwCcAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T08:46:14.903Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

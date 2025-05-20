@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Aplikacija.Models;
 
 namespace Aplikacija.Data
 {
@@ -20,6 +21,9 @@ namespace Aplikacija.Data
 
             base.OnModelCreating(modelBuilder);
         }
+        public DbSet<Aplikacija.Models.Kupovina> Kupovina { get; set; } = default!;
+        public DbSet<Aplikacija.Models.PrijavaZaZaposljavanje> PrijavaZaZaposljavanje { get; set; } = default!;
+        public DbSet<Aplikacija.Models.PlanIshrane> PlanIshrane { get; set; } = default!;
 
     }
 }

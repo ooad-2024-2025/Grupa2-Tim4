@@ -1,7 +1,10 @@
-﻿namespace Aplikacija.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Aplikacija.Models
 {
     public class Korisnik
     {
+        [Key]
         public int Id { get; set; }
         public string Ime { get; set; }
         public string Prezime { get; set; }
