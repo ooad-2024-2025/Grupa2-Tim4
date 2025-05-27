@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Aplikacija",
+    "\\Aplikacija\\Aplikacija",
+    "\\Aplikacija\\Aplikacija\\Controllers",
+    "\\Aplikacija\\Aplikacija\\Data",
+    "\\Aplikacija\\Aplikacija\\Data\\Migrations",
+    "\\Aplikacija\\Aplikacija\\Views"
+  ],
+  "SelectedNode": "\\Aplikacija\\Aplikacija\\Data\\Migrations\\20250520200717_DrugaMigracija.cs",
+  "PreviewInSolutionExplorer": false
+}

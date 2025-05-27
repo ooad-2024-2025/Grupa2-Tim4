@@ -1,8 +1,39 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Početna";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="display-4">Dobrodošli u Fitness Centar</h1>
+        <p class="lead">Vaša destinacija za zdrav život, snagu i vitalnost.</p>
+
+        
+        <a class="btn btn-primary btn-lg m-2" asp-controller="Account" asp-action="Register">Postani član</a>
+        <a class="btn btn-outline-secondary btn-lg m-2" asp-controller="Termin" asp-action="Index">Pogledaj termine treninga</a>
+    </div>
+
+    
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <img src="https://via.placeholder.com/300x200?text=Teretana" class="img-fluid rounded" alt="Teretana">
+            <h3 class="mt-3">Moderno opremljena teretana</h3>
+            <p>Uživaj u treningu sa najnovijom opremom i profesionalnim trenerima.</p>
+        </div>
+        <div class="col-md-4">
+            <img src="https://via.placeholder.com/300x200?text=Grupe" class="img-fluid rounded" alt="Grupni treninzi">
+            <h3 class="mt-3">Grupni treninzi</h3>
+            <p>Odaberi između raznih programa – pilates, HIIT, joga i još mnogo toga.</p>
+        </div>
+        <div class="col-md-4">
+            <img src="https://via.placeholder.com/300x200?text=Nutricionizam" class="img-fluid rounded" alt="Nutricionizam">
+            <h3 class="mt-3">Nutricionističko savetovanje</h3>
+            <p>Postigni svoje ciljeve uz pomoć stručnih saveta o ishrani.</p>
+        </div>
+    </div>
+
+
+    <div class="text-center mt-5">
+        <h2>Pridruži nam se danas!</h2>
+        <p>Promeni svoj stil života već danas. Prvi trening je besplatan!</p>
+        <a class="btn btn-success btn-lg" asp-controller="Home" asp-action="Privacy">Kontaktiraj nas</a>
+    </div>
