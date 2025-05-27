@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Aplikacija.Models
@@ -9,11 +10,19 @@ namespace Aplikacija.Models
         public int IdTermin { get; set; }
 
         [Required]
+        [ValidateDate]
+        [DisplayName("Datum:")]
+        [DataType(DataType.Date)]
         public required DateOnly Datum { get; set; }
+
         [Required]
+        [DisplayName("Vrijeme:")]
+        [DataType(DataType.Time)]
         public required TimeOnly Vrijeme { get; set; }
+
         [Required]
         [EnumDataType(typeof(VrstaTreninga))]
+        [DisplayName("Vrsta treninga:")]
         public required VrstaTreninga Vrsta { get; set; }
 
 
