@@ -13,6 +13,7 @@ namespace Aplikacija.Models
         [Required]
         public required TimeSpan Vrijeme { get; set; }
         [Required]
+        [EnumDataType(typeof(VrstaTreninga))]
         public required VrstaTreninga Tip { get; set; }
 
 

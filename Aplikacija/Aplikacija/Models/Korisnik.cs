@@ -18,7 +18,9 @@ namespace Aplikacija.Models
         [Required]
         public required string Email { get; set; }
         [Required]
+        [EnumDataType(typeof(TipKorisnika))]
         public required TipKorisnika Tip { get; set; }
+
 
 
         public virtual required ICollection<Kupovina> Kupovine { get; set; }

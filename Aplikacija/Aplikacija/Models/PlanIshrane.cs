@@ -9,6 +9,7 @@ namespace Aplikacija.Models
         public int IdPlanishrane { get; set; }
 
         [Required]
+        [EnumDataType(typeof(TipCilja))]
         public required TipCilja Ciljevi { get; set; }
         [Required]
         public required string Plan { get; set; }
