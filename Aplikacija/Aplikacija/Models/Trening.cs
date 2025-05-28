@@ -7,6 +7,7 @@ namespace Aplikacija.Models
     public class Trening
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdTrening { get; set; }
 
         [Required]

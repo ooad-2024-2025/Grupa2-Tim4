@@ -7,6 +7,7 @@ namespace Aplikacija.Models
     public class Termin
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdTermin { get; set; }
 
         [Required]

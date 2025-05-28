@@ -7,6 +7,7 @@ namespace Aplikacija.Models
     public class PlanIshrane
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdPlanishrane { get; set; }
 
         [Required]

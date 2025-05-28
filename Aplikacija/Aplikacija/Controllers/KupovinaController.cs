@@ -57,17 +57,21 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdKupovina,DatumKupovine,Artikal,Cijena,Racun,IdKorisnik")] Kupovina kupovina)
+        public async Task<IActionResult> Create([Bind("DatumKupovine,Artikal,Cijena,Racun")] Kupovina kupovina)
         {
             if (ModelState.IsValid)
             {
+                var korisnik = await _context.Korisnik.FirstOrDefaultAsync(k => k.Username == User.Identity.Name);
+                if (korisnik == null) return Unauthorized();
+
+                kupovina.IdKorisnik = korisnik.IdKorisnik;
                 _context.Add(kupovina);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdKorisnik"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", kupovina.IdKorisnik);
             return View(kupovina);
         }
+
 
         // GET: Kupovina/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -91,7 +95,7 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdKupovina,DatumKupovine,Artikal,Cijena,Racun,IdKorisnik")] Kupovina kupovina)
+        public async Task<IActionResult> Edit(int id, [Bind("DatumKupovine,Artikal,Cijena,Racun,IdKorisnik")] Kupovina kupovina)
         {
             if (id != kupovina.IdKupovina)
             {

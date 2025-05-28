@@ -54,7 +54,7 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdKorisnik,Ime,Prezime,Username,Password,Email,Tip")] Korisnik korisnik)
+        public async Task<IActionResult> Create([Bind("Ime,Prezime,Username,Password,Email,Tip")] Korisnik korisnik)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdKorisnik,Ime,Prezime,Username,Password,Email,Tip")] Korisnik korisnik)
+        public async Task<IActionResult> Edit(int id, [Bind("Ime,Prezime,Username,Password,Email,Tip")] Korisnik korisnik)
         {
             if (id != korisnik.IdKorisnik)
             {

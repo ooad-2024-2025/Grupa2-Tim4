@@ -7,6 +7,7 @@ namespace Aplikacija.Models
     public class Kupovina
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdKupovina { get; set; }
 
         [Required]

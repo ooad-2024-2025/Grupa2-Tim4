@@ -7,6 +7,7 @@ namespace Aplikacija.Models
     public class PrijavaZaZaposljavanje
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdPrijava { get; set; }
 
         [Required]

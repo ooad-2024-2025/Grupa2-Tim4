@@ -59,18 +59,26 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdTrening,Datum,Vrijeme,Tip,ClanId,TrenerId")] Trening trening)
+        public async Task<IActionResult> Create([Bind("Datum,Vrijeme,Tip")] Trening trening)
         {
             if (ModelState.IsValid)
             {
+                var korisnik = await _context.Korisnik.FirstOrDefaultAsync(k => k.Username == User.Identity.Name);
+                if (korisnik == null) return Unauthorized();
+
+                if (korisnik.Tip == TipKorisnika.Clan)
+                    trening.ClanId = korisnik.IdKorisnik;
+                else if (korisnik.Tip == TipKorisnika.Trener)
+                    trening.TrenerId = korisnik.IdKorisnik;
+
                 _context.Add(trening);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClanId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", trening.ClanId);
-            ViewData["TrenerId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", trening.TrenerId);
+
             return View(trening);
         }
+
 
         // GET: Trening/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -95,7 +103,7 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdTrening,Datum,Vrijeme,Tip,ClanId,TrenerId")] Trening trening)
+        public async Task<IActionResult> Edit(int id, [Bind("Datum,Vrijeme,Tip,ClanId,TrenerId")] Trening trening)
         {
             if (id != trening.IdTrening)
             {

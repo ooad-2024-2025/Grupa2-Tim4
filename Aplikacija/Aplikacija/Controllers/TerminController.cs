@@ -57,17 +57,21 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdTermin,Datum,Vrijeme,Vrsta,TrenerId")] Termin termin)
+        public async Task<IActionResult> Create([Bind("Datum,Vrijeme,Vrsta")] Termin termin)
         {
             if (ModelState.IsValid)
             {
+                var korisnik = await _context.Korisnik.FirstOrDefaultAsync(k => k.Username == User.Identity.Name);
+                if (korisnik == null) return Unauthorized();
+
+                termin.TrenerId = korisnik.IdKorisnik;
                 _context.Add(termin);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TrenerId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", termin.TrenerId);
             return View(termin);
         }
+
 
         // GET: Termin/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -91,7 +95,7 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdTermin,Datum,Vrijeme,Vrsta,TrenerId")] Termin termin)
+        public async Task<IActionResult> Edit(int id, [Bind("Datum,Vrijeme,Vrsta,TrenerId")] Termin termin)
         {
             if (id != termin.IdTermin)
             {
