@@ -52,22 +52,35 @@ namespace Aplikacija.Controllers
             return View();
         }
 
+        // GET: PlanIshrane/PrikaziCiljeve
+        public IActionResult PrikaziCiljeve()
+        {
+            var ciljevi = Enum.GetValues(typeof(TipCilja)).Cast<TipCilja>().ToList();
+            return View(ciljevi);
+        }
+
+
+
         // POST: PlanIshrane/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdPlanishrane,Ciljevi,Plan,DatumGenerisanja,Kilaza,Godine,ClanId")] PlanIshrane planIshrane)
+        public async Task<IActionResult> Create([Bind("Ciljevi,Plan,DatumGenerisanja,Kilaza,Godine")] PlanIshrane planIshrane)
         {
             if (ModelState.IsValid)
             {
+                var korisnik = await _context.Korisnik.FirstOrDefaultAsync(k => k.Username == User.Identity.Name);
+                if (korisnik == null) return Unauthorized();
+
+                planIshrane.ClanId = korisnik.IdKorisnik;
                 _context.Add(planIshrane);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClanId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", planIshrane.ClanId);
             return View(planIshrane);
         }
+
 
         // GET: PlanIshrane/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -91,7 +104,7 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdPlanishrane,Ciljevi,Plan,DatumGenerisanja,Kilaza,Godine,ClanId")] PlanIshrane planIshrane)
+        public async Task<IActionResult> Edit(int id, [Bind("Ciljevi,Plan,DatumGenerisanja,Kilaza,Godine,ClanId")] PlanIshrane planIshrane)
         {
             if (id != planIshrane.IdPlanishrane)
             {

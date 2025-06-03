@@ -57,17 +57,21 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdPrijava,Ime,Prezime,Email,CV,Pregledano,KorisnikId")] PrijavaZaZaposljavanje prijavaZaZaposljavanje)
+        public async Task<IActionResult> Create([Bind("Ime,Prezime,Email,CV,Pregledano")] PrijavaZaZaposljavanje prijava)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(prijavaZaZaposljavanje);
+                var korisnik = await _context.Korisnik.FirstOrDefaultAsync(k => k.Username == User.Identity.Name);
+                if (korisnik == null) return Unauthorized();
+
+                prijava.KorisnikId = korisnik.IdKorisnik;
+                _context.Add(prijava);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KorisnikId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", prijavaZaZaposljavanje.KorisnikId);
-            return View(prijavaZaZaposljavanje);
+            return View(prijava);
         }
+
 
         // GET: PrijavaZaZaposljavanje/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -91,7 +95,7 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdPrijava,Ime,Prezime,Email,CV,Pregledano,KorisnikId")] PrijavaZaZaposljavanje prijavaZaZaposljavanje)
+        public async Task<IActionResult> Edit(int id, [Bind("Ime,Prezime,Email,CV,Pregledano,KorisnikId")] PrijavaZaZaposljavanje prijavaZaZaposljavanje)
         {
             if (id != prijavaZaZaposljavanje.IdPrijava)
             {
