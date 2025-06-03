@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Aplikacija.Data;
 using Aplikacija.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Aplikacija.Controllers
 {
+    [Authorize]
     public class KorisnikController : Controller
     {
         private readonly ApplicationDbContext _context;

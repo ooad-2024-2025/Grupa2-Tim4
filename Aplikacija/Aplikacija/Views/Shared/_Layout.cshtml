@@ -7,41 +7,107 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Aplikacija.styles.css" asp-append-version="true" />
+    <style>
+        .orange-circle {
+            width: 50px;
+            height: 50px;
+            background-color: #f55f3a;
+            border-radius: 50%;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .custom-header {
+            background-color: white;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .navbar-custom {
+            margin-left: 90px;
+        }
+
+        .nav-link {
+            color: black !important;
+            font-weight: 500;
+        }
+
+        .nav-auth {
+            margin-left: auto;
+            margin-right: 20px;
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Aplikacija</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
+<body style="background-color: white;">
+    <div class="orange-circle"></div>
+
+    <header class="custom-header">
+        <div class="d-flex align-items-center">
+            <ul class="navbar-nav flex-row navbar-custom">
+                <li class="nav-item me-3">
+                    <a class="nav-link" asp-controller="Home" asp-action="Index">Početna</a>
+                </li>
+                <!-- Ostale stavke -->
+            </ul>
+
+            <div class="nav-auth d-flex align-items-center ms-auto">
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <a class="text-danger fw-bold me-3" asp-area="Identity" asp-page="/Account/Register">REGISTRACIJA</a>
+                    <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        PRIJAVA
+                    </button>
+                }
+                else
+                {
+                    <a class="text-success fw-bold me-3" asp-area="Identity" asp-page="/Account/Manage/Index">Pozdrav, @User.Identity?.Name!</a>
+                    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")" method="post">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">ODJAVA</button>
+                    </form>
+                }
             </div>
-        </nav>
+        </div>
     </header>
-    <div class="container">
+
+    <div class="container mt-5">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted mt-5">
         <div class="container">
             &copy; 2025 - Aplikacija - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-3">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Prijava</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="/Identity/Account/Login">
+                        <div class="mb-3">
+                            <label for="Input_Email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="Input_Email" name="Input.Email" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="Input_Password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="Input_Password" name="Input.Password" required />
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 text-white" style="background-color: #f55f3a;">Prijavi se</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

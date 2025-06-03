@@ -1,0 +1,16 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profil";
+}
+
+<div class="row">
+    <div class="col-md-3">
+        @await Html.PartialAsync("_ManageNav")
+    </div>
+    <div class="col-md-9">
+        <h2>@ViewData["Title"]</h2>
+        <p>Ovdje možeš urediti svoj profil.</p>
+        @* Dodaj konkretne forme kasnije *@
+    </div>
+</div>

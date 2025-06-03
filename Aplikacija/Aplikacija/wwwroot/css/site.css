@@ -20,3 +20,37 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.nav-pills .nav-link.active {
+    background-color: #f55f3a !important;
+    color: white !important;
+}
+
+
+/* Boja gumba - narandžasta */
+.btn-primary {
+    background-color: #f55f3a !important;
+    border-color: #f55f3a !important;
+    color: white !important;
+}
+
+    /* Hover efekat */
+    .btn-primary:hover {
+        background-color: #d94f2f !important;
+        border-color: #d94f2f !important;
+    }
+
+    /* Fokusirani gumb */
+    .btn-primary:focus, .btn-primary:active:focus {
+        box-shadow: 0 0 0 0.2rem rgba(245, 95, 58, 0.5) !important;
+    }
+
+.modal-content {
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+
+.modal-title {
+    font-size: 24px;
+    font-weight: bold;
+}
