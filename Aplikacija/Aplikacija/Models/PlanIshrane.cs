@@ -39,5 +39,6 @@ namespace Aplikacija.Models
         public int ClanId { get; set; }
         [ForeignKey("ClanId")]
         public required Korisnik Clan { get; set; }
+        public TipCilja TipCilja { get; internal set; }
     }
 }

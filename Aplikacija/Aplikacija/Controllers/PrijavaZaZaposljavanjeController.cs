@@ -57,7 +57,7 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Ime,Prezime,Email,CV,Pregledano")] PrijavaZaZaposljavanje prijava)
+        public async Task<IActionResult> Create([Bind("Ime,Prezime,Email,CV")] PrijavaZaZaposljavanje prijava)
         {
             if (ModelState.IsValid)
             {
@@ -65,6 +65,8 @@ namespace Aplikacija.Controllers
                 if (korisnik == null) return Unauthorized();
 
                 prijava.KorisnikId = korisnik.IdKorisnik;
+                prijava.Pregledano = User.IsInRole("Admin") ? prijava.Pregledano : false;
+
                 _context.Add(prijava);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

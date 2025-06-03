@@ -1,0 +1,30 @@
+﻿@page
+@model PersonalDataModel
+@{
+    ViewData["Title"] = "Lični podaci";
+    ViewData["ActivePage"] = ManageNavPages.PersonalData;
+}
+
+<h3>@ViewData["Title"]</h3>
+
+<p>
+    Vaš korisnički račun sadrži lične podatke koje ste nam dali. Na ovoj stranici možete preuzeti ili trajno obrisati te podatke.
+</p>
+
+<div class="alert alert-warning" role="alert">
+    <strong>Upozorenje:</strong> Brisanje ovih podataka će trajno ukloniti vaš račun i <strong>neće se moći povratiti</strong>.
+</div>
+
+<div class="d-flex gap-3">
+    <form method="post" asp-page-handler="Download">
+        <button class="btn btn-outline-primary" type="submit">📥 Preuzmi podatke</button>
+    </form>
+
+    <form method="post" asp-page-handler="Delete">
+        <button class="btn btn-danger" type="submit">🗑️ Obriši račun</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,53 +1,65 @@
 ﻿@model Aplikacija.Models.PrijavaZaZaposljavanje
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Prijava za posao";
 }
 
-<h1>Create</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4 fw-bold" style="color: darkorange; text-transform: uppercase; font-size: 2rem;">
+                Prijava za posao
+            </h2>
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-<h4>PrijavaZaZaposljavanje</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Ime" class="control-label"></label>
-                <input asp-for="Ime" class="form-control" />
-                <span asp-validation-for="Ime" class="text-danger"></span>
+                        <div class="mb-3">
+                            <label asp-for="Ime" class="form-label">Ime</label>
+                            <input asp-for="Ime" class="form-control" />
+                            <span asp-validation-for="Ime" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Prezime" class="form-label">Prezime</label>
+                            <input asp-for="Prezime" class="form-control" />
+                            <span asp-validation-for="Prezime" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email adresa</label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CV" class="form-label">CV (biografija)</label>
+                            <textarea asp-for="CV" class="form-control" rows="6" placeholder="Unesite svoju biografiju..."></textarea>
+                            <span asp-validation-for="CV" class="text-danger"></span>
+                        </div>
+
+                        @* Prikazuj checkbox samo ako je korisnik Admin *@
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" asp-for="Pregledano" />
+                                <label class="form-check-label" asp-for="Pregledano">Pregledano</label>
+                            </div>
+                        }
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Pošalji prijavu</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Prezime" class="control-label"></label>
-                <input asp-for="Prezime" class="form-control" />
-                <span asp-validation-for="Prezime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CV" class="control-label"></label>
-                <input asp-for="CV" class="form-control" />
-                <span asp-validation-for="CV" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Pregledano" /> @Html.DisplayNameFor(model => model.Pregledano)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

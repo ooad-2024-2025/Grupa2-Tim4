@@ -1,16 +1,24 @@
 ﻿@page
-@model IndexModel
+@model Aplikacija.Areas.Identity.Pages.Account.Manage.IndexModel
 @{
     ViewData["Title"] = "Profil";
 }
 
-<div class="row">
-    <div class="col-md-3">
-        @await Html.PartialAsync("_ManageNav")
-    </div>
-    <div class="col-md-9">
-        <h2>@ViewData["Title"]</h2>
-        <p>Ovdje možeš urediti svoj profil.</p>
-        @* Dodaj konkretne forme kasnije *@
+<div class="container mt-5">
+    <div class="row">
+    
+        <div class="col-md-9">
+            <div class="card shadow-sm">
+                <div class="card-header text-white" style="background-color: #f55f3a;">
+                    <h4 class="mb-0">Profil</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Ovdje možeš urediti svoj profil.</p>
+
+                    @* Ovdje ćeš kasnije dodati formu za ažuriranje korisničkih podataka *@
+                    <p class="fst-italic">Detalji profila će biti dostupni uskoro...</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

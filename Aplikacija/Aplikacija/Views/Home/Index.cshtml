@@ -4,10 +4,22 @@
 
 <div class="text-center mt-5">
     <h1 class="display-5 fw-bold">O nama</h1>
-    <p class="text-muted">Opis</p>
-    <a class="btn btn-warning text-white mt-3 px-4 py-2" style="background-color: #f55f3a; border: none;" asp-controller="Account" asp-action="Apply">
-        Prijava za posao
-    </a>
+    <p class="text-muted">
+        Dobrodošli u naš fitness centar – mjesto gdje zdravlje, energija i motivacija postaju stil života!
+        Naša misija je da svakom članu pružimo podršku na putu ka boljoj formi kroz moderne treninge i individualne planove ishrane.
+        Bilo da ste početnik ili iskusni sportista, naš stručni tim je tu da vam pomogne da postignete svoje ciljeve u pozitivnom i motivišućem okruženju.
+    </p>
+
+    <!-- Dugme koje vodi na formu za prijavu -->
+    @if (User.Identity.IsAuthenticated)
+    {
+        <a class="btn btn-warning text-white mt-3 px-4 py-2"
+           style="background-color: #f55f3a; border: none;"
+           asp-controller="PrijavaZaZaposljavanje" asp-action="Create">
+            Prijava za posao
+        </a>
+    }
+
 
     <div class="mt-5 d-flex justify-content-center">
         <div style="width: 70%; max-width: 800px;">

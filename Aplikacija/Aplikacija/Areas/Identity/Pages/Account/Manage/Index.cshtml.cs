@@ -7,6 +7,12 @@ namespace Aplikacija.Areas.Identity.Pages.Account.Manage
     {
         public void OnGet()
         {
+            ViewData["ActivePage"] = ManageNavPages.Index;
         }
+
     }
+
+
+
+
 }

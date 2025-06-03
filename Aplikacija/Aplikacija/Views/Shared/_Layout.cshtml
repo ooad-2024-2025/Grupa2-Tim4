@@ -49,7 +49,24 @@
                 <li class="nav-item me-3">
                     <a class="nav-link" asp-controller="Home" asp-action="Index">Početna</a>
                 </li>
-                <!-- Ostale stavke -->
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item me-3">
+                        <a class="nav-link" asp-controller="Korisnik" asp-action="Index">Korisnici</a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <a class="nav-link" asp-controller="Kupovina" asp-action="Index">Kupovine</a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <a class="nav-link" asp-controller="PlanIshrane" asp-action="Index">Plan Ishrane</a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <a class="nav-link" asp-controller="Termin" asp-action="Index">Termini</a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <a class="nav-link" asp-controller="Trening" asp-action="Index">Treninzi</a>
+                    </li>
+                }
             </ul>
 
             <div class="nav-auth d-flex align-items-center ms-auto">
@@ -62,7 +79,7 @@
                 }
                 else
                 {
-                    <a class="text-success fw-bold me-3" asp-area="Identity" asp-page="/Account/Manage/Index">Pozdrav, @User.Identity?.Name!</a>
+                    <a class="text-success fw-bold me-3" asp-area="Identity" asp-page="/Account/Manage/Index">Profil</a>
                     <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")" method="post">
                         <button type="submit" class="btn btn-outline-danger btn-sm">ODJAVA</button>
                     </form>
@@ -93,12 +110,13 @@
                 </div>
                 <div class="modal-body">
                     <form method="post" action="/Identity/Account/Login">
+                        @Html.AntiForgeryToken()
                         <div class="mb-3">
                             <label for="Input_Email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="Input_Email" name="Input.Email" required />
                         </div>
                         <div class="mb-3">
-                            <label for="Input_Password" class="form-label">Password</label>
+                            <label for="Input_Password" class="form-label">Lozinka</label>
                             <input type="password" class="form-control" id="Input_Password" name="Input.Password" required />
                         </div>
                         <button type="submit" class="btn btn-warning w-100 text-white" style="background-color: #f55f3a;">Prijavi se</button>
@@ -107,6 +125,7 @@
             </div>
         </div>
     </div>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
