@@ -12,6 +12,19 @@
         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
         <div class="form-group">
+            <input asp-for="Input.Ime" class="form-control" placeholder="Ime" />
+            <span asp-validation-for="Input.Ime" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input asp-for="Input.Prezime" class="form-control" placeholder="Prezime" />
+            <span asp-validation-for="Input.Prezime" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input asp-for="Input.Username" class="form-control" placeholder="Korisničko ime" />
+            <span asp-validation-for="Input.Username" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
             <input asp-for="Input.Email" class="form-control" autocomplete="username" placeholder="Email" />
             <span asp-validation-for="Input.Email" class="text-danger"></span>
         </div>

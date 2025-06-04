@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -38,19 +39,21 @@ namespace Aplikacija.Models
         [DisplayName("Email adresa:")]
         public required string Email { get; set; }
 
-        [Required]
         [EnumDataType(typeof(TipKorisnika))]
         [DisplayName("Tip korisnika:")]
-        public required TipKorisnika Tip { get; set; }
+        public TipKorisnika Tip { get; set; }
+
+        [ForeignKey("IdentityUser")]
+        public string IdentityUserId { get; set; } = default!;
+        public virtual IdentityUser IdentityUser { get; set; } = default!;
 
 
-
-        public virtual required ICollection<Kupovina> Kupovine { get; set; }
-        public virtual required ICollection<PrijavaZaZaposljavanje> Prijave { get; set; }
-        public virtual required ICollection<Termin> TerminiTrenera { get; set; }
-        public virtual required PlanIshrane Plan_Ishrane { get; set; }
-        public virtual required ICollection<Trening> TreninziKaoClan { get; set; }
-        public virtual required ICollection<Trening> TreninziKaoTrener { get; set; }
+        public virtual ICollection<Kupovina> Kupovine { get; set; }
+        public virtual ICollection<PrijavaZaZaposljavanje> Prijave { get; set; }
+        public virtual ICollection<Termin> TerminiTrenera { get; set; }
+        public virtual PlanIshrane Plan_Ishrane { get; set; }
+        public virtual ICollection<Trening> TreninziKaoClan { get; set; }
+        public virtual ICollection<Trening> TreninziKaoTrener { get; set; }
 
     }
 

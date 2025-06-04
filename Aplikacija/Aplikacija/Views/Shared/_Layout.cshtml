@@ -51,9 +51,12 @@
                 </li>
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <li class="nav-item me-3">
-                        <a class="nav-link" asp-controller="Korisnik" asp-action="Index">Korisnici</a>
-                    </li>
+                    
+                        <li class="nav-item me-3">
+                            <a class="nav-link" asp-controller="Korisnik" asp-action="Index">Korisnici</a>
+                        </li>
+                    
+
                     <li class="nav-item me-3">
                         <a class="nav-link" asp-controller="Kupovina" asp-action="Index">Kupovine</a>
                     </li>
