@@ -1,43 +1,53 @@
-﻿@model Aplikacija.Models.Trening
+﻿@model Aplikacija.Models.PrijavaZaZaposljavanje
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nova prijava";
 }
 
-<h1>Create</h1>
-
-<h4>Trening</h4>
+<h1>Nova prijava za zapošljavanje</h1>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
-                <label asp-for="Datum" class="control-label"></label>
-                <input asp-for="Datum" class="form-control" />
-                <span asp-validation-for="Datum" class="text-danger"></span>
+                <label asp-for="Ime" class="control-label"></label>
+                <input asp-for="Ime" class="form-control" />
+                <span asp-validation-for="Ime" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Vrijeme" class="control-label"></label>
-                <input asp-for="Vrijeme" class="form-control" />
-                <span asp-validation-for="Vrijeme" class="text-danger"></span>
+                <label asp-for="Prezime" class="control-label"></label>
+                <input asp-for="Prezime" class="form-control" />
+                <span asp-validation-for="Prezime" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Tip" class="control-label"></label>
-                <select asp-for="Tip" class="form-control" asp-items="Html.GetEnumSelectList<VrstaTreninga>()"></select>
-                <span asp-validation-for="Tip" class="text-danger"></span>
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <label asp-for="CV" class="control-label"></label>
+                <textarea asp-for="CV" class="form-control"></textarea>
+                <span asp-validation-for="CV" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Pošalji prijavu" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Nazad na listu</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

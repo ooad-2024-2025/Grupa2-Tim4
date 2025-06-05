@@ -27,10 +27,10 @@ namespace Aplikacija.Models
         public required VrstaTreninga Tip { get; set; }
 
 
-        public int ClanId { get; set; }
+        public string ClanId { get; set; }
         public required Korisnik Clan { get; set; }
 
-        public int TrenerId { get; set; }
+        public string TrenerId { get; set; }
         public required Korisnik Trener { get; set; }
 
 

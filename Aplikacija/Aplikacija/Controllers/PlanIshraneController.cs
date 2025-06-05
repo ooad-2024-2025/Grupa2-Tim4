@@ -1,6 +1,7 @@
 ﻿using Aplikacija.Data;
 using Aplikacija.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,10 +16,12 @@ namespace Aplikacija.Controllers
     public class PlanIshraneController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<Korisnik> _userManager;
 
-        public PlanIshraneController(ApplicationDbContext context)
+        public PlanIshraneController(ApplicationDbContext context, UserManager<Korisnik> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: PlanIshrane
@@ -72,10 +75,11 @@ namespace Aplikacija.Controllers
         {
             if (ModelState.IsValid)
             {
-                var korisnik = await _context.Korisnik.FirstOrDefaultAsync(k => k.Username == User.Identity.Name);
-                if (korisnik == null) return Unauthorized();
+                var korisnik = await _userManager.GetUserAsync(User);
+                planIshrane.ClanId = korisnik.Id;
 
-                planIshrane.ClanId = korisnik.IdKorisnik;
+
+                planIshrane.ClanId = korisnik.Id;
                 _context.Add(planIshrane);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

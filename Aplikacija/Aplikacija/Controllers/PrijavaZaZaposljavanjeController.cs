@@ -1,22 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Aplikacija.Data;
+using Aplikacija.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Aplikacija.Data;
-using Aplikacija.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Aplikacija.Controllers
 {
+    [Authorize]
     public class PrijavaZaZaposljavanjeController : Controller
     {
-        private readonly ApplicationDbContext _context;
 
-        public PrijavaZaZaposljavanjeController(ApplicationDbContext context)
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<Korisnik> _userManager;
+
+        public PrijavaZaZaposljavanjeController(ApplicationDbContext context, UserManager<Korisnik> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: PrijavaZaZaposljavanje
@@ -48,7 +54,6 @@ namespace Aplikacija.Controllers
         // GET: PrijavaZaZaposljavanje/Create
         public IActionResult Create()
         {
-            ViewData["KorisnikId"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email");
             return View();
         }
 
@@ -57,22 +62,53 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Ime,Prezime,Email,CV")] PrijavaZaZaposljavanje prijava)
+        public async Task<IActionResult> Create([Bind("Ime,Prezime,Email,CV,Pregledano")] PrijavaZaZaposljavanje prijava)
         {
+            Console.WriteLine("Ulaz u POST Create");
+            Console.WriteLine("Autentifikovan? " + User.Identity.IsAuthenticated);
+
             if (ModelState.IsValid)
             {
-                var korisnik = await _context.Korisnik.FirstOrDefaultAsync(k => k.Username == User.Identity.Name);
-                if (korisnik == null) return Unauthorized();
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    Console.WriteLine("User null — dodajem test ID privremeno");
+                    prijava.KorisnikId = "test-korisnik-id"; // neka test vrijednost
+                }
+                else
+                {
+                    prijava.KorisnikId = user.Id;
+                }
 
-                prijava.KorisnikId = korisnik.IdKorisnik;
-                prijava.Pregledano = User.IsInRole("Admin") ? prijava.Pregledano : false;
+
+                prijava.KorisnikId = user.Id;
+
+                if (!User.IsInRole("Admin"))
+                {
+                    prijava.Pregledano = false;
+                }
 
                 _context.Add(prijava);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                Console.WriteLine("Prijava sačuvana!");
+
+                return RedirectToAction("Index", "Home");
             }
+
+            Console.WriteLine("ModelState nije validan!");
+            foreach (var modelState in ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    Console.WriteLine("GREŠKA: " + error.ErrorMessage);
+                }
+            }
+
             return View(prijava);
         }
+
+
 
 
         // GET: PrijavaZaZaposljavanje/Edit/5

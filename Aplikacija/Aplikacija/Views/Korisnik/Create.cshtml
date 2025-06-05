@@ -4,55 +4,51 @@
     ViewData["Title"] = "Dodaj novog korisnika";
 }
 
-<h1 style="color: #d35400;" class="fw-bold text-center">Dodavanje novog korisnika</h1>
-
-
+<h1 class="fw-bold text-center" style="color: #d35400;">Dodavanje novog korisnika</h1>
 
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card shadow-lg rounded">
             <div class="card-body">
-                <form asp-action="Create">
+                <form asp-action="Create" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                     <div class="form-group mb-3">
-                        <label asp-for="Ime" class="form-label">Ime</label>
+                        <label asp-for="Ime" class="form-label"></label>
                         <input asp-for="Ime" class="form-control" />
                         <span asp-validation-for="Ime" class="text-danger"></span>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label asp-for="Prezime" class="form-label">Prezime</label>
+                        <label asp-for="Prezime" class="form-label"></label>
                         <input asp-for="Prezime" class="form-control" />
                         <span asp-validation-for="Prezime" class="text-danger"></span>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label asp-for="Username" class="form-label">Korisničko ime</label>
-                        <input asp-for="Username" class="form-control" />
-                        <span asp-validation-for="Username" class="text-danger"></span>
+                        <label class="form-label">Korisničko ime</label>
+                        <input name="username" class="form-control" />
                     </div>
 
                     <div class="form-group mb-3">
-                        <label asp-for="Password" class="form-label">Lozinka</label>
-                        <input asp-for="Password" class="form-control" type="password" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
+                        <label class="form-label">Lozinka</label>
+                        <input name="password" type="password" class="form-control" />
                     </div>
 
                     <div class="form-group mb-3">
-                        <label asp-for="Email" class="form-label">Email</label>
+                        <label asp-for="Email" class="form-label"></label>
                         <input asp-for="Email" class="form-control" type="email" />
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
 
                     <div class="form-group mb-4">
-                        <label asp-for="Tip" class="form-label">Tip korisnika</label>
-                        <select asp-for="Tip" class="form-control" asp-items="Html.GetEnumSelectList<TipKorisnika>()"></select>
+                        <label asp-for="Tip" class="form-label"></label>
+                        <select asp-for="Tip" asp-items="Html.GetEnumSelectList<TipKorisnika>()" class="form-control"></select>
                         <span asp-validation-for="Tip" class="text-danger"></span>
                     </div>
 
                     <div class="d-grid">
-                        <input type="submit" value="Dodaj korisnika" class="btn btn-lg" style="background-color: #d35400; color: white; border: none;" />
+                        <button type="submit" class="btn btn-lg text-white" style="background-color: #d35400; border: none;">Dodaj korisnika</button>
                     </div>
                 </form>
             </div>
@@ -65,7 +61,5 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

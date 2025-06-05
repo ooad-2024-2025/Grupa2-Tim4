@@ -11,8 +11,4 @@ namespace Aplikacija.Areas.Identity.Pages.Account.Manage
         }
 
     }
-
-
-
-
 }

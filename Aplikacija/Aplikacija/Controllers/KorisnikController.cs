@@ -3,10 +3,7 @@ using Aplikacija.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,9 +13,9 @@ namespace Aplikacija.Controllers
     public class KorisnikController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<Korisnik> _userManager;
 
-        public KorisnikController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public KorisnikController(ApplicationDbContext context, UserManager<Korisnik> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -27,23 +24,18 @@ namespace Aplikacija.Controllers
         // GET: Korisnik
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Korisnik.ToListAsync());
+            return View(await _context.Users.ToListAsync());
         }
 
         // GET: Korisnik/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var korisnik = await _context.Korisnik
-                .FirstOrDefaultAsync(m => m.IdKorisnik == id);
+            var korisnik = await _context.Users.FirstOrDefaultAsync(k => k.Id == id);
             if (korisnik == null)
-            {
                 return NotFound();
-            }
 
             return View(korisnik);
         }
@@ -56,28 +48,20 @@ namespace Aplikacija.Controllers
         }
 
         // POST: Korisnik/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        // POST: Korisnik/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Recepcioner")]
-        public async Task<IActionResult> Create([Bind("Ime,Prezime,Username,Password,Email,Tip")] Korisnik korisnik)
+        public async Task<IActionResult> Create(Korisnik korisnik, string username, string password)
         {
             if (ModelState.IsValid)
             {
-                // 1. Kreiraj Identity korisnika
-                var identityUser = new IdentityUser
-                {
-                    UserName = korisnik.Username,
-                    Email = korisnik.Email
-                };
+                korisnik.UserName = username;
+                korisnik.Email = korisnik.Email; 
 
-                var result = await _userManager.CreateAsync(identityUser, korisnik.Password);
+                var result = await _userManager.CreateAsync(korisnik, password);
 
                 if (result.Succeeded)
                 {
-                    // 2. Mapiraj enum TipKorisnika u tačan naziv role iz AspNetRoles
                     string roleName = korisnik.Tip switch
                     {
                         TipKorisnika.Administrator => "Admin",
@@ -87,48 +71,28 @@ namespace Aplikacija.Controllers
                         _ => "Korisnik"
                     };
 
-                    // 3. Dodaj ulogu korisniku
-                    var roleResult = await _userManager.AddToRoleAsync(identityUser, roleName);
-
-                    if (!roleResult.Succeeded)
-                    {
-                        foreach (var error in roleResult.Errors)
-                        {
-                            ModelState.AddModelError("", error.Description);
-                        }
-                        return View(korisnik);
-                    }
-
-                    // 4. Spasi u domensku tabelu
-                    korisnik.IdentityUserId = identityUser.Id;
-                    _context.Korisnik.Add(korisnik);
-                    await _context.SaveChangesAsync();
-
+                    await _userManager.AddToRoleAsync(korisnik, roleName);
                     return RedirectToAction(nameof(Index));
                 }
-                else
-                {
-                    // Ako kreiranje korisnika nije uspjelo
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError("", error.Description);
-                    }
-                }
+
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError("", error.Description);
             }
 
             return View(korisnik);
         }
 
-
-
         // GET: Korisnik/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string id)
         {
             if (id == null) return NotFound();
 
-            var korisnik = await _context.Korisnik.FindAsync(id);
-            var user = await _userManager.GetUserAsync(User);
+            var korisnik = await _context.Users.FindAsync(id);
+            if (korisnik == null) return NotFound();
 
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Id != id && !User.IsInRole("Admin"))
+                return Forbid();
 
             return View(korisnik);
         }
@@ -136,96 +100,137 @@ namespace Aplikacija.Controllers
         // POST: Korisnik/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdKorisnik,Ime,Prezime,Username,Password,Email,Tip")] Korisnik korisnik)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Ime,Prezime,Tip")] Korisnik korisnik)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var existing = await _context.Korisnik.AsNoTracking().FirstOrDefaultAsync(k => k.IdKorisnik == id);
+            // DEBUG: ispis podataka koje forma šalje
+            System.Diagnostics.Debug.WriteLine($"[Edit.POST] id iz URL-a: {id}");
+            System.Diagnostics.Debug.WriteLine($"[Edit.POST] korisnik.Id: {korisnik.Id}");
+            System.Diagnostics.Debug.WriteLine($"[Edit.POST] korisnik.Ime: {korisnik.Ime}");
+            System.Diagnostics.Debug.WriteLine($"[Edit.POST] korisnik.Prezime: {korisnik.Prezime}");
+            System.Diagnostics.Debug.WriteLine($"[Edit.POST] korisnik.Tip: {korisnik.Tip}");
 
-
-            if (id != korisnik.IdKorisnik)
+            if (id != korisnik.Id)
+            {
+                System.Diagnostics.Debug.WriteLine("[Edit.POST] ID mismatch");
                 return NotFound();
+            }
 
-            if (existing.IdentityUserId != user.Id && !User.IsInRole("Admin"))
+            // Provjera validacije modela
+            if (!ModelState.IsValid)
+            {
+                System.Diagnostics.Debug.WriteLine("[Edit.POST] ModelState nije validan:");
+                foreach (var kvp in ModelState)
+                {
+                    foreach (var error in kvp.Value.Errors)
+                    {
+                        System.Diagnostics.Debug.WriteLine($" - {kvp.Key}: {error.ErrorMessage}");
+                    }
+                }
+            }
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            var existing = await _userManager.FindByIdAsync(id);
+
+            if (existing == null)
+            {
+                System.Diagnostics.Debug.WriteLine("[Edit.POST] Korisnik ne postoji");
+                return NotFound();
+            }
+
+            if (existing.Id != currentUser.Id && !User.IsInRole("Admin"))
+            {
+                System.Diagnostics.Debug.WriteLine("[Edit.POST] Nemaš prava da edituješ ovog korisnika.");
                 return Forbid();
+            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    korisnik.IdentityUserId = existing.IdentityUserId;
-                    _context.Update(korisnik);
-                    await _context.SaveChangesAsync();
+                    existing.Ime = korisnik.Ime;
+                    existing.Prezime = korisnik.Prezime;
+
+                    if (User.IsInRole("Admin") && existing.Tip != korisnik.Tip)
+                    {
+                        string oldRole = existing.Tip.ToString();
+                        string newRole = korisnik.Tip switch
+                        {
+                            TipKorisnika.Administrator => "Admin",
+                            TipKorisnika.Clan => "Korisnik",
+                            TipKorisnika.Recepcioner => "Recepcioner",
+                            TipKorisnika.Trener => "Trener",
+                            _ => "Korisnik"
+                        };
+
+
+                        System.Diagnostics.Debug.WriteLine($"[Edit.POST] Mijenjam rolu: {oldRole} => {newRole}");
+
+                        await _userManager.RemoveFromRoleAsync(existing, oldRole);
+                        await _userManager.AddToRoleAsync(existing, newRole);
+
+                        existing.Tip = korisnik.Tip;
+                    }
+
+                    var updateResult = await _userManager.UpdateAsync(existing);
+                    if (!updateResult.Succeeded)
+                    {
+                        foreach (var error in updateResult.Errors)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[Edit.POST] Update error: {error.Description}");
+                            ModelState.AddModelError("", error.Description);
+                        }
+                    }
+
+                    System.Diagnostics.Debug.WriteLine("[Edit.POST] Ažuriranje korisnika je završeno.");
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    
+                    System.Diagnostics.Debug.WriteLine($"[Edit.POST] Exception: {ex.Message}");
                     throw;
                 }
-                return RedirectToAction("Index", "Home");
             }
 
             return View(korisnik);
         }
 
-        [Authorize(Roles = "Admin")]
+
+
         // GET: Korisnik/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var korisnik = await _context.Korisnik
-                .FirstOrDefaultAsync(m => m.IdKorisnik == id);
+            var korisnik = await _context.Users.FirstOrDefaultAsync(k => k.Id == id);
             if (korisnik == null)
-            {
                 return NotFound();
-            }
 
             return View(korisnik);
         }
 
+        // POST: Korisnik/Delete/5
         [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var korisnik = await _context.Korisnik
-                .AsNoTracking()
-                .FirstOrDefaultAsync(k => k.IdKorisnik == id);
-
+            var korisnik = await _context.Users.FirstOrDefaultAsync(k => k.Id == id);
             if (korisnik == null)
                 return NotFound();
 
-            var user = await _userManager.FindByIdAsync(korisnik.IdentityUserId);
+            var roles = await _userManager.GetRolesAsync(korisnik);
+            if (roles.Any())
+                await _userManager.RemoveFromRolesAsync(korisnik, roles);
 
-            if (user != null)
-            {
-                
-                var roles = await _userManager.GetRolesAsync(user);
-                if (roles.Any())
-                {
-                    await _userManager.RemoveFromRolesAsync(user, roles);
-                }
-
-                
-                await _userManager.DeleteAsync(user);
-            }
-
-            
-            _context.Attach(korisnik);
-            _context.Korisnik.Remove(korisnik);
-            await _context.SaveChangesAsync();
-
+            await _userManager.DeleteAsync(korisnik);
             return RedirectToAction(nameof(Index));
         }
 
-
-
-        private bool KorisnikExists(int id)
+        private bool KorisnikExists(string id)
         {
-            return _context.Korisnik.Any(e => e.IdKorisnik == id);
+            return _context.Users.Any(e => e.Id == id);
         }
     }
 }

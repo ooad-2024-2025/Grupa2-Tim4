@@ -1,6 +1,7 @@
 ﻿using Aplikacija.Data;
 using Aplikacija.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,10 +16,12 @@ namespace Aplikacija.Controllers
     public class TerminController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<Korisnik> _userManager;
 
-        public TerminController(ApplicationDbContext context)
+        public TerminController(ApplicationDbContext context, UserManager<Korisnik> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Termin
@@ -63,10 +66,12 @@ namespace Aplikacija.Controllers
         {
             if (ModelState.IsValid)
             {
-                var korisnik = await _context.Korisnik.FirstOrDefaultAsync(k => k.Username == User.Identity.Name);
-                if (korisnik == null) return Unauthorized();
+                var korisnik = await _userManager.GetUserAsync(User);
+                termin.TrenerId = korisnik.Id;
 
-                termin.TrenerId = korisnik.IdKorisnik;
+
+
+                termin.TrenerId = korisnik.Id;
                 _context.Add(termin);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

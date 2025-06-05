@@ -1,11 +1,10 @@
 ﻿using Aplikacija.Data;
 using Aplikacija.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,34 +14,33 @@ namespace Aplikacija.Controllers
     public class KupovinaController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<Korisnik> _userManager;
 
-        public KupovinaController(ApplicationDbContext context)
+        public KupovinaController(ApplicationDbContext context, UserManager<Korisnik> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Kupovina
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Kupovina.Include(k => k.Korisnik);
-            return View(await applicationDbContext.ToListAsync());
+            var kupovine = _context.Kupovina.Include(k => k.Korisnik);
+            return View(await kupovine.ToListAsync());
         }
 
         // GET: Kupovina/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var kupovina = await _context.Kupovina
                 .Include(k => k.Korisnik)
                 .FirstOrDefaultAsync(m => m.IdKupovina == id);
+
             if (kupovina == null)
-            {
                 return NotFound();
-            }
 
             return View(kupovina);
         }
@@ -50,23 +48,21 @@ namespace Aplikacija.Controllers
         // GET: Kupovina/Create
         public IActionResult Create()
         {
-            ViewData["IdKorisnik"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email");
             return View();
         }
 
         // POST: Kupovina/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DatumKupovine,Artikal,Cijena,Racun")] Kupovina kupovina)
         {
             if (ModelState.IsValid)
             {
-                var korisnik = await _context.Korisnik.FirstOrDefaultAsync(k => k.Username == User.Identity.Name);
+                var korisnik = await _userManager.GetUserAsync(User);
                 if (korisnik == null) return Unauthorized();
 
-                kupovina.IdKorisnik = korisnik.IdKorisnik;
+                kupovina.KorisnikId = korisnik.Id;
+
                 _context.Add(kupovina);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -74,35 +70,31 @@ namespace Aplikacija.Controllers
             return View(kupovina);
         }
 
-
         // GET: Kupovina/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var kupovina = await _context.Kupovina.FindAsync(id);
+            var kupovina = await _context.Kupovina
+                .Include(k => k.Korisnik)
+                .FirstOrDefaultAsync(k => k.IdKupovina == id);
+
             if (kupovina == null)
-            {
                 return NotFound();
-            }
-            ViewData["IdKorisnik"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", kupovina.IdKorisnik);
+
+            ViewBag.Korisnici = new SelectList(_context.Users.ToList(), "Id", "Email", kupovina.Korisnik?.Id);
             return View(kupovina);
         }
 
+
         // POST: Kupovina/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DatumKupovine,Artikal,Cijena,Racun,IdKorisnik")] Kupovina kupovina)
+        public async Task<IActionResult> Edit(int id, [Bind("IdKupovina,DatumKupovine,Artikal,Cijena,Racun,KorisnikId")] Kupovina kupovina)
         {
             if (id != kupovina.IdKupovina)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -114,17 +106,12 @@ namespace Aplikacija.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!KupovinaExists(kupovina.IdKupovina))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdKorisnik"] = new SelectList(_context.Korisnik, "IdKorisnik", "Email", kupovina.IdKorisnik);
             return View(kupovina);
         }
 
@@ -132,17 +119,13 @@ namespace Aplikacija.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var kupovina = await _context.Kupovina
                 .Include(k => k.Korisnik)
                 .FirstOrDefaultAsync(m => m.IdKupovina == id);
             if (kupovina == null)
-            {
                 return NotFound();
-            }
 
             return View(kupovina);
         }
@@ -156,9 +139,9 @@ namespace Aplikacija.Controllers
             if (kupovina != null)
             {
                 _context.Kupovina.Remove(kupovina);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

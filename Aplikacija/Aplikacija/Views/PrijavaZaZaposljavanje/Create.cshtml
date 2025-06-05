@@ -12,7 +12,7 @@
             </h2>
             <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <form asp-action="Create">
+                    <form asp-action="Create" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                         <div class="mb-3">
@@ -51,6 +51,13 @@
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg">Pošalji prijavu</button>
                         </div>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <div class="alert alert-warning mt-3">
+                                <strong>Upozorenje:</strong> Niste prijavljeni. Prijava za posao neće biti sačuvana!
+                            </div>
+                        }
+
                     </form>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 ﻿using Aplikacija.Data;
 using Aplikacija.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,12 +16,13 @@ namespace Aplikacija.Controllers
     public class TreningController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<Korisnik> _userManager;
 
-        public TreningController(ApplicationDbContext context)
+        public TreningController(ApplicationDbContext context, UserManager<Korisnik> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
-
         // GET: Trening
         public async Task<IActionResult> Index()
         {
@@ -65,13 +67,15 @@ namespace Aplikacija.Controllers
         {
             if (ModelState.IsValid)
             {
-                var korisnik = await _context.Korisnik.FirstOrDefaultAsync(k => k.Username == User.Identity.Name);
-                if (korisnik == null) return Unauthorized();
+                var korisnik = await _userManager.GetUserAsync(User);
+                if (korisnik.Tip == TipKorisnika.Clan)
+                    trening.ClanId = korisnik.Id;
+
 
                 if (korisnik.Tip == TipKorisnika.Clan)
-                    trening.ClanId = korisnik.IdKorisnik;
+                    trening.ClanId = korisnik.Id;
                 else if (korisnik.Tip == TipKorisnika.Trener)
-                    trening.TrenerId = korisnik.IdKorisnik;
+                    trening.TrenerId = korisnik.Id;
 
                 _context.Add(trening);
                 await _context.SaveChangesAsync();

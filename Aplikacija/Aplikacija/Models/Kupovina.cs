@@ -33,9 +33,11 @@ namespace Aplikacija.Models
 
 
         [Required]
-        public int IdKorisnik { get; set; }
-        [ForeignKey("IdKorisnik")]
+        public string KorisnikId { get; set; }
+
+        [ForeignKey("KorisnikId")]
         public required Korisnik Korisnik { get; set; }
+
 
 
 

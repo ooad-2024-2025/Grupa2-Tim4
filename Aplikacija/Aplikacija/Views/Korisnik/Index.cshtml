@@ -17,58 +17,44 @@
     <table class="table table-bordered table-striped shadow-sm">
         <thead class="table-dark">
             <tr>
-                <th>@Html.DisplayNameFor(model => model.Ime)</th>
-                <th>@Html.DisplayNameFor(model => model.Prezime)</th>
-                <th>@Html.DisplayNameFor(model => model.Username)</th>
-                @if (User.IsInRole("Admin"))
-                    {
-                <th>@Html.DisplayNameFor(model => model.Password)</th>
-                    }
-                <th>@Html.DisplayNameFor(model => model.Email)</th>
-
+                <th>Ime</th>
+                <th>Prezime</th>
+                <th>Korisničko ime</th>
+                <th>Email</th>
                 @if (User.IsInRole("Admin"))
                 {
-                    <th>@Html.DisplayNameFor(model => model.Tip)</th>
+                    <th>Tip korisnika</th>
                 }
-
                 <th>Akcije</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
-                bool isCurrentUser = item.IdentityUserId == currentUserId;
+                bool isCurrentUser = item.Id == currentUserId;
 
                 <tr>
                     <td>@item.Ime</td>
                     <td>@item.Prezime</td>
-                    <td>@item.Username</td>
-                    @if (User.IsInRole("Admin"))
-                    {
-                    <td>@item.Password</td>
-                    }
+                    <td>@item.UserName</td>
                     <td>@item.Email</td>
-
                     @if (User.IsInRole("Admin"))
                     {
                         <td>@item.Tip</td>
                     }
-
                     <td>
-                        <div class="btn-group btn-group-sm" role="group">
+                        <div class="btn-group btn-group-sm">
                             @if (User.IsInRole("Admin") || User.IsInRole("Recepcioner"))
                             {
-                                <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@item.IdKorisnik">Edit</a>
+                                <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                             }
-
                             @if (User.IsInRole("Admin"))
                             {
-                                <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.IdKorisnik">Delete</a>
+                                <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                             }
-
                             @if (User.IsInRole("Admin") || User.IsInRole("Recepcioner") || User.IsInRole("Trener") || isCurrentUser)
                             {
-                                <a class="btn btn-outline-secondary" asp-action="Details" asp-route-id="@item.IdKorisnik">Detalji</a>
+                                <a class="btn btn-outline-secondary" asp-action="Details" asp-route-id="@item.Id">Detalji</a>
                             }
                         </div>
                     </td>
@@ -77,7 +63,3 @@
         </tbody>
     </table>
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

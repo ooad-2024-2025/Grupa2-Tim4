@@ -35,9 +35,11 @@ namespace Aplikacija.Models
         public bool Pregledano { get; set; } = false;
 
 
-        public int KorisnikId { get; set; }
+        public string KorisnikId { get; set; }
+
         [ForeignKey("KorisnikId")]
-        public required Korisnik Korisnik { get; set; }
+        public Korisnik Korisnik { get; set; }
+
 
 
     }

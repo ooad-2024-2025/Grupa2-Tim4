@@ -34,10 +34,11 @@
                 <span asp-validation-for="Racun" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="IdKorisnik" class="control-label"></label>
-                <select asp-for="IdKorisnik" class="form-control" asp-items="ViewBag.IdKorisnik"></select>
-                <span asp-validation-for="IdKorisnik" class="text-danger"></span>
+                <label asp-for="Korisnik.Id" class="control-label">Korisnik</label>
+                <select asp-for="Korisnik.Id" class="form-control" asp-items="ViewBag.Korisnici"></select>
+                <span asp-validation-for="Korisnik.Id" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

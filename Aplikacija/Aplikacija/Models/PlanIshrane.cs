@@ -36,9 +36,11 @@ namespace Aplikacija.Models
         public required int Godine { get; set; }
 
 
-        public int ClanId { get; set; }
+        public string ClanId { get; set; }
+
         [ForeignKey("ClanId")]
         public required Korisnik Clan { get; set; }
+
         public TipCilja TipCilja { get; internal set; }
     }
 }

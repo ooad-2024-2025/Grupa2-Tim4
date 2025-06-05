@@ -19,13 +19,7 @@
                 <dd class="col-sm-9 fw-bold">@Model.Prezime</dd>
 
                 <dt class="col-sm-3 text-muted">Korisničko ime</dt>
-                <dd class="col-sm-9 fw-bold">@Model.Username</dd>
-
-                @if (User.IsInRole("Admin"))
-                {
-                <dt class="col-sm-3 text-muted">Lozinka</dt>
-                <dd class="col-sm-9 fw-bold">@Model.Password</dd>
-                }
+                <dd class="col-sm-9 fw-bold">@Model.UserName</dd>
 
                 <dt class="col-sm-3 text-muted">Email adresa</dt>
                 <dd class="col-sm-9 fw-bold">@Model.Email</dd>
@@ -41,12 +35,8 @@
             <a asp-action="Index" class="btn btn-outline-secondary">Nazad</a>
             @if (User.IsInRole("Admin") || User.IsInRole("Recepcioner"))
             {
-                <a asp-action="Edit" asp-route-id="@Model.IdKorisnik" class="btn btn-primary">Uredi</a>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
             }
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

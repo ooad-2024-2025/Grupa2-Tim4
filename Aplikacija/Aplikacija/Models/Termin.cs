@@ -27,9 +27,11 @@ namespace Aplikacija.Models
         public required VrstaTreninga Vrsta { get; set; }
 
 
-        public int TrenerId { get; set; }
+        public string TrenerId { get; set; }
+
         [ForeignKey("TrenerId")]
         public required Korisnik Trener { get; set; }
+
 
 
         public bool ProvjeraTermina(DateOnly datum, TimeOnly vrijeme, VrstaTreninga vrsta)
