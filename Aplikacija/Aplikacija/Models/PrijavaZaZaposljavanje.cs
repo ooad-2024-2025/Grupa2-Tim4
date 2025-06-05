@@ -32,7 +32,7 @@ namespace Aplikacija.Models
 
         [Required]
         [DisplayName("Pregledano:")]
-        public required bool Pregledano { get; set; } = false;
+        public bool Pregledano { get; set; } = false;
 
 
         public int KorisnikId { get; set; }

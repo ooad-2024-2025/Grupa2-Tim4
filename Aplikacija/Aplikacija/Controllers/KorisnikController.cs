@@ -49,6 +49,7 @@ namespace Aplikacija.Controllers
         }
 
         // GET: Korisnik/Create
+        [Authorize(Roles = "Admin,Recepcioner")]
         public IActionResult Create()
         {
             return View();
@@ -57,22 +58,67 @@ namespace Aplikacija.Controllers
         // POST: Korisnik/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Korisnik/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Recepcioner")]
         public async Task<IActionResult> Create([Bind("Ime,Prezime,Username,Password,Email,Tip")] Korisnik korisnik)
         {
-            var user = await _userManager.GetUserAsync(User);
-            korisnik.IdentityUserId = user.Id;
-
             if (ModelState.IsValid)
             {
-                _context.Add(korisnik);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Home");
+                // 1. Kreiraj Identity korisnika
+                var identityUser = new IdentityUser
+                {
+                    UserName = korisnik.Username,
+                    Email = korisnik.Email
+                };
+
+                var result = await _userManager.CreateAsync(identityUser, korisnik.Password);
+
+                if (result.Succeeded)
+                {
+                    // 2. Mapiraj enum TipKorisnika u tačan naziv role iz AspNetRoles
+                    string roleName = korisnik.Tip switch
+                    {
+                        TipKorisnika.Administrator => "Admin",
+                        TipKorisnika.Clan => "Korisnik",
+                        TipKorisnika.Recepcioner => "Recepcioner",
+                        TipKorisnika.Trener => "Trener",
+                        _ => "Korisnik"
+                    };
+
+                    // 3. Dodaj ulogu korisniku
+                    var roleResult = await _userManager.AddToRoleAsync(identityUser, roleName);
+
+                    if (!roleResult.Succeeded)
+                    {
+                        foreach (var error in roleResult.Errors)
+                        {
+                            ModelState.AddModelError("", error.Description);
+                        }
+                        return View(korisnik);
+                    }
+
+                    // 4. Spasi u domensku tabelu
+                    korisnik.IdentityUserId = identityUser.Id;
+                    _context.Korisnik.Add(korisnik);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    // Ako kreiranje korisnika nije uspjelo
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
             }
 
             return View(korisnik);
         }
+
 
 
         // GET: Korisnik/Edit/5
@@ -121,6 +167,7 @@ namespace Aplikacija.Controllers
             return View(korisnik);
         }
 
+        [Authorize(Roles = "Admin")]
         // GET: Korisnik/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -139,6 +186,7 @@ namespace Aplikacija.Controllers
             return View(korisnik);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -154,18 +202,18 @@ namespace Aplikacija.Controllers
 
             if (user != null)
             {
-                // Prvo obriši role
+                
                 var roles = await _userManager.GetRolesAsync(user);
                 if (roles.Any())
                 {
                     await _userManager.RemoveFromRolesAsync(user, roles);
                 }
 
-                // Obriši iz AspNetUsers
+                
                 await _userManager.DeleteAsync(user);
             }
 
-            // Reattach jer je AsNoTracking() bio korišten
+            
             _context.Attach(korisnik);
             _context.Korisnik.Remove(korisnik);
             await _context.SaveChangesAsync();

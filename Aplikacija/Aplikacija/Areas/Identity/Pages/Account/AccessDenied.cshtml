@@ -1,0 +1,16 @@
+﻿@page
+@model AccessDeniedModel
+@{
+    ViewData["Title"] = "Pristup odbijen";
+}
+
+<div class="container text-center mt-5">
+    <div class="card shadow-lg p-4 rounded-4 border-danger border-2">
+        <div class="card-body">
+            <h1 class="display-4 text-danger mb-3">@ViewData["Title"]</h1>
+            <p class="lead text-muted">Nemate dozvolu za pristup ovoj stranici ili resursu.</p>
+            <hr class="my-4" />
+            <a href="/" class="btn btn-lg mt-3 px-4 text-white" style="background-color: #d35400; border-color: #d35400;">Nazad na početnu</a>
+        </div>
+    </div>
+</div>

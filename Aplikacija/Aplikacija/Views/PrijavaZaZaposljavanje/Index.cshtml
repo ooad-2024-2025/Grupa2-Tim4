@@ -1,65 +1,49 @@
 ﻿@model IEnumerable<Aplikacija.Models.PrijavaZaZaposljavanje>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Kandidati za posao";
 }
 
-<h1>Index</h1>
+<h1 class="fw-bold text-center my-4">Kandidati za posao</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Ime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Prezime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CV)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Pregledano)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Korisnik)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Prezime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CV)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pregledano)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Korisnik.Email)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdPrijava">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdPrijava">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdPrijava">Delete</a>
-            </td>
-        </tr>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    @foreach (var item in Model)
+    {
+        <div class="col">
+            <div class="card h-100 text-center shadow-sm border-0">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <img src="https://via.placeholder.com/100x100.png?text=👤" class="rounded-circle mb-3" alt="Kandidat" />
+                    <h5 class="card-title fw-bold">@item.Korisnik.Ime @item.Korisnik.Prezime</h5>
+                    <p class="text-muted">@item.Korisnik.Email</p>
+                    <p class="card-text">@item.CV</p>
+
+                    <div class="form-check">
+                        <input class="form-check-input prihvati" type="checkbox" id="prihvati-@item.IdPrijava" data-group="@item.IdPrijava" />
+                        <label class="form-check-label" for="prihvati-@item.IdPrijava">Prihvati</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input odbij" type="checkbox" id="odbij-@item.IdPrijava" data-group="@item.IdPrijava" />
+                        <label class="form-check-label" for="odbij-@item.IdPrijava">Odbij</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.form-check-input').forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                const groupId = this.dataset.group;
+                const isPrihvati = this.classList.contains('prihvati');
+                const pairSelector = isPrihvati ? '.odbij' : '.prihvati';
+                const other = document.querySelector(`${pairSelector}[data-group='${groupId}']`);
+
+                if (this.checked) {
+                    other.checked = false;
+                }
+            });
+        });
+    </script>
 }
-    </tbody>
-</table>
