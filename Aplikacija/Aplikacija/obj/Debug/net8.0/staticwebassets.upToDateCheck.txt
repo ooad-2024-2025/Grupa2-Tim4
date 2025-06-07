@@ -1,5 +1,13 @@
 wwwroot\css\site.css
 wwwroot\favicon.ico
+wwwroot\images\boca.jpg
+wwwroot\images\empty-cart.jpg
+wwwroot\images\korpa.png
+wwwroot\images\podloga.jpg
+wwwroot\images\rukavice.jpg
+wwwroot\images\tegovi.jpg
+wwwroot\images\traka.jpg
+wwwroot\images\user-profile-icon.webp
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map

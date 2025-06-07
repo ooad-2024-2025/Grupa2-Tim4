@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Korpa je prazna";
+}
+
+<div class="container text-center my-5 py-5">
+    <div class="mb-4">
+        <img src="~/images/empty-cart.jpg" alt="Prazna korpa" style="max-width: 150px;" />
+    </div>
+
+    <h2 class="text-muted mb-3">Vaša korpa je prazna</h2>
+    <p class="text-secondary mb-4">Izgleda da još niste dodali nijedan proizvod.</p>
+
+    <a asp-controller="Kupovina" asp-action="Create" class="btn btn-lg custom-orange px-4 py-2 fs-5">
+        🛍 Povratak u Shop
+    </a>
+</div>
+
+<style>
+    .custom-orange {
+        border: 2px solid #f55f3a;
+        color: #f55f3a;
+        background-color: transparent;
+        transition: background-color 0.3s, color 0.3s;
+        border-radius: 0.5rem;
+    }
+
+        .custom-orange:hover {
+            background-color: #f55f3a;
+            color: white;
+        }
+</style>

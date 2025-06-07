@@ -1,0 +1,68 @@
+﻿@model List<Aplikacija.Models.Kupovina>
+@{
+    ViewData["Title"] = "Detalji narudžbe";
+    var racunId = Model.FirstOrDefault()?.Racun ?? "Nepoznat";
+    var korisnik = Model.FirstOrDefault()?.Korisnik?.UserName ?? "Nepoznat korisnik";
+    var datum = Model.FirstOrDefault()?.DatumKupovine.ToString("dd.MM.yyyy");
+    var ukupno = Model.Sum(x => x.Cijena);
+}
+
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold mb-3">🧾 Narudžba: <span class="text-orange">@racunId</span></h2>
+        <p class="mb-1"><strong>👤 Korisnik:</strong> <span class="text-dark">@korisnik</span></p>
+        <p><strong>📅 Datum kupovine:</strong> <span class="text-muted">@datum</span></p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var kupovina in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow border-0 rounded-4">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                        <h5 class="card-title fw-semibold">@kupovina.Artikal</h5>
+                        <p class="card-text mt-2">
+                            💰 Cijena ukupno:
+                            <span class="fw-bold text-orange">@string.Format("{0:0.00} KM", kupovina.Cijena)</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="mt-5 p-4 bg-light rounded-4 shadow-sm border text-end">
+        <h4 class="fw-bold mb-3">
+            ✅ Ukupno za platiti:
+            <span class="text-success">@string.Format("{0:0.00} KM", ukupno)</span>
+        </h4>
+        <a asp-controller="Home" asp-action="Index" class="btn custom-orange px-4 py-2 fs-6">← Nazad na početnu</a>
+    </div>
+</div>
+
+<style>
+    .text-orange {
+        color: #f55f3a;
+    }
+
+    .custom-orange {
+        border: 2px solid #f55f3a;
+        color: #f55f3a;
+        background-color: transparent;
+        transition: background-color 0.3s, color 0.3s;
+        border-radius: 0.5rem;
+    }
+
+        .custom-orange:hover {
+            background-color: #f55f3a;
+            color: white;
+        }
+
+    .card-title {
+        font-size: 1.2rem;
+    }
+
+    .card-text {
+        font-size: 1rem;
+    }
+</style>

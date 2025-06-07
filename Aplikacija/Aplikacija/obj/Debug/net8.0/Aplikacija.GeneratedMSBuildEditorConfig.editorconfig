@@ -124,8 +124,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS3Vwb3ZpbmFcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/user/Documents/GitHub/Grupa2-Tim4/Aplikacija/Aplikacija/Views/Kupovina/DeleteByRacun.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS3Vwb3ZpbmFcRGVsZXRlQnlSYWN1bi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/user/Documents/GitHub/Grupa2-Tim4/Aplikacija/Aplikacija/Views/Kupovina/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS3Vwb3ZpbmFcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/user/Documents/GitHub/Grupa2-Tim4/Aplikacija/Aplikacija/Views/Kupovina/DetailsByRacun.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS3Vwb3ZpbmFcRGV0YWlsc0J5UmFjdW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/user/Documents/GitHub/Grupa2-Tim4/Aplikacija/Aplikacija/Views/Kupovina/Edit.cshtml]
@@ -134,6 +142,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/user/Documents/GitHub/Grupa2-Tim4/Aplikacija/Aplikacija/Views/Kupovina/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS3Vwb3ZpbmFcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/user/Documents/GitHub/Grupa2-Tim4/Aplikacija/Aplikacija/Views/Kupovina/KorpaPrazna.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS3Vwb3ZpbmFcS29ycGFQcmF6bmEuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/user/Documents/GitHub/Grupa2-Tim4/Aplikacija/Aplikacija/Views/PlanIshrane/Create.cshtml]

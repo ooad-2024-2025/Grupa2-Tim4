@@ -1,59 +1,47 @@
-﻿@model IEnumerable<Aplikacija.Models.Kupovina>
-
-@{
-    ViewData["Title"] = "Index";
+﻿@{
+    ViewData["Title"] = "Kupovina - Narudžbe";
 }
 
-<h1>Index</h1>
+<h2 class="fw-bold text-center my-4">Sve narudžbe</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DatumKupovine)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Artikal)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cijena)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Racun)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Korisnik)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DatumKupovine)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Artikal)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cijena)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Racun)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Korisnik.Email)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdKupovina">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdKupovina">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdKupovina">Delete</a>
-            </td>
-        </tr>
+@if (ViewBag.Narudzbe != null)
+{
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Datum</th>
+                <th>Korisnik</th>
+                <th>Proizvodi</th>
+                <th>Ukupno</th>
+                <th>Akcija</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var narudzba in ViewBag.Narudzbe)
+            {
+                <tr>
+                    <td>@narudzba.Datum.ToString("dd.MM.yyyy")</td>
+                    <td>@narudzba.Korisnik</td>
+                    <td>
+                        <ul class="mb-0">
+                            @foreach (var stavka in narudzba.Stavke)
+                            {
+                                <li>@stavka.Naziv x @stavka.Kolicina</li>
+                            }
+                        </ul>
+                    </td>
+                    <td>@string.Format("{0:0.00} KM", narudzba.Ukupno)</td>
+                    <td>
+                        <form asp-controller="Kupovina" asp-action="DeleteByRacun" asp-route-racun="@narudzba.Racun" method="post" onsubmit="return confirm('Jeste li sigurni da želite obrisati ovu narudžbu?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Obriši</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
-    </tbody>
-</table>
+else
+{
+    <p class="text-center">Nema dostupnih narudžbi.</p>
+}

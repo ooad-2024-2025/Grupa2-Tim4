@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -36,19 +37,7 @@ namespace Aplikacija.Models
         public string KorisnikId { get; set; }
 
         [ForeignKey("KorisnikId")]
-        public required Korisnik Korisnik { get; set; }
-
-
-
-
-        void Kupi(string artikal, float cijena, string racun)
-        {
-            Artikal = artikal;
-            Cijena = cijena;
-            Racun = racun;
-            DatumKupovine = DateOnly.FromDateTime(DateTime.Now);
-        }
-
-
+        [ValidateNever]
+        public Korisnik Korisnik { get; set; }
     }
 }

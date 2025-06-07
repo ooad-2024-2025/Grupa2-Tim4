@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -30,17 +31,14 @@ namespace Aplikacija.Models
         [DisplayName("CV:")]
         public required string CV { get; set; }
 
-        [Required]
         [DisplayName("Pregledano:")]
         public bool Pregledano { get; set; } = false;
 
-
+        [Required]
         public string KorisnikId { get; set; }
 
         [ForeignKey("KorisnikId")]
+        [ValidateNever] 
         public Korisnik Korisnik { get; set; }
-
-
-
     }
 }

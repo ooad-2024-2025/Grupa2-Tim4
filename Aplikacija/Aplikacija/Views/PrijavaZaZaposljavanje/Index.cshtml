@@ -11,19 +11,16 @@
     {
         <div class="col">
             <div class="card h-100 text-center shadow-sm border-0">
-                <div class="card-body d-flex flex-column align-items-center">
-                    <img src="https://via.placeholder.com/100x100.png?text=👤" class="rounded-circle mb-3" alt="Kandidat" />
-                    <h5 class="card-title fw-bold">@item.Korisnik.Ime @item.Korisnik.Prezime</h5>
-                    <p class="text-muted">@item.Korisnik.Email</p>
-                    <p class="card-text">@item.CV</p>
-
-                    <div class="form-check">
-                        <input class="form-check-input prihvati" type="checkbox" id="prihvati-@item.IdPrijava" data-group="@item.IdPrijava" />
-                        <label class="form-check-label" for="prihvati-@item.IdPrijava">Prihvati</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input odbij" type="checkbox" id="odbij-@item.IdPrijava" data-group="@item.IdPrijava" />
-                        <label class="form-check-label" for="odbij-@item.IdPrijava">Odbij</label>
+                <div class="card h-100 text-center shadow-sm border-0">
+                    <a asp-action="Details" asp-route-id="@item.IdPrijava" class="text-decoration-none text-dark">
+                        <div class="card-body d-flex flex-column align-items-center">
+                            <img src="~/images/user-profile-icon.webp" class="rounded-circle mb-3" alt="Kandidat" width="100" height="100" />
+                            <h5 class="card-title fw-bold">@item.Korisnik.Ime @item.Korisnik.Prezime</h5>
+                            <p class="text-muted">@item.Korisnik.Email</p>
+                        </div>
+                    </a>
+                    <div class="card-footer bg-transparent border-0 text-center">
+                        <a asp-action="Delete" asp-route-id="@item.IdPrijava" class="btn btn-outline-danger btn-sm">Obriši</a>
                     </div>
                 </div>
             </div>

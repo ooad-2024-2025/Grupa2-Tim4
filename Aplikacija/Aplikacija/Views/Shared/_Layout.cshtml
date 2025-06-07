@@ -38,6 +38,14 @@
             margin-left: auto;
             margin-right: 20px;
         }
+
+        .korpa-ikona img {
+            transition: transform 0.2s;
+        }
+
+            .korpa-ikona img:hover {
+                transform: scale(1.1);
+            }
     </style>
 </head>
 <body style="background-color: white;">
@@ -49,17 +57,31 @@
                 <li class="nav-item me-3">
                     <a class="nav-link" asp-controller="Home" asp-action="Index">Početna</a>
                 </li>
+
                 @if (User.Identity.IsAuthenticated)
                 {
-                    
+                    @* Prikaz "Korisnici" samo za određene uloge *@
+                    @if (User.IsInRole("Admin") || User.IsInRole("Trener") || User.IsInRole("Recepcioner"))
+                    {
                         <li class="nav-item me-3">
                             <a class="nav-link" asp-controller="Korisnik" asp-action="Index">Korisnici</a>
                         </li>
-                    
+                    }
 
-                    <li class="nav-item me-3">
-                        <a class="nav-link" asp-controller="Kupovina" asp-action="Index">Kupovine</a>
-                    </li>
+                    @* Kupovine/Shop logika *@
+                    @if (User.IsInRole("Korisnik") || User.IsInRole("Trener"))
+                    {
+                        <li class="nav-item me-3">
+                            <a class="nav-link" asp-controller="Kupovina" asp-action="Create">Shop</a>
+                        </li>
+                    }
+                    else if (User.IsInRole("Admin") || User.IsInRole("Recepcioner"))
+                    {
+                        <li class="nav-item me-3">
+                            <a class="nav-link" asp-controller="Kupovina" asp-action="Index">Kupovine</a>
+                        </li>
+                    }
+
                     <li class="nav-item me-3">
                         <a class="nav-link" asp-controller="PlanIshrane" asp-action="Index">Plan Ishrane</a>
                     </li>
@@ -73,6 +95,15 @@
             </ul>
 
             <div class="nav-auth d-flex align-items-center ms-auto">
+                @if (User.Identity.IsAuthenticated && (User.IsInRole("Korisnik") || User.IsInRole("Trener")))
+                {
+                    <div class="me-3 korpa-ikona">
+                        <a asp-controller="Kupovina" asp-action="Korpa" title="Pogledaj korpu">
+                            <img src="~/images/korpa.png" alt="Korpa" width="30" height="30" />
+                        </a>
+                    </div>
+                }
+
                 @if (!User.Identity.IsAuthenticated)
                 {
                     <a class="text-danger fw-bold me-3" asp-area="Identity" asp-page="/Account/Register">REGISTRACIJA</a>
@@ -128,7 +159,6 @@
             </div>
         </div>
     </div>
-
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,57 +1,44 @@
 ﻿@model Aplikacija.Models.PrijavaZaZaposljavanje
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Brisanje prijave";
 }
 
-<h1>Delete</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-danger text-white text-center">
+                    <h4 class="mb-0">Potvrda brisanja prijave</h4>
+                </div>
+                <div class="card-body">
+                    <p>Da li ste sigurni da želite obrisati ovu prijavu?</p>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>PrijavaZaZaposljavanje</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Prezime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Prezime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CV)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CV)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Pregledano)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Pregledano)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Korisnik)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Korisnik.Email)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="IdPrijava" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+                    <dl class="row">
+                        <dt class="col-sm-4">Ime:</dt>
+                        <dd class="col-sm-8">@Model.Ime</dd>
+
+                        <dt class="col-sm-4">Prezime:</dt>
+                        <dd class="col-sm-8">@Model.Prezime</dd>
+
+                        <dt class="col-sm-4">Email adresa:</dt>
+                        <dd class="col-sm-8">@Model.Email</dd>
+
+                        <dt class="col-sm-4">CV:</dt>
+                        <dd class="col-sm-8">@Model.CV</dd>
+
+                        <dt class="col-sm-4">Korisnik:</dt>
+                        <dd class="col-sm-8">@Model.Korisnik?.Email</dd>
+                    </dl>
+                </div>
+                <div class="card-footer text-end">
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="IdPrijava" />
+                        <button type="submit" class="btn btn-danger">Obriši</button>
+                        <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

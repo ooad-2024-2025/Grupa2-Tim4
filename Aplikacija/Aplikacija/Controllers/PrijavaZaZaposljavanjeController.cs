@@ -62,46 +62,46 @@ namespace Aplikacija.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Ime,Prezime,Email,CV,Pregledano")] PrijavaZaZaposljavanje prijava)
+        public async Task<IActionResult> Create(PrijavaZaZaposljavanje prijava)
         {
-            Console.WriteLine("Ulaz u POST Create");
-            Console.WriteLine("Autentifikovan? " + User.Identity.IsAuthenticated);
+            System.Diagnostics.Debug.WriteLine("=== [PRIJAVA.POST] Start ===");
+            System.Diagnostics.Debug.WriteLine($"Ime: {prijava.Ime}");
+            System.Diagnostics.Debug.WriteLine($"Prezime: {prijava.Prezime}");
+            System.Diagnostics.Debug.WriteLine($"Email: {prijava.Email}");
+            System.Diagnostics.Debug.WriteLine($"CV: {prijava.CV}");
+            System.Diagnostics.Debug.WriteLine($"Pregledano (input): {prijava.Pregledano}");
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                System.Diagnostics.Debug.WriteLine("[PRIJAVA.POST] Korisnik nije prijavljen.");
+                return Unauthorized();
+            }
+
+            prijava.KorisnikId = user.Id;
+
+            // ⬇️ OVDJE uklanjaš grešku za KorisnikId (jer je sad ručno postavljen)
+            ModelState.Remove(nameof(prijava.KorisnikId));
+
+            if (!User.IsInRole("Admin"))
+            {
+                prijava.Pregledano = false;
+            }
 
             if (ModelState.IsValid)
             {
-                var user = await _userManager.GetUserAsync(User);
-                if (user == null)
-                {
-                    Console.WriteLine("User null — dodajem test ID privremeno");
-                    prijava.KorisnikId = "test-korisnik-id"; // neka test vrijednost
-                }
-                else
-                {
-                    prijava.KorisnikId = user.Id;
-                }
-
-
-                prijava.KorisnikId = user.Id;
-
-                if (!User.IsInRole("Admin"))
-                {
-                    prijava.Pregledano = false;
-                }
-
                 _context.Add(prijava);
                 await _context.SaveChangesAsync();
-
-                Console.WriteLine("Prijava sačuvana!");
-
+                System.Diagnostics.Debug.WriteLine("[PRIJAVA.POST] Prijava sačuvana.");
                 return RedirectToAction("Index", "Home");
             }
 
-            Console.WriteLine("ModelState nije validan!");
-            foreach (var modelState in ModelState.Values)
+            System.Diagnostics.Debug.WriteLine("[PRIJAVA.POST] ModelState nije validan:");
+            foreach (var kvp in ModelState)
             {
-                foreach (var error in modelState.Errors)
+                foreach (var error in kvp.Value.Errors)
                 {
-                    Console.WriteLine("GREŠKA: " + error.ErrorMessage);
+                    System.Diagnostics.Debug.WriteLine($" - {kvp.Key}: {error.ErrorMessage}");
                 }
             }
 
@@ -110,8 +110,8 @@ namespace Aplikacija.Controllers
 
 
 
-
         // GET: PrijavaZaZaposljavanje/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -131,6 +131,7 @@ namespace Aplikacija.Controllers
         // POST: PrijavaZaZaposljavanje/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Ime,Prezime,Email,CV,Pregledano,KorisnikId")] PrijavaZaZaposljavanje prijavaZaZaposljavanje)
@@ -165,6 +166,7 @@ namespace Aplikacija.Controllers
         }
 
         // GET: PrijavaZaZaposljavanje/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -184,6 +186,7 @@ namespace Aplikacija.Controllers
         }
 
         // POST: PrijavaZaZaposljavanje/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

@@ -1,48 +1,139 @@
-﻿@model Aplikacija.Models.Kupovina
-
+﻿@model List<Aplikacija.Controllers.Proizvod>
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Kupovina";
 }
 
-<h1>Create</h1>
+<h1 class="fw-bold text-center my-4">Ponuda proizvoda</h1>
 
-<h4>Kupovina</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="DatumKupovine" class="control-label"></label>
-                <input asp-for="DatumKupovine" class="form-control" />
-                <span asp-validation-for="DatumKupovine" class="text-danger"></span>
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            var proizvod = Model[i];
+            <div class="col">
+                <div class="card h-100 shadow-sm text-center">
+                    <img src="@proizvod.Slika" class="card-img-top" style="height: 250px; object-fit: cover;" />
+                    <div class="card-body">
+                        <h5 class="card-title">@proizvod.Naziv</h5>
+                        <p class="card-text text-decoration-underline">@string.Format("{0:0.00} KM", proizvod.Cijena)</p>
+                        <button class="btn btn-sm text-white dodaj-u-korpu"
+                                style="background-color: #f55f3a;"
+                                data-naziv="@proizvod.Naziv"
+                                data-cijena="@proizvod.Cijena.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                            Dodaj u korpu
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Artikal" class="control-label"></label>
-                <input asp-for="Artikal" class="form-control" />
-                <span asp-validation-for="Artikal" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cijena" class="control-label"></label>
-                <input asp-for="Cijena" class="form-control" />
-                <span asp-validation-for="Cijena" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Racun" class="control-label"></label>
-                <input asp-for="Racun" class="form-control" />
-                <span asp-validation-for="Racun" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+        }
+    </div>
+
+    <div class="mt-5">
+        <h4>Korpa:</h4>
+        <ul id="korpa-lista" class="list-group mb-3"></ul>
+        <div class="border-top pt-3">
+            <h5>Ukupno: <span id="ukupna-cijena" class="text-orange fw-bold">0.00 KM</span></h5>
+        </div>
+        <form id="kupovina-form" method="post" action="@Url.Action("PotvrdiNarudzbu", "Kupovina")" onsubmit="return provjeriKorpu();">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="json" id="korpa-json" />
+            <button type="submit" class="btn btn-success">Kupi</button>
         </form>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+        <div id="greskaToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="greskaToastBody"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Zatvori"></button>
+            </div>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        console.log("Script učitan."); 
+
+        const korpa = {};
+
+        document.querySelectorAll(".dodaj-u-korpu").forEach((btn, index) => {
+            console.log("Registrujem dugme broj: ", index); 
+
+            btn.addEventListener("click", function () {
+                const naziv = this.dataset.naziv;
+                const cijena = parseFloat(this.dataset.cijena);
+
+                console.log(`Kliknuto dugme za proizvod: ${naziv}, cijena: ${cijena}`);
+
+                if (korpa[naziv]) {
+                    korpa[naziv].kolicina += 1;
+                } else {
+                    korpa[naziv] = { cijena: cijena, kolicina: 1 };
+                }
+
+                console.log("Trenutno stanje korpe: ", korpa); 
+
+                osvjeziKorpu();
+            });
+        });
+
+        function osvjeziKorpu() {
+            console.log("Pozvana funkcija osvjeziKorpu()"); 
+
+            const lista = document.getElementById("korpa-lista");
+            const ukupnaCijenaEl = document.getElementById("ukupna-cijena");
+
+            lista.innerHTML = "";
+            let total = 0;
+
+            for (let naziv in korpa) {
+                const item = korpa[naziv];
+                const li = document.createElement("li");
+                li.className = "list-group-item d-flex justify-content-between align-items-center border-bottom";
+                li.textContent = `${naziv} x ${item.kolicina}`;
+
+                const span = document.createElement("span");
+                span.className = "badge rounded-pill";
+                span.style.backgroundColor = "darkorange";
+                span.textContent = (item.kolicina * item.cijena).toFixed(2) + " KM";
+
+                li.appendChild(span);
+                lista.appendChild(li);
+
+                total += item.kolicina * item.cijena;
+            }
+
+            ukupnaCijenaEl.textContent = total.toFixed(2) + " KM";
+            document.getElementById("korpa-json").value = JSON.stringify(korpa);
+        }
+
+        function provjeriKorpu() {
+            if (Object.keys(korpa).length === 0) {
+                prikaziGresku("Korpa je prazna. Dodajte artikle prije kupovine.");
+                return false;
+            }
+
+            document.getElementById("korpa-json").value = JSON.stringify(korpa);
+            return true;
+        }
+
+        function prikaziGresku(poruka) {
+            const body = document.getElementById("greskaToastBody");
+            body.textContent = poruka;
+
+            const toastElement = document.getElementById("greskaToast");
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+    </script>
+
+    @if (!string.IsNullOrEmpty(ViewBag.Greska as string))
+    {
+        <script>
+            window.addEventListener("load", function () {
+                prikaziGresku("@ViewBag.Greska");
+            });
+        </script>
+    }
 }

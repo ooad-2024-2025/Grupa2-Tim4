@@ -1,0 +1,45 @@
+﻿@model List<Aplikacija.Models.Kupovina>
+
+@{
+    ViewData["Title"] = "Brisanje narudžbe";
+}
+
+<h1>Brisanje narudžbe</h1>
+
+<h3>Jeste li sigurni da želite obrisati ovu narudžbu?</h3>
+
+<div>
+    <h4>Račun: @Model.First().Racun</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Korisnik
+        </dt>
+        <dd class="col-sm-10">
+            @Model.First().Korisnik.Email
+        </dd>
+        <dt class="col-sm-2">
+            Datum kupovine
+        </dt>
+        <dd class="col-sm-10">
+            @Model.First().DatumKupovine.ToString("dd.MM.yyyy")
+        </dd>
+        <dt class="col-sm-2">
+            Artikli
+        </dt>
+        <dd class="col-sm-10">
+            <ul>
+                @foreach (var item in Model)
+                {
+                    <li>@item.Artikal - @string.Format("{0:0.00} KM", item.Cijena)</li>
+                }
+            </ul>
+        </dd>
+    </dl>
+
+    <form asp-action="DeleteByRacun" method="post">
+        <input type="hidden" name="racun" value="@Model.First().Racun" />
+        <input type="submit" value="Obriši" class="btn btn-danger" /> |
+        <a asp-action="Index">Nazad na listu</a>
+    </form>
+</div>
