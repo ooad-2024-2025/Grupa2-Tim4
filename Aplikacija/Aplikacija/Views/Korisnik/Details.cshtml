@@ -6,36 +6,49 @@
 }
 
 <div class="container mt-5">
-    <div class="card shadow-sm border-0">
-        <div class="card-header text-white" style="background-color: #f55f3a;">
-            <h4 class="mb-0">Detalji korisnika</h4>
+    <div class="card shadow rounded-4 border-0">
+        <div class="card-header bg-white border-bottom-0 text-center py-4">
+            <h3 class="fw-bold text-dark mb-1">👤 Profil korisnika</h3>
+            <p class="text-muted mb-0">Osnovni podaci o korisniku</p>
         </div>
-        <div class="card-body">
-            <dl class="row">
-                <dt class="col-sm-3 text-muted">Ime korisnika</dt>
-                <dd class="col-sm-9 fw-bold">@Model.Ime</dd>
+        <div class="card-body px-5 py-4">
+            <div class="row mb-4">
+                <div class="col-md-4 text-muted">👨‍💼 <strong>Ime:</strong></div>
+                <div class="col-md-8 fw-semibold">@Model.Ime</div>
+            </div>
 
-                <dt class="col-sm-3 text-muted">Prezime korisnika</dt>
-                <dd class="col-sm-9 fw-bold">@Model.Prezime</dd>
+            <div class="row mb-4">
+                <div class="col-md-4 text-muted">👨‍💼 <strong>Prezime:</strong></div>
+                <div class="col-md-8 fw-semibold">@Model.Prezime</div>
+            </div>
 
-                <dt class="col-sm-3 text-muted">Korisničko ime</dt>
-                <dd class="col-sm-9 fw-bold">@Model.UserName</dd>
+            <div class="row mb-4">
+                <div class="col-md-4 text-muted">🔐 <strong>Korisničko ime:</strong></div>
+                <div class="col-md-8 fw-semibold">@Model.UserName</div>
+            </div>
 
-                <dt class="col-sm-3 text-muted">Email adresa</dt>
-                <dd class="col-sm-9 fw-bold">@Model.Email</dd>
+            <div class="row mb-4">
+                <div class="col-md-4 text-muted">📧 <strong>Email adresa:</strong></div>
+                <div class="col-md-8 fw-semibold">@Model.Email</div>
+            </div>
 
-                @if (userRole)
-                {
-                    <dt class="col-sm-3 text-muted">Tip korisnika</dt>
-                    <dd class="col-sm-9 fw-bold">@Model.Tip</dd>
-                }
-            </dl>
+            @if (userRole)
+            {
+                <div class="row mb-4">
+                    <div class="col-md-4 text-muted">🧾 <strong>Tip korisnika:</strong></div>
+                    <div class="col-md-8 fw-semibold">@Model.Tip</div>
+                </div>
+            }
         </div>
-        <div class="card-footer d-flex justify-content-between bg-light">
-            <a asp-action="Index" class="btn btn-outline-secondary">Nazad</a>
+        <div class="card-footer bg-light d-flex justify-content-between px-4 py-3">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+                Nazad na početnu
+            </a>
             @if (User.IsInRole("Admin") || User.IsInRole("Recepcioner"))
             {
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning text-white rounded-pill px-4">
+                    ✏️ Uredi
+                </a>
             }
         </div>
     </div>

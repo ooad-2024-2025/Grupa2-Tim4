@@ -232,5 +232,24 @@ namespace Aplikacija.Controllers
         {
             return _context.Users.Any(e => e.Id == id);
         }
+
+
+
+
+
+
+
+        public async Task<IActionResult> MojProfil()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return RedirectToAction("Details", new { id = user.Id });
+        }
+
+
+
     }
 }

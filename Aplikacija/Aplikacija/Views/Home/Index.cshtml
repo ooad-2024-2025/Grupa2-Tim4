@@ -30,9 +30,26 @@
         }
     }
 
-    <div class="mt-5 d-flex justify-content-center">
-        <div style="width: 70%; max-width: 800px;">
-            <img src="https://via.placeholder.com/800x400?text=Slika" class="img-fluid border rounded" alt="Placeholder">
+    <div class="container mt-5">
+        <div class="row g-3">
+            <!-- Velika slika lijevo -->
+            <div class="col-md-6">
+                <div class="h-100">
+                    <img src="~/images/teretana4.jpg" class="img-fluid rounded shadow-sm w-100 h-100 object-fit-cover" alt="Glavna slika">
+                </div>
+            </div>
+
+            <!-- Dvije manje slike desno -->
+            <div class="col-md-6 d-flex flex-column justify-content-between">
+                <div class="mb-2" style="height: 49%;">
+                    <img src="~/images/teretana2.jpg" class="img-fluid rounded shadow-sm w-100 h-100 object-fit-cover" alt="Slika 2">
+                </div>
+                <div style="height: 49%;">
+                    <img src="~/images/teretana3.jpg" class="img-fluid rounded shadow-sm w-100 h-100 object-fit-cover" alt="Slika 3">
+                </div>
+            </div>
         </div>
     </div>
+
+
 </div>
