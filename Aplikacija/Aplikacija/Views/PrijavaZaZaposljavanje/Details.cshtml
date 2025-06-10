@@ -7,29 +7,33 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header text-white" style="background-color: #f55f3a;">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header text-white rounded-top-4" style="background-color: #f55f3a;">
                     <h4 class="mb-0">Detalji prijave za posao</h4>
                 </div>
+
                 <div class="card-body">
                     <dl class="row">
-                        <dt class="col-sm-4">Ime:</dt>
+                        <dt class="col-sm-4 fw-bold text-muted">👤 Ime:</dt>
                         <dd class="col-sm-8">@Model.Ime</dd>
 
-                        <dt class="col-sm-4">Prezime:</dt>
+                        <dt class="col-sm-4 fw-bold text-muted">👤 Prezime:</dt>
                         <dd class="col-sm-8">@Model.Prezime</dd>
 
-                        <dt class="col-sm-4">Email adresa:</dt>
+                        <dt class="col-sm-4 fw-bold text-muted">📧 Email adresa:</dt>
                         <dd class="col-sm-8">@Model.Email</dd>
 
-                        <dt class="col-sm-4">CV (biografija):</dt>
-                        <dd class="col-sm-8">@Model.CV</dd>
-
-                        <dt class="col-sm-4">Korisnik:</dt>
+                        <dt class="col-sm-4 fw-bold text-muted">🔐 Korisnik:</dt>
                         <dd class="col-sm-8">@Model.Korisnik?.Email</dd>
                     </dl>
                 </div>
-                <div class="card-footer text-end">
+
+                <div class="card-body border-top pt-4" style="background-color: #fff7f4;">
+                    <h5 class="fw-bold mb-3 text-muted">CV (Biografija)</h5>
+                    <p class="mt-2">@Model.CV</p>
+                </div>
+
+                <div class="card-footer text-end rounded-bottom-4 bg-light">
                     <a asp-action="Index" class="btn btn-secondary">Nazad</a>
                 </div>
             </div>

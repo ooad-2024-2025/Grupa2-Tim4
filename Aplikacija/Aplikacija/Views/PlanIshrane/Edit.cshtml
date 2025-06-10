@@ -1,59 +1,65 @@
 ﻿@model Aplikacija.Models.PlanIshrane
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Uredi plan ishrane";
 }
 
-<h1>Edit</h1>
+<div class="container mt-5">
+    <div class="card shadow-lg rounded-4">
+        <div class="card-header text-white" style="background-color: #f55f3a;">
+            <h4 class="mb-0">Uredi plan ishrane</h3>
+        </div>
 
-<h4>PlanIshrane</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" method="post">
-            @Html.AntiForgeryToken()
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="IdPlanishrane" />
-            <div class="form-group">
-                <label asp-for="Ciljevi" class="control-label"></label>
-                <select asp-for="Ciljevi" class="form-control" asp-items="ViewBag.TipCiljaOptions"></select>
-                <span asp-validation-for="Ciljevi" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Plan" class="control-label"></label>
-                <input asp-for="Plan" class="form-control" />
-                <span asp-validation-for="Plan" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DatumGenerisanja" class="control-label"></label>
-                <input asp-for="DatumGenerisanja" class="form-control" />
-                <span asp-validation-for="DatumGenerisanja" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Kilaza" class="control-label"></label>
-                <input asp-for="Kilaza" class="form-control" />
-                <span asp-validation-for="Kilaza" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Godine" class="control-label"></label>
-                <input asp-for="Godine" class="form-control" />
-                <span asp-validation-for="Godine" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Visina" class="control-label"></label>
-                <input asp-for="Visina" class="form-control" />
-                <span asp-validation-for="Visina" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-          
-        </form>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="IdPlanishrane" />
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Ciljevi" class="form-label fw-bold"></label>
+                    <select asp-for="Ciljevi" class="form-select" asp-items="ViewBag.TipCiljaOptions"></select>
+                    <span asp-validation-for="Ciljevi" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Plan" class="form-label fw-bold"></label>
+                    <textarea asp-for="Plan" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Plan" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DatumGenerisanja" class="form-label fw-bold"></label>
+                    <input asp-for="DatumGenerisanja" class="form-control" />
+                    <span asp-validation-for="DatumGenerisanja" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Kilaza" class="form-label fw-bold"></label>
+                    <input asp-for="Kilaza" class="form-control" />
+                    <span asp-validation-for="Kilaza" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Godine" class="form-label fw-bold"></label>
+                    <input asp-for="Godine" class="form-control" />
+                    <span asp-validation-for="Godine" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Visina" class="form-label fw-bold"></label>
+                    <input asp-for="Visina" class="form-control" />
+                    <span asp-validation-for="Visina" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success">Sačuvaj</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Nazad</a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
