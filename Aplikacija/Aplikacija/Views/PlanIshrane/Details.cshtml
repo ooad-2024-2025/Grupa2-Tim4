@@ -5,37 +5,58 @@
     ViewData["Title"] = "Detalji plana ishrane";
 }
 
-<div class="container">
-    <h2>Detalji vašeg plana ishrane</h2>
+<div class="container mt-5">
+    <div class="card shadow-lg rounded-4">
+        <!-- NARANDŽASTI HEADER -->
+        <div class="card-header text-white" style="background-color: #f55f3a;">
+            <h4 class="mb-0">Detalji vašeg plana ishrane</h3>
+        </div>
 
-    <dl class="row">
-        <dt class="col-sm-3">Cilj plana:</dt>
-        <dd class="col-sm-9">@Model.Plan.Ciljevi.GetDisplayName()</dd>
+        <!-- DETALJI -->
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold text-muted">🎯 Cilj plana:</div>
+                <div class="col-md-8">@Model.Plan.Ciljevi.GetDisplayName()</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold text-muted">📅 Datum generisanja:</div>
+                <div class="col-md-8">@Model.Plan.DatumGenerisanja.ToShortDateString()</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold text-muted">⚖️ Kilaža:</div>
+                <div class="col-md-8">@Model.Plan.Kilaza kg</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold text-muted">📏 Visina:</div>
+                <div class="col-md-8">@Model.Plan.Visina cm</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold text-muted">👤 Godine:</div>
+                <div class="col-md-8">@Model.Plan.Godine</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold text-muted">📊 BMI:</div>
+                <div class="col-md-8">@Model.BMI.ToString("F2")</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold text-muted">🔥 Preporučene kalorije dnevno:</div>
+                <div class="col-md-8">@Model.PotrebneKalorije kcal</div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-4 fw-bold text-muted">🏃‍♂️ Preporučeni način vežbanja:</div>
+                <div class="col-md-8">@Model.NacinVjezbanja</div>
+            </div>
 
-        <dt class="col-sm-3">Plan ishrane:</dt>
-        <dd class="col-sm-9">@Model.Plan.Plan</dd>
+            <div class="border-top pt-4 mt-4">
+                <h5 class="fw-bold mb-3 text-muted">🍽️ Detaljan plan ishrane</h5>
+                <div class="bg-light p-4 rounded-3">
+                    @Html.Raw(Model.Plan.Plan.Replace("-", "<br><strong>•</strong>").Replace("Preporuka:", "<br><br><strong>Preporuka:</strong>"))
+                </div>
+            </div>
+        </div>
 
-        <dt class="col-sm-3">Datum generisanja:</dt>
-        <dd class="col-sm-9">@Model.Plan.DatumGenerisanja.ToShortDateString()</dd>
-
-        <dt class="col-sm-3">Kilaža:</dt>
-        <dd class="col-sm-9">@Model.Plan.Kilaza kg</dd>
-
-        <dt class="col-sm-3">Visina:</dt>
-        <dd class="col-sm-9">@Model.Plan.Visina cm</dd>
-
-        <dt class="col-sm-3">Godine:</dt>
-        <dd class="col-sm-9">@Model.Plan.Godine</dd>
-
-        <dt class="col-sm-3">BMI:</dt>
-        <dd class="col-sm-9">@Model.BMI.ToString("F2")</dd>
-
-        <dt class="col-sm-3">Preporučene kalorije dnevno:</dt>
-        <dd class="col-sm-9">@Model.PotrebneKalorije kcal</dd>
-
-        <dt class="col-sm-3">Preporučeni način vežbanja:</dt>
-        <dd class="col-sm-9">@Model.NacinVjezbanja</dd>
-    </dl>
-
-    <a asp-action="Index" class="btn btn-primary">Nazad na listu</a>
+        <div class="card-footer text-end">
+            <a asp-action="Index" class="btn btn-outline-secondary">Nazad na listu</a>
+        </div>
+    </div>
 </div>
