@@ -6,6 +6,10 @@ wwwroot\images\korpa.png
 wwwroot\images\podloga.jpg
 wwwroot\images\rukavice.jpg
 wwwroot\images\tegovi.jpg
+wwwroot\images\teretana.jpg
+wwwroot\images\teretana2.jpg
+wwwroot\images\teretana3.jpg
+wwwroot\images\teretana4.jpg
 wwwroot\images\traka.jpg
 wwwroot\images\user-profile-icon.webp
 wwwroot\js\site.js

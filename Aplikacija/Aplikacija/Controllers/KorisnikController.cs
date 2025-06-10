@@ -22,6 +22,7 @@ namespace Aplikacija.Controllers
         }
 
         // GET: Korisnik
+        [Authorize(Roles = "Admin,Recepcioner")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Users.ToListAsync());
