@@ -175,15 +175,5 @@
     "C:\\Users\\aljic\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
     "C:\\Users\\aljic\\.nuget\\packages\\system.windows.extensions\\7.0.0\\system.windows.extensions.7.0.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "message": "Problem reading the cache file C:\\Users\\aljic\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\obj\\project.nuget.cache : '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0.",
-      "projectPath": "C:\\Users\\aljic\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Aplikacija.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\Users\\aljic\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Aplikacija.csproj",
-      "targetGraphs": []
-    }
-  ]
+  "logs": []
 }
