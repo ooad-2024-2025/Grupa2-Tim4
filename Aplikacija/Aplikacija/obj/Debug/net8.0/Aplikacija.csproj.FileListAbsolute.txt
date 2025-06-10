@@ -536,3 +536,8 @@ C:\Users\user\Documents\GitHub\Grupa2-Tim4\Aplikacija\Aplikacija\obj\Debug\net8.
 C:\Users\user\Documents\GitHub\Grupa2-Tim4\Aplikacija\Aplikacija\obj\Debug\net8.0\Aplikacija.pdb
 C:\Users\user\Documents\GitHub\Grupa2-Tim4\Aplikacija\Aplikacija\obj\Debug\net8.0\Aplikacija.genruntimeconfig.cache
 C:\Users\user\Documents\GitHub\Grupa2-Tim4\Aplikacija\Aplikacija\obj\Debug\net8.0\ref\Aplikacija.dll
+C:\Users\user\Documents\GitHub\Grupa2-Tim4\Aplikacija\Aplikacija\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+C:\Users\user\Documents\GitHub\Grupa2-Tim4\Aplikacija\Aplikacija\bin\Debug\net8.0\MailKit.dll
+C:\Users\user\Documents\GitHub\Grupa2-Tim4\Aplikacija\Aplikacija\bin\Debug\net8.0\MimeKit.dll
+C:\Users\user\Documents\GitHub\Grupa2-Tim4\Aplikacija\Aplikacija\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\user\Documents\GitHub\Grupa2-Tim4\Aplikacija\Aplikacija\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
