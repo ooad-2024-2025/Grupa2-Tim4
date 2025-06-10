@@ -1,54 +1,41 @@
-﻿@model Aplikacija.Models.PlanIshrane
+﻿@using Aplikacija.Extensions
+@model Aplikacija.Models.ViewModels.PlanIshraneDetailsViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalji plana ishrane";
 }
 
-<h1>Details</h1>
+<div class="container">
+    <h2>Detalji vašeg plana ishrane</h2>
 
-<div>
-    <h4>PlanIshrane</h4>
-    <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ciljevi)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ciljevi)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Plan)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Plan)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DatumGenerisanja)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DatumGenerisanja)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Kilaza)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Kilaza)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Godine)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Godine)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Clan)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Clan.Email)
-        </dd>
+        <dt class="col-sm-3">Cilj plana:</dt>
+        <dd class="col-sm-9">@Model.Plan.Ciljevi.GetDisplayName()</dd>
+
+        <dt class="col-sm-3">Plan ishrane:</dt>
+        <dd class="col-sm-9">@Model.Plan.Plan</dd>
+
+        <dt class="col-sm-3">Datum generisanja:</dt>
+        <dd class="col-sm-9">@Model.Plan.DatumGenerisanja.ToShortDateString()</dd>
+
+        <dt class="col-sm-3">Kilaža:</dt>
+        <dd class="col-sm-9">@Model.Plan.Kilaza kg</dd>
+
+        <dt class="col-sm-3">Visina:</dt>
+        <dd class="col-sm-9">@Model.Plan.Visina cm</dd>
+
+        <dt class="col-sm-3">Godine:</dt>
+        <dd class="col-sm-9">@Model.Plan.Godine</dd>
+
+        <dt class="col-sm-3">BMI:</dt>
+        <dd class="col-sm-9">@Model.BMI.ToString("F2")</dd>
+
+        <dt class="col-sm-3">Preporučene kalorije dnevno:</dt>
+        <dd class="col-sm-9">@Model.PotrebneKalorije kcal</dd>
+
+        <dt class="col-sm-3">Preporučeni način vežbanja:</dt>
+        <dd class="col-sm-9">@Model.NacinVjezbanja</dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdPlanishrane">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+    <a asp-action="Index" class="btn btn-primary">Nazad na listu</a>
 </div>

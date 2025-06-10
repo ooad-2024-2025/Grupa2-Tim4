@@ -1,48 +1,44 @@
 ﻿@model Aplikacija.Models.PlanIshrane
 
-@{
-    ViewData["Title"] = "Create";
-}
+<form asp-action="Create" method="post">
 
-<h1>Create</h1>
 
-<h4>PlanIshrane</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Plan" class="control-label"></label>
-                <select asp-for="Plan" class="form-control" asp-items="Html.GetEnumSelectList<TipCilja>()"></select>
-                <span asp-validation-for="Plan" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DatumGenerisanja" class="control-label"></label>
-                <input asp-for="DatumGenerisanja" class="form-control" />
-                <span asp-validation-for="DatumGenerisanja" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Kilaza" class="control-label"></label>
-                <input asp-for="Kilaza" class="form-control" />
-                <span asp-validation-for="Kilaza" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Godine" class="control-label"></label>
-                <input asp-for="Godine" class="form-control" />
-                <span asp-validation-for="Godine" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    <!-- Cilj plana -->
+    <div class="form-group">
+        <label asp-for="Ciljevi"></label>
+        <select asp-for="Ciljevi" asp-items="ViewBag.TipCiljaOptions" class="form-control">
+            <option value="">-- Izaberite cilj --</option>
+        </select>
+        <span asp-validation-for="Ciljevi" class="text-danger"></span>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <!-- Kilaža -->
+    <div class="form-group">
+        <label asp-for="Kilaza"></label>
+        <input asp-for="Kilaza" class="form-control" type="number" step="0.1" min="30" max="300" />
+        <span asp-validation-for="Kilaza" class="text-danger"></span>
+    </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    <!-- Visina -->
+    <div class="form-group">
+        <label asp-for="Visina"></label>
+        <input asp-for="Visina" class="form-control" type="number" min="100" max="250" />
+        <span asp-validation-for="Visina" class="text-danger"></span>
+    </div>
+
+    <!-- Godine -->
+    <div class="form-group">
+        <label asp-for="Godine"></label>
+        <input asp-for="Godine" class="form-control" type="number" min="10" max="100" />
+        <span asp-validation-for="Godine" class="text-danger"></span>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary">Kreiraj Plan</button>
+</form>

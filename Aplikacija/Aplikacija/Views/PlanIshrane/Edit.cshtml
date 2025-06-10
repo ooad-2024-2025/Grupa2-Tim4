@@ -10,12 +10,13 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="IdPlanishrane" />
             <div class="form-group">
                 <label asp-for="Ciljevi" class="control-label"></label>
-                <select asp-for="Ciljevi" class="form-control"></select>
+                <select asp-for="Ciljevi" class="form-control" asp-items="ViewBag.TipCiljaOptions"></select>
                 <span asp-validation-for="Ciljevi" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -39,13 +40,14 @@
                 <span asp-validation-for="Godine" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ClanId" class="control-label"></label>
-                <select asp-for="ClanId" class="form-control" asp-items="ViewBag.ClanId"></select>
-                <span asp-validation-for="ClanId" class="text-danger"></span>
+                <label asp-for="Visina" class="control-label"></label>
+                <input asp-for="Visina" class="form-control" />
+                <span asp-validation-for="Visina" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
+          
         </form>
     </div>
 </div>
@@ -55,5 +57,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -11,6 +11,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+
+
 builder.Services.AddDefaultIdentity<Korisnik>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;

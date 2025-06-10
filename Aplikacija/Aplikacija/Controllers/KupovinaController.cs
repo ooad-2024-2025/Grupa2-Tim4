@@ -48,11 +48,13 @@ namespace Aplikacija.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Korisnik> _userManager;
+        private readonly IEmailSender _emailSender;
 
-        public KupovinaController(ApplicationDbContext context, UserManager<Korisnik> userManager)
+        public KupovinaController(ApplicationDbContext context, UserManager<Korisnik> userManager, IEmailSender emailSender)
         {
             _context = context;
             _userManager = userManager;
+            _emailSender = emailSender;
         }
 
 
@@ -385,6 +387,8 @@ namespace Aplikacija.Controllers
             var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
             var racunId = "RN" + timestamp;
 
+            decimal ukupno = 0m;
+
             foreach (var item in artikli)
             {
                 System.Diagnostics.Debug.WriteLine($"[PotvrdiNarudzbu.POST] Artikal: {item.Key}, Cijena: {item.Value.cijena}, Količina: {item.Value.kolicina}");
@@ -397,15 +401,67 @@ namespace Aplikacija.Controllers
                     Racun = racunId,
                     KorisnikId = korisnik.Id
                 };
+                ukupno += (decimal)novaKupovina.Cijena;
+
+
                 _context.Kupovina.Add(novaKupovina);
             }
 
             await _context.SaveChangesAsync();
             System.Diagnostics.Debug.WriteLine("[PotvrdiNarudzbu.POST] Sve kupovine su spremljene.");
 
-            // ⏩ Preusmjerenje na prikaz detalja narudžbe
+            var sb = new System.Text.StringBuilder();
+
+            sb.AppendLine("<html><body>");
+            sb.AppendLine($"<p>Poštovani <strong>{korisnik.UserName}</strong>,</p>");
+            sb.AppendLine($"<p>Zahvaljujemo na vašoj narudžbi. Vaša narudžba s brojem računa <strong>{racunId}</strong> je uspješno zaprimljena.</p>");
+            sb.AppendLine("<p>Detalji narudžbe:</p>");
+
+            sb.AppendLine("<table style='border-collapse: collapse; width: 100%;'>");
+            sb.AppendLine("<thead>");
+            sb.AppendLine("<tr>");
+            sb.AppendLine("<th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>Artikal</th>");
+            sb.AppendLine("<th style='border: 1px solid #ddd; padding: 8px; text-align: right;'>Količina</th>");
+            sb.AppendLine("<th style='border: 1px solid #ddd; padding: 8px; text-align: right;'>Cijena</th>");
+            sb.AppendLine("</tr>");
+            sb.AppendLine("</thead>");
+            sb.AppendLine("<tbody>");
+
+            foreach (var item in artikli)
+            {
+                decimal cijenaUkupno = (decimal)(item.Value.cijena * item.Value.kolicina);
+                sb.AppendLine("<tr>");
+                sb.AppendLine($"<td style='border: 1px solid #ddd; padding: 8px;'>{item.Key}</td>");
+                sb.AppendLine($"<td style='border: 1px solid #ddd; padding: 8px; text-align: right;'>{item.Value.kolicina}</td>");
+                sb.AppendLine($"<td style='border: 1px solid #ddd; padding: 8px; text-align: right;'>{cijenaUkupno:C}</td>");
+                sb.AppendLine("</tr>");
+            }
+
+            sb.AppendLine("</tbody>");
+            sb.AppendLine("<tfoot>");
+            sb.AppendLine("<tr>");
+            sb.AppendLine("<td colspan='2' style='border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;'>Ukupna cijena:</td>");
+            sb.AppendLine($"<td style='border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;'>{ukupno:C}</td>");
+            sb.AppendLine("</tr>");
+            sb.AppendLine("</tfoot>");
+            sb.AppendLine("</table>");
+
+            sb.AppendLine("<p>Ukoliko imate bilo kakvih pitanja, slobodno nas kontaktirajte.</p>");
+            sb.AppendLine("<p>S poštovanjem,<br/>Vaš tim za podršku</p>");
+            sb.AppendLine("</body></html>");
+
+            try
+            {
+                await _emailSender.SendEmailAsync(korisnik.Email, "Potvrda narudžbe", sb.ToString());
+                System.Diagnostics.Debug.WriteLine("[PotvrdiNarudzbu.POST] Email potvrde poslan korisniku.");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[PotvrdiNarudzbu.POST] Greška pri slanju emaila: {ex.Message}");
+            }
             return RedirectToAction("DetailsByRacun", new { racun = racunId });
         }
+
 
 
         public async Task<IActionResult> DetailsByRacun(string racun)

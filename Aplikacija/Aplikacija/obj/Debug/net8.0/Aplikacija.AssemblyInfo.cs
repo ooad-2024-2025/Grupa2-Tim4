@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Aplikacija")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e9d607ee5bfc54aefddc5a5e04ba0d5dea3bffcf")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+40c002facefddf3359b4b3393aa6e16137a8c6db")]
 [assembly: System.Reflection.AssemblyProductAttribute("Aplikacija")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Aplikacija")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
