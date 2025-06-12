@@ -3,8 +3,8 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Napravi termin</h1>
-<hr />
+<h1 class="mb-4">Napravi termin</h1>
+<hr class="mb-4" />
 
 @if (TempData["ErrorMessage"] != null)
 {
@@ -15,71 +15,75 @@
 }
 
 <div class="row">
+    <!-- Forma -->
     <div class="col-md-6">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            @* Uslovni prikaz za trenera i admina *@
-            @if (ViewBag.JeTrener == true)
-            {
-                <!-- Trener - automatski postavljen -->
-                <input type="hidden" asp-for="TrenerId" />
-                <div class="form-group mb-3">
-                    <label class="control-label"><strong>Trener:</strong></label>
-                    <input type="text" class="form-control" value="@User.Identity.Name" readonly />
-                    <small class="form-text text-muted">Automatski postavljen kao trenutni trener</small>
-                </div>
-            }
-            else if (ViewBag.JeAdmin == true)
-            {
-                <!-- Admin - može da bira trenera -->
-                <div class="form-group mb-3">
-                    <label asp-for="TrenerId" class="control-label"><strong>Trener:</strong></label>
-                    <select asp-for="TrenerId" class="form-control" asp-items="ViewBag.TrenerId">
-                        <option value="">-- Izaberite trenera --</option>
-                    </select>
-                    <span asp-validation-for="TrenerId" class="text-danger"></span>
-                    <small class="form-text text-muted">Kao admin možete kreirati termin za bilo kojeg trenera</small>
-                </div>
-            }
+                    @* Uslovni prikaz za trenera i admina *@
+                    @if (ViewBag.JeTrener == true)
+                    {
+                        <input type="hidden" asp-for="TrenerId" />
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-bold">Trener:</label>
+                            <input type="text" class="form-control" value="@User.Identity.Name" readonly />
+                            <div class="form-text">Automatski postavljen kao trenutni trener</div>
+                        </div>
+                    }
+                    else if (ViewBag.JeAdmin == true)
+                    {
+                        <div class="form-group mb-3">
+                            <label asp-for="TrenerId" class="form-label fw-bold">Trener:</label>
+                            <select asp-for="TrenerId" class="form-control" asp-items="ViewBag.TrenerId">
+                                <option value="">-- Izaberite trenera --</option>
+                            </select>
+                            <span asp-validation-for="TrenerId" class="text-danger"></span>
+                            <div class="form-text">Kao admin možete kreirati termin za bilo kojeg trenera</div>
+                        </div>
+                    }
 
-            <div class="form-group mb-3">
-                <label asp-for="Datum" class="control-label"><strong>Datum:</strong></label>
-                <input asp-for="Datum" class="form-control" type="date" />
-                <span asp-validation-for="Datum" class="text-danger"></span>
+                    <div class="form-group mb-3">
+                        <label asp-for="Datum" class="form-label fw-bold">Datum:</label>
+                        <input asp-for="Datum" class="form-control" type="date" />
+                        <span asp-validation-for="Datum" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Vrijeme" class="form-label fw-bold">Vrijeme:</label>
+                        <input asp-for="Vrijeme" class="form-control" type="time" />
+                        <span asp-validation-for="Vrijeme" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label asp-for="Vrsta" class="form-label fw-bold">Vrsta treninga:</label>
+                        <select asp-for="Vrsta" class="form-control" asp-items="Html.GetEnumSelectList<VrstaTreninga>()">
+                            <option value="">-- Izaberite vrstu treninga --</option>
+                        </select>
+                        <span asp-validation-for="Vrsta" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <input type="submit" value="Kreiraj termin" class="btn btn-success" />
+                        <a asp-action="Index" class="btn btn-outline-secondary">Otkaži</a>
+                    </div>
+                </form>
             </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Vrijeme" class="control-label"><strong>Vrijeme:</strong></label>
-                <input asp-for="Vrijeme" class="form-control" type="time" />
-                <span asp-validation-for="Vrijeme" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Vrsta" class="control-label"><strong>Vrsta treninga:</strong></label>
-                <select asp-for="Vrsta" class="form-control" asp-items="Html.GetEnumSelectList<VrstaTreninga>()">
-                    <option value="">-- Izaberite vrstu treninga --</option>
-                </select>
-                <span asp-validation-for="Vrsta" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <input type="submit" value="Kreiraj termin" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Otkazi</a>
-            </div>
-        </form>
+        </div>
     </div>
 
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>Napomene</h5>
+    <!-- Napomene -->
+    <div class="col-md-6 mt-4 mt-md-0">
+        <div class="card shadow-sm h-100" style="border: 1px solid #f55f3a;">
+            <div class="card-header text-white" style="background-color: #f55f3a;">
+                <h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Napomene</h5>
             </div>
             <div class="card-body">
-                <ul class="list-unstyled">
-                    <li><i class="fas fa-info-circle text-info"></i> Datum mora biti današnji ili u budućnosti</li>
-                    <li><i class="fas fa-info-circle text-info"></i> Individualni treninzi mogu imati samo jednog učesnika</li>
-                    <li><i class="fas fa-info-circle text-info"></i> Jedan trener ne može imati dva termina u isto vrijeme</li>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-3"><i class="fas fa-calendar-alt text-primary me-2"></i>Datum mora biti današnji ili u budućnosti</li>
+                    <li class="mb-3"><i class="fas fa-user-friends text-primary me-2"></i>Individualni treninzi mogu imati samo jednog učesnika</li>
+                    <li class="mb-3"><i class="fas fa-user-clock text-primary me-2"></i>Jedan trener ne može imati dva termina u isto vrijeme</li>
                 </ul>
             </div>
         </div>
@@ -92,8 +96,7 @@
     }
 
     <script>
-        // Postavi minimalni datum na danas
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var today = new Date().toISOString().split('T')[0];
             document.querySelector('input[type="date"]').setAttribute('min', today);
         });

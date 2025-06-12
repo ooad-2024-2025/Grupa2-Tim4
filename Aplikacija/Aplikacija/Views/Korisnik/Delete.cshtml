@@ -1,50 +1,46 @@
 ﻿@model Aplikacija.Models.Korisnik
 
 @{
-    ViewData["Title"] = "Brisanje korisnika";
+    ViewData["Title"] = "Obriši korisnika";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow rounded-4 border-danger">
-                <div class="card-header bg-danger text-white text-center rounded-top-4">
-                    <h3><i class="bi bi-trash-fill"></i> Potvrda brisanja</h3>
-                </div>
+<h1 class="mb-4 text-danger"><i class="fas fa-trash-alt me-2"></i>Obriši korisnika</h1>
 
-                <div class="card-body">
-                    <p class="lead text-center mb-4">
-                        Da li ste sigurni da želite obrisati sljedećeg korisnika?
-                    </p>
+<div class="alert alert-warning border-warning shadow-sm">
+    <h5><i class="fas fa-exclamation-triangle me-2"></i>Jeste li sigurni da želite obrisati ovog korisnika?</h5>
+    <p class="mb-0">Ova radnja je nepovratna!</p>
+</div>
 
-                    <dl class="row">
-                        <dt class="col-sm-4">Ime</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Ime)</dd>
+<div class="card shadow-sm border-danger mt-4">
+    <div class="card-header bg-danger text-white">
+        <strong>Detalji korisnika</strong>
+    </div>
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Ime</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Ime)</dd>
 
-                        <dt class="col-sm-4">Prezime</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Prezime)</dd>
+            <dt class="col-sm-3">Prezime</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Prezime)</dd>
 
-                        <dt class="col-sm-4">Korisničko ime</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.UserName)</dd>
+            <dt class="col-sm-3">Korisničko ime</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.UserName)</dd>
 
-                        <dt class="col-sm-4">Email</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Email)</dd>
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
 
-                        <dt class="col-sm-4">Tip korisnika</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Tip)</dd>
-                    </dl>
-
-                    <form asp-action="Delete" method="post" class="text-center mt-4">
-                        <input type="hidden" asp-for="Id" />
-                        <button type="submit" class="btn btn-danger btn-lg me-2">
-                            <i class="bi bi-trash"></i> Obriši
-                        </button>
-                        <a asp-action="Index" class="btn btn-secondary btn-lg">
-                            <i class="bi bi-arrow-left-circle"></i> Nazad na listu
-                        </a>
-                    </form>
-                </div>
-            </div>
-        </div>
+            <dt class="col-sm-3">Tip korisnika</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Tip)</dd>
+        </dl>
     </div>
 </div>
+
+<form asp-action="Delete" method="post" class="mt-4 d-flex gap-2">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">
+        <i class="fas fa-trash-alt me-1"></i> Obriši
+    </button>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-1"></i> Nazad na listu
+    </a>
+</form>

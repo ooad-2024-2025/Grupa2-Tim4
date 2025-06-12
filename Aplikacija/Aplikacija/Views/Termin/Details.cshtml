@@ -1,42 +1,39 @@
 ﻿@model Aplikacija.Models.Termin
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalji termina";
 }
 
-<h1>Details</h1>
+<h1 class="mb-4" style="color: #f55f3a;">
+    <i class="fas fa-calendar-alt me-2"></i>Detalji termina
+</h1>
 
-<div>
-    <h4>Termin</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Datum)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Datum)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Vrijeme)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Vrijeme)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Vrsta)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Vrsta)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Trener)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Trener.Email)
-        </dd>
-    </dl>
+<div class="card shadow-sm mt-3" style="border: 1px solid #f55f3a;">
+    <div class="card-header text-white" style="background-color: #f55f3a;">
+        <strong>Informacije o terminu</strong>
+    </div>
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Datum:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Datum)</dd>
+
+            <dt class="col-sm-3">Vrijeme:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Vrijeme)</dd>
+
+            <dt class="col-sm-3">Vrsta treninga:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Vrsta)</dd>
+
+            <dt class="col-sm-3">Trener:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Trener.Email)</dd>
+        </dl>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdTermin">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="mt-4 d-flex gap-2">
+    <a asp-action="Edit" asp-route-id="@Model?.IdTermin" class="btn text-white" style="background-color: #f55f3a;">
+        <i class="fas fa-edit me-1"></i> Uredi
+    </a>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-1"></i> Nazad na listu
+    </a>
 </div>

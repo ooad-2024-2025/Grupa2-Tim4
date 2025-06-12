@@ -2,88 +2,83 @@
 @{
     ViewData["Title"] = "Lista treninga";
 }
-<h1>Lista treninga</h1>
 
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-dark fw-bold">Lista treninga</h2>
+        <!-- Ako postoji dugme za novi trening, možeš ga dodati ovde -->
+    </div>
 
-
-
-<table class="table table-striped">
-    <thead class="thead-dark">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Datum)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Vrijeme)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Tip)
-            </th>
-            <th>
-                Član
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Trener)
-            </th>
-            <th>Akcije</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.Any())
-        {
-            @foreach (var item in Model)
+    <table class="table table-bordered table-striped shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Datum)</th>
+                <th>@Html.DisplayNameFor(model => model.Vrijeme)</th>
+                <th>@Html.DisplayNameFor(model => model.Tip)</th>
+                <th>Član</th>
+                <th>@Html.DisplayNameFor(model => model.Trener)</th>
+                <th>Akcije</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Datum)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Vrijeme)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Tip)</td>
+                        <td>
+                            @if (item.Clan != null)
+                            {
+                                @Html.DisplayFor(modelItem => item.Clan.Email)
+                            }
+                            else
+                            {
+                                <span class="text-muted">Nije dodijeljen</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Trener != null)
+                            {
+                                @Html.DisplayFor(modelItem => item.Trener.Email)
+                            }
+                            else
+                            {
+                                <span class="text-muted">Nije dodijeljen</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a asp-action="Details" asp-route-id="@item.IdTrening" class="btn btn-info" title="Detalji">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                @if (ViewBag.IsAdmin || User.IsInRole("Trener"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.IdTrening" class="btn btn-warning" title="Uredi">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                }
+                                @if (ViewBag.IsAdmin)
+                                {
+                                    <a asp-action="Delete" asp-route-id="@item.IdTrening" class="btn btn-danger" title="Obriši">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Datum)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Vrijeme)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Tip)
-                    </td>
-                    <td>
-                        @if (item.Clan != null)
-                        {
-                            @Html.DisplayFor(modelItem => item.Clan.Email)
-                        }
-                        else
-                        {
-                            <span class="text-muted">Nije dodijeljen</span>
-                        }
-                    </td>
-                    <td>
-                        @if (item.Trener != null)
-                        {
-                            @Html.DisplayFor(modelItem => item.Trener.Email)
-                        }
-                        else
-                        {
-                            <span class="text-muted">Nije dodijeljen</span>
-                        }
-                    </td>
-                    <td>
-                        @* Details dugme - dostupno svima *@
-                        <a asp-action="Details" asp-route-id="@item.IdTrening" class="btn btn-sm btn-info">Details</a>
-
-                        @* Edit i Delete dugmad - samo za Admin *@
-                        @if (ViewBag.IsAdmin)
-                        {
-                            
-                            <a asp-action="Delete" asp-route-id="@item.IdTrening" class="btn btn-sm btn-danger">Delete</a>
-                        }
+                    <td colspan="6" class="text-center">
+                        <em>Nema treninga za prikazivanje.</em>
                     </td>
                 </tr>
             }
-        }
-        else
-        {
-            <tr>
-                <td colspan="6" class="text-center">
-                    <em>Nema treninga za prikazivanje.</em>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>

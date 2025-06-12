@@ -1,49 +1,53 @@
 ﻿@model Aplikacija.Models.Termin
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Uredi termin";
 }
 
-<h1>Edit</h1>
+<h1 class="mb-4" style="color: #f55f3a;">
+    <i class="fas fa-edit me-2"></i>Uredi termin
+</h1>
 
-<h4>Termin</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="card shadow-sm border-0">
+    <div class="card-body">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="IdTermin" />
-            <div class="form-group">
-                <label asp-for="Datum" class="control-label"></label>
-                <input asp-for="Datum" class="form-control" />
+
+            <div class="mb-3">
+                <label asp-for="Datum" class="form-label"><strong>Datum</strong></label>
+                <input asp-for="Datum" class="form-control" type="date" />
                 <span asp-validation-for="Datum" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Vrijeme" class="control-label"></label>
-                <input asp-for="Vrijeme" class="form-control" />
+
+            <div class="mb-3">
+                <label asp-for="Vrijeme" class="form-label"><strong>Vrijeme</strong></label>
+                <input asp-for="Vrijeme" class="form-control" type="time" />
                 <span asp-validation-for="Vrijeme" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Vrsta" class="control-label"></label>
-                <select asp-for="Vrsta" class="form-control"></select>
+
+            <div class="mb-3">
+                <label asp-for="Vrsta" class="form-label"><strong>Vrsta treninga</strong></label>
+                <select asp-for="Vrsta" class="form-control" asp-items="Html.GetEnumSelectList<VrstaTreninga>()"></select>
                 <span asp-validation-for="Vrsta" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="TrenerId" class="control-label"></label>
+
+            <div class="mb-4">
+                <label asp-for="TrenerId" class="form-label"><strong>Trener</strong></label>
                 <select asp-for="TrenerId" class="form-control" asp-items="ViewBag.TrenerId"></select>
                 <span asp-validation-for="TrenerId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <div class="d-flex gap-2">
+                <input type="submit" value="Sačuvaj promjene" class="btn text-white" style="background-color: #f55f3a;" />
+                <a asp-action="Index" class="btn btn-secondary">Nazad</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

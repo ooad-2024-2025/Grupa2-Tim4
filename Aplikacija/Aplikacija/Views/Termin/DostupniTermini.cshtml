@@ -1,100 +1,141 @@
-﻿
-@model IEnumerable<Aplikacija.Models.Termin>  
-@{  
-    ViewData["Title"] = "Dostupni termini";  
-}  
-<h1>Dostupni termini</h1>  
-@if (TempData["Message"] != null)  
-{  
-    <div class="alert alert-info">@TempData["Message"]</div>  
-}  
-@if (TempData["ErrorMessage"] != null)  
-{  
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>  
-}  
-@if (TempData["SuccessMessage"] != null)  
-{  
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>  
-}  
+﻿@model IEnumerable<Aplikacija.Models.Termin>
 
-<table class="table table-striped">  
-    <thead>  
-        <tr>  
-            <th>Datum</th>  
-            <th>Vrijeme</th>  
-            <th>Vrsta</th>  
-            <th>Trener</th>  
-            <th>Akcija</th>  
-            <th>Status</th>  
-        </tr>  
-    </thead>  
-    <tbody>  
-        @foreach (var t in Model)  
-        {  
-            // Removed unnecessary "@{" block  
-            var korisnikPrijavljen = t.Prijave.Any(p => p.ClanId == ViewContext.HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);  
-            var vremeTermina = t.Datum.Add(t.Vrijeme.ToTimeSpan());  
-            var mozeOtkazati = vremeTermina > DateTime.Now.AddHours(2);  
+@{
+    ViewData["Title"] = "Dostupni termini";
+}
 
-            <tr>  
-                <td>@t.Datum.ToString("yyyy-MM-dd")</td>  
-                <td>@t.Vrijeme.ToString(@"hh\:mm")</td>  
-                <td>@t.Vrsta</td>  
-                <td>@t.Trener?.Email</td>  
-                <td>  
-                    @if (korisnikPrijavljen)  
-                    {  
-                        if (mozeOtkazati)  
-                        {  
-                            <form asp-action="OtkaziRezervaciju" asp-controller="Termin" method="post" style="display:inline;">  
-                                <input type="hidden" name="terminId" value="@t.IdTermin" />  
-                                <button type="submit" class="btn btn-warning btn-sm"   
-                                        onclick="return confirm('Da li ste sigurni da želite da otkažete rezervaciju?')">  
-                                    Otkazi rezervaciju  
-                                </button>  
-                            </form>  
-                        }  
-                        else  
-                        {  
-                            <span class="text-muted">Ne možete otkazati</span>  
-                        }  
-                    }  
-                    else  
-                    {  
-                        if (t.Vrsta == Aplikacija.Models.VrstaTreninga.Individualni && t.Prijave.Any())  
-                        {  
-                            <span class="text-danger">Popunjeno</span>  
-                        }  
-                        else if (vremeTermina <= DateTime.Now)  
-                        {  
-                            <span class="text-muted">Prošao termin</span>  
-                        }  
-                        else  
-                        {  
-                            <form asp-action="Rezervisi" asp-controller="Termin" method="post" style="display:inline;">  
-                                <input type="hidden" name="terminId" value="@t.IdTermin" />  
-                                <button type="submit" class="btn btn-success btn-sm">  
-                                    Rezerviši  
-                                </button>  
-                            </form>  
-                        }  
-                    }  
-                </td>  
-                <td>  
-                    @if (t.Vrsta == Aplikacija.Models.VrstaTreninga.Grupni)  
-                    {  
-                        <small>@t.Prijave.Count() prijavljenih</small>  
-                    }  
-                    else if (t.Prijave.Any())  
-                    {  
-                        <small class="text-danger">Rezervisan</small>  
-                    }  
-                    else  
-                    {  
-                        <small class="text-success">Dostupan</small>  
-                    }  
-                </td>  
-            </tr>  
-        }  
-    </tbody>  
-</table>
+<style>
+    .termin-card {
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease-in-out;
+        background-color: #f8f9fa; /* Svijetlosiva pozadina kartice */
+    }
+
+        .termin-card:hover {
+            transform: scale(1.02);
+        }
+
+    .termin-datetime {
+        color: #f55f3a; /* Narandžasta boja datuma i vremena */
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .btn-sm {
+        font-size: 0.85rem;
+        border-radius: 8px;
+    }
+
+    .badge-rounded {
+        border-radius: 12px;
+        padding: 0.35em 0.65em;
+        font-size: 0.85rem;
+    }
+
+    .card-title-icon {
+        font-size: 1.5rem;
+        margin-right: 0.4rem;
+        color: #f55f3a;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">📅 Dostupni termini</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-info shadow-sm">@TempData["Message"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger shadow-sm">@TempData["ErrorMessage"]</div>
+    }
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success shadow-sm">@TempData["SuccessMessage"]</div>
+    }
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var t in Model.OrderBy(t => t.Datum).ThenBy(t => t.Vrijeme))
+        {
+            var korisnikPrijavljen = t.Prijave.Any(p => p.ClanId == ViewContext.HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var vremeTermina = t.Datum.Add(t.Vrijeme.ToTimeSpan());
+            var mozeOtkazati = vremeTermina > DateTime.Now.AddHours(2);
+
+            <div class="col">
+                <div class="card termin-card h-100 border-0">
+                    <div class="card-body">
+                        <h5 class="termin-datetime mb-3">
+                            <i class="bi bi-calendar3 card-title-icon"></i>
+                            @t.Datum.ToString("dd.MM.yyyy") u @t.Vrijeme.ToString(@"hh\:mm")
+                        </h5>
+
+                        <p class="mb-2">
+                            <strong>Vrsta:</strong>
+                            <span class="badge badge-rounded text-white" style="background-color: #f55f3a;">@t.Vrsta</span>
+                        </p>
+
+                        <p class="mb-2"><strong>Trener:</strong> @t.Trener?.Email</p>
+
+                        <p class="mb-2">
+                            <strong>Status:</strong>
+                            @if (t.Vrsta == Aplikacija.Models.VrstaTreninga.Grupni)
+                            {
+                                <span class="badge bg-info badge-rounded">@t.Prijave.Count() prijavljenih</span>
+                            }
+                            else if (t.Prijave.Any())
+                            {
+                                <span class="badge bg-danger badge-rounded">Rezervisan</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success badge-rounded">Dostupan</span>
+                            }
+                        </p>
+
+                        <div class="mt-3">
+                            @if (korisnikPrijavljen)
+                            {
+                                if (mozeOtkazati)
+                                {
+                                    <form asp-action="OtkaziRezervaciju" asp-controller="Termin" method="post">
+                                        <input type="hidden" name="terminId" value="@t.IdTermin" />
+                                        <button type="submit" class="btn btn-outline-warning btn-sm w-100"
+                                                onclick="return confirm('Da li ste sigurni da želite da otkažete rezervaciju?')">
+                                            Otkazi rezervaciju
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">Ne možete otkazati (manje od 2h)</span>
+                                }
+                            }
+                            else
+                            {
+                                if (t.Vrsta == Aplikacija.Models.VrstaTreninga.Individualni && t.Prijave.Any())
+                                {
+                                    <span class="text-danger fw-bold">Popunjeno!</span>
+                                }
+                                else if (vremeTermina <= DateTime.Now)
+                                {
+                                    <span class="text-muted fst-italic">Prošao termin</span>
+                                }
+                                else
+                                {
+                                    <form asp-action="Rezervisi" asp-controller="Termin" method="post">
+                                        <input type="hidden" name="terminId" value="@t.IdTermin" />
+                                        <button type="submit" class="btn btn-success btn-sm w-100">
+                                            Rezerviši
+                                        </button>
+                                    </form>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

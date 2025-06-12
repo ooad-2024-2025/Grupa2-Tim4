@@ -1,48 +1,39 @@
 ﻿@model Aplikacija.Models.Trening
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalji treninga";
 }
 
-<h1>Details</h1>
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">Detalji treninga</h2>
 
-<div>
-    <h4>Trening</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Datum)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Datum)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Vrijeme)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Vrijeme)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Tip)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Tip)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Clan)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Clan.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Trener)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Trener.Email)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdTrening">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3 fw-semibold">@Html.DisplayNameFor(m => m.Datum)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(m => m.Datum)</dd>
+
+                <dt class="col-sm-3 fw-semibold">@Html.DisplayNameFor(m => m.Vrijeme)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(m => m.Vrijeme)</dd>
+
+                <dt class="col-sm-3 fw-semibold">@Html.DisplayNameFor(m => m.Tip)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(m => m.Tip)</dd>
+
+                <dt class="col-sm-3 fw-semibold">Član</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(m => m.Clan.Email)</dd>
+
+                <dt class="col-sm-3 fw-semibold">Trener</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(m => m.Trener.Email)</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.IdTrening" class="btn me-2" style="background-color: #f55f3a; border-color: #f55f3a; color: white;">
+            <i class="fas fa-edit me-1"></i> Uredi
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Nazad na listu
+        </a>
+    </div>
 </div>

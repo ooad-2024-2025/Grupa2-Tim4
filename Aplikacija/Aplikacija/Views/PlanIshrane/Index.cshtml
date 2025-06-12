@@ -4,10 +4,10 @@
     ViewData["Title"] = "Planovi Ishrane";
 }
 
-<div class="container">
+<div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Planovi Ishrane</h1>
-        <a asp-action="Create" class="btn btn-success">
+        <h2 class="text-dark fw-bold">Planovi Ishrane</h2>
+        <a asp-action="Create" class="btn btn-primary">
             <i class="fas fa-plus"></i> Kreiraj novi plan
         </a>
     </div>
@@ -16,118 +16,101 @@
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             @TempData["SuccessMessage"]
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
     @if (Model != null && Model.Any())
     {
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>@Html.DisplayNameFor(model => model.Ciljevi)</th>
-                                <th>@Html.DisplayNameFor(model => model.Plan)</th>
-                                <th>@Html.DisplayNameFor(model => model.DatumGenerisanja)</th>
-                                <th>@Html.DisplayNameFor(model => model.Kilaza)</th>
-                                <th>@Html.DisplayNameFor(model => model.Godine)</th>
-                                <th>Korisnik</th>
-                                <th>Akcije</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
+        <table class="table table-bordered table-striped shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Ciljevi)</th>
+                    <th>@Html.DisplayNameFor(model => model.Plan)</th>
+                    <th>@Html.DisplayNameFor(model => model.DatumGenerisanja)</th>
+                    <th>@Html.DisplayNameFor(model => model.Kilaza)</th>
+                    <th>@Html.DisplayNameFor(model => model.Godine)</th>
+                    <th>Korisnik</th>
+                    <th>Akcije</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <span class="badge bg-warning text-dark">
+                                @Html.DisplayFor(modelItem => item.Ciljevi)
+                            </span>
+                        </td>
+                        <td>
+                            @if (item.Plan.Length > 50)
                             {
-                                <tr>
-                                    <td>
-                                        <span class="badge badge-primary" style="color: black;">
-                                            @Html.DisplayFor(modelItem => item.Ciljevi)
-                                        </span>
-                                    </td>
-                                    <td>
-                                        @if (item.Plan.Length > 50)
-                                        {
-                                            @Html.Raw(item.Plan.Substring(0, 50) + "...")
-                                        }
-                                        else
-                                        {
-                                            @Html.DisplayFor(modelItem => item.Plan)
-                                        }
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.DatumGenerisanja)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Kilaza) kg
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Godine) god.
-                                    </td>
-                                    <td>
-                                        @if (item.Clan != null)
-                                        {
-                                            @Html.DisplayFor(modelItem => item.Clan.Email)
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">N/A</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a asp-action="Details" asp-route-id="@item.IdPlanishrane"
-                                               class="btn btn-info btn-sm" title="Detalji">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            @if (User.IsInRole("Admin") || User.IsInRole("Trener"))
-                                            {
-                                            <a asp-action="Edit" asp-route-id="@item.IdPlanishrane"
-                                               class="btn btn-warning btn-sm" title="Uredi">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a asp-action="Delete" asp-route-id="@item.IdPlanishrane"
-                                               class="btn btn-danger btn-sm" title="Obriši">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                            }
-                                        </div>
-                                    </td>
-                                </tr>
+                                @Html.Raw(item.Plan.Substring(0, 50) + "...")
                             }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => item.Plan)
+                            }
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.DatumGenerisanja)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Kilaza) kg</td>
+                        <td>@Html.DisplayFor(modelItem => item.Godine) god.</td>
+                        <td>
+                            @if (item.Clan != null)
+                            {
+                                @Html.DisplayFor(modelItem => item.Clan.Email)
+                            }
+                            else
+                            {
+                                <span class="text-muted">N/A</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a asp-action="Details" asp-route-id="@item.IdPlanishrane" class="btn btn-info" title="Detalji">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                @if (User.IsInRole("Admin") || User.IsInRole("Trener"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.IdPlanishrane" class="btn btn-warning" title="Uredi">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.IdPlanishrane" class="btn btn-danger" title="Obriši">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     }
     else
     {
         <div class="alert alert-info text-center">
             <h4>Nemate kreirane planove ishrane</h4>
             <p>Kliknite na dugme "Kreiraj novi plan" da biste dodali svoj prvi plan ishrane.</p>
-            <a asp-action="Create" class="btn btn-success btn-lg">
+            <a asp-action="Create" class="btn btn-primary btn-lg">
                 <i class="fas fa-plus"></i> Kreiraj prvi plan
             </a>
         </div>
     }
+
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-warning">
+        <div class="alert alert-warning mt-3">
             @TempData["ErrorMessage"]
         </div>
     }
-
 </div>
 
 @section Scripts {
     <script>
         // Auto-hide success alerts after 5 seconds
-        window.setTimeout(function() {
-            $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        window.setTimeout(function () {
+            $(".alert").fadeTo(500, 0).slideUp(500, function () {
                 $(this).remove();
             });
         }, 5000);
