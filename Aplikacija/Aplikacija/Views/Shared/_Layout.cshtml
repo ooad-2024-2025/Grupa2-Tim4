@@ -64,18 +64,7 @@
                     <a class="nav-link" asp-controller="Home" asp-action="Index">Početna</a>
                 </li>
 
-                @* Dodano za debugging *@
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <div class="alert alert-warning">
-                        <strong>DEBUG:</strong>
-                        User: @User.Identity.Name <br />
-                        Roles: @string.Join(", ", User.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(c => c.Value)) <br />
-                        IsInRole Korisnik: @User.IsInRole("Korisnik") <br />
-                        IsInRole Trener: @User.IsInRole("Trener") <br />
-                        IsInRole Admin: @User.IsInRole("Admin")
-                    </div>
-                }
+               
 
                 @if (User.Identity.IsAuthenticated)
                 {
