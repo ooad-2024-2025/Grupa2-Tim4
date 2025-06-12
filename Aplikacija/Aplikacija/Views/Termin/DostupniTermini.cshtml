@@ -1,0 +1,100 @@
+﻿
+@model IEnumerable<Aplikacija.Models.Termin>  
+@{  
+    ViewData["Title"] = "Dostupni termini";  
+}  
+<h1>Dostupni termini</h1>  
+@if (TempData["Message"] != null)  
+{  
+    <div class="alert alert-info">@TempData["Message"]</div>  
+}  
+@if (TempData["ErrorMessage"] != null)  
+{  
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>  
+}  
+@if (TempData["SuccessMessage"] != null)  
+{  
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>  
+}  
+
+<table class="table table-striped">  
+    <thead>  
+        <tr>  
+            <th>Datum</th>  
+            <th>Vrijeme</th>  
+            <th>Vrsta</th>  
+            <th>Trener</th>  
+            <th>Akcija</th>  
+            <th>Status</th>  
+        </tr>  
+    </thead>  
+    <tbody>  
+        @foreach (var t in Model)  
+        {  
+            // Removed unnecessary "@{" block  
+            var korisnikPrijavljen = t.Prijave.Any(p => p.ClanId == ViewContext.HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);  
+            var vremeTermina = t.Datum.Add(t.Vrijeme.ToTimeSpan());  
+            var mozeOtkazati = vremeTermina > DateTime.Now.AddHours(2);  
+
+            <tr>  
+                <td>@t.Datum.ToString("yyyy-MM-dd")</td>  
+                <td>@t.Vrijeme.ToString(@"hh\:mm")</td>  
+                <td>@t.Vrsta</td>  
+                <td>@t.Trener?.Email</td>  
+                <td>  
+                    @if (korisnikPrijavljen)  
+                    {  
+                        if (mozeOtkazati)  
+                        {  
+                            <form asp-action="OtkaziRezervaciju" asp-controller="Termin" method="post" style="display:inline;">  
+                                <input type="hidden" name="terminId" value="@t.IdTermin" />  
+                                <button type="submit" class="btn btn-warning btn-sm"   
+                                        onclick="return confirm('Da li ste sigurni da želite da otkažete rezervaciju?')">  
+                                    Otkazi rezervaciju  
+                                </button>  
+                            </form>  
+                        }  
+                        else  
+                        {  
+                            <span class="text-muted">Ne možete otkazati</span>  
+                        }  
+                    }  
+                    else  
+                    {  
+                        if (t.Vrsta == Aplikacija.Models.VrstaTreninga.Individualni && t.Prijave.Any())  
+                        {  
+                            <span class="text-danger">Popunjeno</span>  
+                        }  
+                        else if (vremeTermina <= DateTime.Now)  
+                        {  
+                            <span class="text-muted">Prošao termin</span>  
+                        }  
+                        else  
+                        {  
+                            <form asp-action="Rezervisi" asp-controller="Termin" method="post" style="display:inline;">  
+                                <input type="hidden" name="terminId" value="@t.IdTermin" />  
+                                <button type="submit" class="btn btn-success btn-sm">  
+                                    Rezerviši  
+                                </button>  
+                            </form>  
+                        }  
+                    }  
+                </td>  
+                <td>  
+                    @if (t.Vrsta == Aplikacija.Models.VrstaTreninga.Grupni)  
+                    {  
+                        <small>@t.Prijave.Count() prijavljenih</small>  
+                    }  
+                    else if (t.Prijave.Any())  
+                    {  
+                        <small class="text-danger">Rezervisan</small>  
+                    }  
+                    else  
+                    {  
+                        <small class="text-success">Dostupan</small>  
+                    }  
+                </td>  
+            </tr>  
+        }  
+    </tbody>  
+</table>

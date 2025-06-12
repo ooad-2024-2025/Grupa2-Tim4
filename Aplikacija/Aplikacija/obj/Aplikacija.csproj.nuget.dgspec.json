@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Aplikacija.csproj": {}
+    "C:\\Users\\Korisnik\\Source\\Repos\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Aplikacija.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Aplikacija.csproj": {
+    "C:\\Users\\Korisnik\\Source\\Repos\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Aplikacija.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Aplikacija.csproj",
+        "projectUniqueName": "C:\\Users\\Korisnik\\Source\\Repos\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Aplikacija.csproj",
         "projectName": "Aplikacija",
-        "projectPath": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Aplikacija.csproj",
-        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\Documents\\GitHub\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\obj\\",
+        "projectPath": "C:\\Users\\Korisnik\\Source\\Repos\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\Aplikacija.csproj",
+        "packagesPath": "C:\\Users\\Korisnik\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Korisnik\\Source\\Repos\\Grupa2-Tim4\\Aplikacija\\Aplikacija\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Korisnik\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,7 +26,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -99,7 +98,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

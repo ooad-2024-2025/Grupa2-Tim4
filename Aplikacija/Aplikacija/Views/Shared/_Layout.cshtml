@@ -31,7 +31,7 @@
 
         .nav-link {
             color: black !important;
-            font-size: 1.1rem; 
+            font-size: 1.1rem;
             font-weight: bold;
         }
 
@@ -44,12 +44,12 @@
             transition: transform 0.2s;
         }
 
-        .korpa-ikona img:hover {
-            transform: scale(1.1);
-        }
+            .korpa-ikona img:hover {
+                transform: scale(1.1);
+            }
 
         .navbar-nav .nav-item {
-            margin-right: 2.5rem; 
+            margin-right: 2.5rem;
         }
 
     </style>
@@ -63,6 +63,19 @@
                 <li class="nav-item me-3">
                     <a class="nav-link" asp-controller="Home" asp-action="Index">Početna</a>
                 </li>
+
+                @* Dodano za debugging *@
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="alert alert-warning">
+                        <strong>DEBUG:</strong>
+                        User: @User.Identity.Name <br />
+                        Roles: @string.Join(", ", User.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(c => c.Value)) <br />
+                        IsInRole Korisnik: @User.IsInRole("Korisnik") <br />
+                        IsInRole Trener: @User.IsInRole("Trener") <br />
+                        IsInRole Admin: @User.IsInRole("Admin")
+                    </div>
+                }
 
                 @if (User.Identity.IsAuthenticated)
                 {
@@ -91,12 +104,44 @@
                     <li class="nav-item me-3">
                         <a class="nav-link" asp-controller="PlanIshrane" asp-action="Index">Plan Ishrane</a>
                     </li>
-                    <li class="nav-item me-3">
-                        <a class="nav-link" asp-controller="Termin" asp-action="Index">Termini</a>
-                    </li>
-                    <li class="nav-item me-3">
-                        <a class="nav-link" asp-controller="Trening" asp-action="Index">Treninzi</a>
-                    </li>
+
+                    @* Prikaz linka Termini prema ulozi *@
+                    <!-- Zamenite deo sa Termini linkovima u layout.cshtml -->
+                    @* Prikaz linka Termini prema ulozi - ISPRAVKA *@
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item me-3">
+                            <a class="nav-link" asp-controller="Termin" asp-action="Index">Termini (Admin)</a>
+                        </li>
+                    }
+                    else if (User.IsInRole("Trener"))
+                    {
+                        <li class="nav-item me-3">
+                            <a class="nav-link" asp-controller="Termin" asp-action="Index">Termini (Trener)</a>
+                        </li>
+                    }
+                    else if (User.IsInRole("Korisnik") || User.IsInRole("Recepcioner"))
+                    {
+                        <li class="nav-item me-3">
+                            <a class="nav-link" asp-controller="Termin" asp-action="DostupniTermini">Termini</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <!-- Fallback za debugging -->
+                        <li class="nav-item me-3">
+                            <a class="nav-link text-danger" href="#">Nema role!</a>
+                        </li>
+                    }
+
+                    @if (User.IsInRole("Trener") || User.IsInRole("Admin"))
+                    {
+                        
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Trening" asp-action="Index">Treninzi</a>
+                        </li>
+                    }
+
                 }
             </ul>
 

@@ -17,6 +17,7 @@ namespace Aplikacija.Data
         public DbSet<Aplikacija.Models.Kupovina> Kupovina { get; set; } = default!;
         public DbSet<Aplikacija.Models.PrijavaZaZaposljavanje> PrijavaZaZaposljavanje { get; set; } = default!;
         public DbSet<Aplikacija.Models.PlanIshrane> PlanIshrane { get; set; } = default!;
+        public DbSet<PrijavaNaTermin> PrijaveNaTermine { get; set; }
 
 
 

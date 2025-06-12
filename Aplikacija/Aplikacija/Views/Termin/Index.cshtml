@@ -1,16 +1,16 @@
 ﻿@model IEnumerable<Aplikacija.Models.Termin>
-
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Lista termina</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Napravi termin</a>
 </p>
-<table class="table">
-    <thead>
+
+<table class="table table-striped">
+    <thead class="thead-dark">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Datum)
@@ -24,30 +24,31 @@
             <th>
                 @Html.DisplayNameFor(model => model.Trener)
             </th>
-            <th></th>
+            <th>Akcije</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Datum)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Vrijeme)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Vrsta)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Trener.Email)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdTermin">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdTermin">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdTermin">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Datum)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Vrijeme)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Vrsta)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Trener.Email)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.IdTermin" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@item.IdTermin" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.IdTermin" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

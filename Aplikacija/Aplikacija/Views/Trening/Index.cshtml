@@ -1,16 +1,20 @@
 ﻿@model IEnumerable<Aplikacija.Models.Trening>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lista treninga";
+}
+<h1>Lista treninga</h1>
+
+
+@* Dugme za kreiranje novog treninga - samo za Admin *@
+@if (ViewBag.IsAdmin)
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Napravi novi trening</a>
+    </p>
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
+<table class="table table-striped">
+    <thead class="thead-dark">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Datum)
@@ -22,38 +26,70 @@
                 @Html.DisplayNameFor(model => model.Tip)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Clan)
+                Član
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Trener)
             </th>
-            <th></th>
+            <th>Akcije</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Datum)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Vrijeme)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tip)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Clan.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Trener.Email)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdTrening">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdTrening">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdTrening">Delete</a>
-            </td>
-        </tr>
-}
+        @if (Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Datum)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Vrijeme)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Tip)
+                    </td>
+                    <td>
+                        @if (item.Clan != null)
+                        {
+                            @Html.DisplayFor(modelItem => item.Clan.Email)
+                        }
+                        else
+                        {
+                            <span class="text-muted">Nije dodijeljen</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Trener != null)
+                        {
+                            @Html.DisplayFor(modelItem => item.Trener.Email)
+                        }
+                        else
+                        {
+                            <span class="text-muted">Nije dodijeljen</span>
+                        }
+                    </td>
+                    <td>
+                        @* Details dugme - dostupno svima *@
+                        <a asp-action="Details" asp-route-id="@item.IdTrening" class="btn btn-sm btn-info">Details</a>
+
+                        @* Edit i Delete dugmad - samo za Admin *@
+                        @if (ViewBag.IsAdmin)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.IdTrening" class="btn btn-sm btn-warning">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.IdTrening" class="btn btn-sm btn-danger">Delete</a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" class="text-center">
+                    <em>Nema treninga za prikazivanje.</em>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
