@@ -86,7 +86,8 @@ namespace Aplikacija.Areas.Identity.Pages.Account
             {
                 var user = new Korisnik
                 {
-                    UserName = Input.Username,
+                    UserName = Input.Email,
+                    NormalizedUserName = Input.Email,
                     Email = Input.Email,
                     Ime = Input.Ime,
                     Prezime = Input.Prezime,

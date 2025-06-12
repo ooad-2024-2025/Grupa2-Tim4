@@ -4,11 +4,15 @@ namespace Aplikacija.Models
 {
     public enum TipCilja
     {
-        [Display(Name = "Gubitak kilaže")]
-        GubitakKilaze,
-        [Display(Name = "Pocećanje mišićne mase")]
-        PovecanjeMisicneMase,
-        [Display(Name = "Pocećanje izdržljjivosti")]
-        PovecanjeIzdrzljivosti
+        [Display(Name = "Gubljenje težine")]
+        GubljenjeTezine,
+        [Display(Name = "Održavanje težine")]
+        OdrzavanjeTezine,
+        [Display(Name = "Povećanje mišićne mase")]
+        PovecanjeMuski,
+        [Display(Name = "Povećanje energije")]
+        PovecanjeEnergije,
+        [Display(Name = "Opći zdravstveni cilj")]
+        OpciZdravstveniCilj
     }
 }

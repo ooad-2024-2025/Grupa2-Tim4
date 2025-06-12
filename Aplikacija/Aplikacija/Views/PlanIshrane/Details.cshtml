@@ -1,54 +1,62 @@
-﻿@model Aplikacija.Models.PlanIshrane
+﻿@using Aplikacija.Extensions
+@model Aplikacija.Models.ViewModels.PlanIshraneDetailsViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalji plana ishrane";
 }
 
-<h1>Details</h1>
+<div class="container mt-5">
+    <div class="card shadow-lg rounded-4">
+        <!-- NARANDŽASTI HEADER -->
+        <div class="card-header text-white" style="background-color: #f55f3a;">
+            <h4 class="mb-0">Detalji vašeg plana ishrane</h3>
+        </div>
 
-<div>
-    <h4>PlanIshrane</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ciljevi)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ciljevi)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Plan)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Plan)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DatumGenerisanja)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DatumGenerisanja)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Kilaza)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Kilaza)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Godine)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Godine)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Clan)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Clan.Email)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdPlanishrane">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+        <!-- DETALJI -->
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold text-muted">🎯 Cilj plana:</div>
+                <div class="col-md-8">@Model.Plan.Ciljevi.GetDisplayName()</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold text-muted">📅 Datum generisanja:</div>
+                <div class="col-md-8">@Model.Plan.DatumGenerisanja.ToShortDateString()</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold text-muted">⚖️ Kilaža:</div>
+                <div class="col-md-8">@Model.Plan.Kilaza kg</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold text-muted">📏 Visina:</div>
+                <div class="col-md-8">@Model.Plan.Visina cm</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold text-muted">👤 Godine:</div>
+                <div class="col-md-8">@Model.Plan.Godine</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold text-muted">📊 BMI:</div>
+                <div class="col-md-8">@Model.BMI.ToString("F2")</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold text-muted">🔥 Preporučene kalorije dnevno:</div>
+                <div class="col-md-8">@Model.PotrebneKalorije kcal</div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-4 fw-bold text-muted">🏃‍♂️ Preporučeni način vežbanja:</div>
+                <div class="col-md-8">@Model.NacinVjezbanja</div>
+            </div>
+
+            <div class="border-top pt-4 mt-4">
+                <h5 class="fw-bold mb-3 text-muted">🍽️ Detaljan plan ishrane</h5>
+                <div class="bg-light p-4 rounded-3">
+                    @Html.Raw(Model.Plan.Plan.Replace("-", "<br><strong>•</strong>").Replace("Preporuka:", "<br><br><strong>Preporuka:</strong>"))
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer text-end">
+            <a asp-action="Index" class="btn btn-outline-secondary">Nazad na listu</a>
+        </div>
+    </div>
 </div>

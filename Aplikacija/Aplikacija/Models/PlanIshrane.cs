@@ -1,46 +1,52 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Aplikacija.Models.ViewModels;
 
 namespace Aplikacija.Models
 {
+  
+
     public class PlanIshrane
     {
+        
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdPlanishrane { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Cilj plana je obavezan.")]
         [EnumDataType(typeof(TipCilja))]
         [DisplayName("Cilj plana:")]
-        public required TipCilja Ciljevi { get; set; }
+        public TipCilja Ciljevi { get; set; }
 
-        [Required]
-        [StringLength(500)]
-        [DisplayName("Plan ishrane:")]
-        public required string Plan { get; set; }
+       
+        public string Plan { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "Datum generisanja je obavezan.")]
         [DisplayName("Datum generisanja:")]
         [DataType(DataType.Date)]
-        public required DateTime DatumGenerisanja { get; set; }
+        public DateTime DatumGenerisanja { get; set; } = DateTime.Now;
 
-        [Required]
-        [Range(30, 300)]
+        [Required(ErrorMessage = "Kilaža je obavezna.")]
+        [Range(30, 300, ErrorMessage = "Kilaža mora biti između 30 i 300 kg.")]
         [DisplayName("Kilaža (kg):")]
-        public required double Kilaza { get; set; }
+        public double Kilaza { get; set; }
 
-        [Required]
-        [Range(10, 100)]
+        [Required(ErrorMessage = "Godine su obavezne.")]
+        [Range(10, 100, ErrorMessage = "Godine moraju biti između 10 i 100.")]
         [DisplayName("Godine:")]
-        public required int Godine { get; set; }
+        public int Godine { get; set; }
 
+        [Required(ErrorMessage = "Visina je obavezna.")]
+        [Range(100, 250, ErrorMessage = "Visina mora biti između 100 i 250 cm.")]
+        [DisplayName("Visina (cm):")]
+        public int Visina { get; set; }
 
-        public string ClanId { get; set; }
+        // Foreign Key
+        public string ClanId { get; set; } = string.Empty;
 
+        // Navigation Property
         [ForeignKey("ClanId")]
-        public required Korisnik Clan { get; set; }
-
-        public TipCilja TipCilja { get; internal set; }
+        public virtual Korisnik? Clan { get; set; }
     }
 }
