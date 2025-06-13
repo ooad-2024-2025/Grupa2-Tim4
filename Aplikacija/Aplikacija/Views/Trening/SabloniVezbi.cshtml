@@ -1,0 +1,97 @@
+﻿@model IEnumerable<Aplikacija.Models.Vezba>
+@{
+    ViewData["Title"] = "Šabloni vežbi";
+}
+
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">
+        <i class="fas fa-magic me-2" style="color: #f55f3a;"></i>Šabloni vežbi
+    </h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        Kliknite na vežbu da je dodajte u trening. Možete prilagoditi vrednosti pre dodavanja.
+    </div>
+
+    <div class="row">
+        @foreach (var sablon in Model)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm border-0" style="border-left: 4px solid #f55f3a !important;">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">
+                            <i class="fas fa-dumbbell me-2"></i>@sablon.NazivVezbe
+                        </h5>
+
+                        <div class="mb-3">
+                            @if (sablon.Serije > 0 && sablon.Ponavljanja > 0)
+                            {
+                                <span class="badge bg-info me-1">@sablon.Serije serija</span>
+                                <span class="badge bg-primary me-1">@sablon.Ponavljanja ponavljanja</span>
+                            }
+
+                            @if (sablon.Tezina.HasValue)
+                            {
+                                <span class="badge bg-warning text-dark">@sablon.Tezina kg</span>
+                            }
+
+                            @if (sablon.Trajanje.HasValue)
+                            {
+                                <span class="badge bg-success">@sablon.Trajanje.Value.ToString(@"mm\:ss")</span>
+                            }
+                        </div>
+
+                        <form asp-action="DodajSablonVezbe" method="post" class="needs-validation" novalidate>
+                            <input type="hidden" name="treningId" value="@ViewBag.TreningId" />
+                            <input type="hidden" name="nazivVezbe" value="@sablon.NazivVezbe" />
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label small">Serije:</label>
+                                    <input type="number" name="serije" class="form-control form-control-sm"
+                                           value="@sablon.Serije" min="1" max="20" required />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small">Ponavljanja:</label>
+                                    <input type="number" name="ponavljanja" class="form-control form-control-sm"
+                                           value="@sablon.Ponavljanja" min="1" max="100" required />
+                                </div>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label small">Težina (kg):</label>
+                                    <input type="number" name="tezina" class="form-control form-control-sm"
+                                           value="@sablon.Tezina" step="0.5" min="0.5" max="500" />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small">Trajanje:</label>
+                                    <input type="time" name="trajanje" class="form-control form-control-sm"
+                                           value="@sablon.Trajanje?.ToString(@"hh\:mm")" />
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-sm w-100">
+                                <i class="fas fa-plus me-1"></i> Dodaj u trening
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Details" asp-route-id="@ViewBag.TreningId" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Nazad na trening
+        </a>
+    </div>
+</div>

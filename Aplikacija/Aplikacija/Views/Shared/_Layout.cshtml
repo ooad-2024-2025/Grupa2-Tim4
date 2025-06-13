@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Aplikacija</title>
@@ -31,7 +32,7 @@
 
         .nav-link {
             color: black !important;
-            font-size: 1.1rem; 
+            font-size: 1.1rem;
             font-weight: bold;
         }
 
@@ -44,12 +45,12 @@
             transition: transform 0.2s;
         }
 
-        .korpa-ikona img:hover {
-            transform: scale(1.1);
-        }
+            .korpa-ikona img:hover {
+                transform: scale(1.1);
+            }
 
         .navbar-nav .nav-item {
-            margin-right: 2.5rem; 
+            margin-right: 2.5rem;
         }
 
     </style>
@@ -64,9 +65,10 @@
                     <a class="nav-link" asp-controller="Home" asp-action="Index">Početna</a>
                 </li>
 
+               
+
                 @if (User.Identity.IsAuthenticated)
                 {
-                    @* Prikaz "Korisnici" samo za određene uloge *@
                     @if (User.IsInRole("Admin") || User.IsInRole("Trener") || User.IsInRole("Recepcioner"))
                     {
                         <li class="nav-item me-3">
@@ -74,7 +76,6 @@
                         </li>
                     }
 
-                    @* Kupovine/Shop logika *@
                     @if (User.IsInRole("Korisnik") || User.IsInRole("Trener"))
                     {
                         <li class="nav-item me-3">
@@ -91,12 +92,41 @@
                     <li class="nav-item me-3">
                         <a class="nav-link" asp-controller="PlanIshrane" asp-action="Index">Plan Ishrane</a>
                     </li>
-                    <li class="nav-item me-3">
-                        <a class="nav-link" asp-controller="Termin" asp-action="Index">Termini</a>
-                    </li>
-                    <li class="nav-item me-3">
-                        <a class="nav-link" asp-controller="Trening" asp-action="Index">Treninzi</a>
-                    </li>
+
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item me-3">
+                            <a class="nav-link" asp-controller="Termin" asp-action="Index">Termini</a>
+                        </li>
+                    }
+                    else if (User.IsInRole("Trener"))
+                    {
+                        <li class="nav-item me-3">
+                            <a class="nav-link" asp-controller="Termin" asp-action="Index">Termini</a>
+                        </li>
+                    }
+                    else if (User.IsInRole("Korisnik") || User.IsInRole("Recepcioner"))
+                    {
+                        <li class="nav-item me-3">
+                            <a class="nav-link" asp-controller="Termin" asp-action="DostupniTermini">Termini</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item me-3">
+                            <a class="nav-link text-danger" href="#">Nema role!</a>
+                        </li>
+                    }
+
+                    @if (User.IsInRole("Trener") || User.IsInRole("Admin"))
+                    {
+                        
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Trening" asp-action="Index">Treninzi</a>
+                        </li>
+                    }
+
                 }
             </ul>
 

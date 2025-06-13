@@ -1,41 +1,53 @@
 ﻿@model Aplikacija.Models.PlanIshrane
 
 @{
-    ViewData["Title"] = "Brisanje plana ishrane";
+    ViewData["Title"] = "Obriši plan ishrane";
 }
 
-<div class="container mt-5">
-    <div class="card shadow-lg rounded-4 border-danger">
-        <div class="card-header bg-danger text-white rounded-top-4">
-            <h3> Da li ste sigurni da želite da obrišete ovaj plan?</h3>
+<h1 class="mb-4 text-danger"><i class="fas fa-trash-alt me-2"></i>Obriši plan ishrane</h1>
+
+<div class="alert alert-warning border-warning shadow-sm">
+    <h5><i class="fas fa-exclamation-triangle me-2"></i>Jeste li sigurni da želite obrisati ovaj plan?</h5>
+    <p class="mb-0">Ova radnja je nepovratna!</p>
+</div>
+
+<div class="card shadow-sm border-danger mt-4 rounded-4">
+    <div class="card-header bg-danger text-white">
+        <strong>Detalji plana ishrane</strong>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-sm-3 fw-bold text-muted">🎯 Cilj:</div>
+            <div class="col-sm-9">@Model.Ciljevi</div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-3 fw-bold text-muted">📅 Datum generisanja:</div>
+            <div class="col-sm-9">@Model.DatumGenerisanja.ToShortDateString()</div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-3 fw-bold text-muted">⚖️ Kilaža:</div>
+            <div class="col-sm-9">@Model.Kilaza kg</div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-3 fw-bold text-muted">👤 Godine:</div>
+            <div class="col-sm-9">@Model.Godine</div>
         </div>
 
-        <div class="card-body">
-            <dl class="row mb-4">
-                <dt class="col-sm-3 fw-bold text-muted">🎯 Cilj:</dt>
-                <dd class="col-sm-9">@Model.Ciljevi</dd>
-
-                <dt class="col-sm-3 fw-bold text-muted">📄 Plan:</dt>
-                <dd class="col-sm-9">@Model.Plan</dd>
-
-                <dt class="col-sm-3 fw-bold text-muted">📅 Datum:</dt>
-                <dd class="col-sm-9">@Model.DatumGenerisanja.ToShortDateString()</dd>
-
-                <dt class="col-sm-3 fw-bold text-muted">⚖️ Kilaža:</dt>
-                <dd class="col-sm-9">@Model.Kilaza kg</dd>
-
-                <dt class="col-sm-3 fw-bold text-muted">👤 Godine:</dt>
-                <dd class="col-sm-9">@Model.Godine</dd>
-
-                <dt class="col-sm-3 fw-bold text-muted">📧 Član (email):</dt>
-                <dd class="col-sm-9">@Model.Clan.Email</dd>
-            </dl>
-
-            <form asp-action="Delete" method="post">
-                <input type="hidden" asp-for="IdPlanishrane" />
-                <button type="submit" class="btn btn-danger">Obriši</button>
-                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Nazad na listu</a>
-            </form>
+        <div class="border-top pt-4 mt-4">
+            <h5 class="fw-bold mb-3 text-muted">🍽️ Detaljan plan ishrane</h5>
+            <div class="bg-light p-4 rounded-3">
+                @Html.Raw(Model.Plan.Replace("-", "<br><strong>•</strong>").Replace("Preporuka:", "<br><br><strong>Preporuka:</strong>"))
+            </div>
         </div>
     </div>
 </div>
+
+<form asp-action="Delete" method="post" class="mt-4 d-flex gap-2">
+    <input type="hidden" asp-for="IdPlanishrane" />
+    <button type="submit" class="btn btn-danger">
+        <i class="fas fa-trash-alt me-1"></i> Obriši
+    </button>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-1"></i> Nazad na listu
+    </a>
+</form>

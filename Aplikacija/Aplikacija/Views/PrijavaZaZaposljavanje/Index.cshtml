@@ -11,7 +11,7 @@
     {
         <div class="col">
             <div class="card h-100 text-center shadow-sm border-0">
-                <div class="card h-100 text-center shadow-sm border-0">
+                <div class="card h-100 text-center shadow-sm border-0" style="background-color: #f8f9fa;">
                     <a asp-action="Details" asp-route-id="@item.IdPrijava" class="text-decoration-none text-dark">
                         <div class="card-body d-flex flex-column align-items-center">
                             <img src="~/images/user-profile-icon.webp" class="rounded-circle mb-3" alt="Kandidat" width="100" height="100" />
@@ -20,7 +20,9 @@
                         </div>
                     </a>
                     <div class="card-footer bg-transparent border-0 text-center">
-                        <a asp-action="Delete" asp-route-id="@item.IdPrijava" class="btn btn-outline-danger btn-sm">Obriši</a>
+                        <a asp-action="Delete" asp-route-id="@item.IdPrijava" class="btn btn-outline-danger btn-sm" title="Obriši">
+                            <i class="fas fa-trash"></i>
+                        </a>
                     </div>
                 </div>
             </div>

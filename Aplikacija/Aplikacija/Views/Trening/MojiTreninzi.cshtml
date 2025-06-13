@@ -1,0 +1,104 @@
+﻿@model IEnumerable<Aplikacija.Models.Trening>
+@{
+    ViewData["Title"] = "Moji treninzi";
+}
+
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">
+        <i class="fas fa-user me-2" style="color: #f55f3a;"></i>Moji treninzi
+    </h2>
+
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var trening in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header" style="background-color: #f55f3a; color: white;">
+                            <h6 class="mb-0">
+                                <i class="fas fa-calendar me-1"></i>
+                                @trening.Datum.ToString("dd.MM.yyyy") u @trening.Vrijeme.ToString(@"hh\:mm")
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <strong>Tip:</strong>
+                                <span class="badge rounded-pill" style="background-color: #f55f3a;">
+                                    @trening.Tip
+                                </span>
+                            </div>
+
+                            <div class="mb-2">
+                                <strong>Trener:</strong>
+                                <i class="fas fa-user-tie me-1"></i>@trening.Trener?.Email
+                            </div>
+
+                            <div class="mb-2">
+                                <strong>Status:</strong>
+                                @switch (trening.Status)
+                                {
+                                    case StatusTreninga.Planiran:
+                                        <span class="badge bg-info">📅 Planiran</span>
+                                        break;
+                                    case StatusTreninga.UToku:
+                                        <span class="badge bg-warning">⏳ U toku</span>
+                                        break;
+                                    case StatusTreninga.Zavrsen:
+                                        <span class="badge bg-success">✅ Završen</span>
+                                        break;
+                                    case StatusTreninga.Otkazan:
+                                        <span class="badge bg-danger">❌ Otkazan</span>
+                                        break;
+                                }
+                            </div>
+
+                            <div class="mb-3">
+                                <strong>Vežbe:</strong>
+                                @if (trening.Vezbe != null && trening.Vezbe.Any())
+                                {
+                                    <span class="badge bg-secondary">
+                                        <i class="fas fa-list-ol me-1"></i>@trening.Vezbe.Count()
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Nema vežbi</span>
+                                }
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(trening.PlanTreninga))
+                            {
+                                <div class="mb-3">
+                                    <strong>Plan:</strong>
+                                    <p class="small text-muted mb-0">
+                                        @(trening.PlanTreninga.Length > 100 ?
+                                                                    trening.PlanTreninga.Substring(0, 100) + "..." :
+                                                                    trening.PlanTreninga)
+                        </p>
+                    </div>
+                                        }
+                        </div>
+                        <div class="card-footer bg-light">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                Kreirano: @trening.DatumKreiranja.ToString("dd.MM.yyyy")
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-clipboard fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">Nemate treninga</h4>
+            <p class="text-muted">Rezervišite termine da biste videli svoje treninge ovde.</p>
+            <a asp-controller="Termin" asp-action="DostupniTermini" class="btn btn-primary">
+                <i class="fas fa-search me-1"></i> Pregledaj dostupne termine
+            </a>
+        </div>
+    }
+</div>

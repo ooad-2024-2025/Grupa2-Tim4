@@ -1,44 +1,48 @@
 ﻿@model Aplikacija.Models.PrijavaZaZaposljavanje
 
 @{
-    ViewData["Title"] = "Brisanje prijave";
+    ViewData["Title"] = "Obriši prijavu";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-danger text-white text-center">
-                    <h4 class="mb-0">Potvrda brisanja prijave</h4>
-                </div>
-                <div class="card-body">
-                    <p>Da li ste sigurni da želite obrisati ovu prijavu?</p>
+<h1 class="mb-4 text-danger"><i class="fas fa-trash-alt me-2"></i>Obriši prijavu</h1>
 
-                    <dl class="row">
-                        <dt class="col-sm-4">Ime:</dt>
-                        <dd class="col-sm-8">@Model.Ime</dd>
+<div class="alert alert-warning border-warning shadow-sm">
+    <h5><i class="fas fa-exclamation-triangle me-2"></i>Jeste li sigurni da želite obrisati ovu prijavu?</h5>
+    <p class="mb-0">Ova radnja je nepovratna!</p>
+</div>
 
-                        <dt class="col-sm-4">Prezime:</dt>
-                        <dd class="col-sm-8">@Model.Prezime</dd>
+<div class="card shadow-sm border-danger mt-4">
+    <div class="card-header bg-danger text-white">
+        <strong>Detalji prijave</strong>
+    </div>
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Ime:</dt>
+            <dd class="col-sm-9">@Model.Ime</dd>
 
-                        <dt class="col-sm-4">Email adresa:</dt>
-                        <dd class="col-sm-8">@Model.Email</dd>
+            <dt class="col-sm-3">Prezime:</dt>
+            <dd class="col-sm-9">@Model.Prezime</dd>
 
-                        <dt class="col-sm-4">CV:</dt>
-                        <dd class="col-sm-8">@Model.CV</dd>
+            <dt class="col-sm-3">Email adresa:</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
 
-                        <dt class="col-sm-4">Korisnik:</dt>
-                        <dd class="col-sm-8">@Model.Korisnik?.Email</dd>
-                    </dl>
-                </div>
-                <div class="card-footer text-end">
-                    <form asp-action="Delete" method="post">
-                        <input type="hidden" asp-for="IdPrijava" />
-                        <button type="submit" class="btn btn-danger">Obriši</button>
-                        <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-                    </form>
-                </div>
-            </div>
-        </div>
+            <dt class="col-sm-3">CV:</dt>
+            <dd class="col-sm-9">@Model.CV</dd>
+
+            <dt class="col-sm-3">Korisnik:</dt>
+            <dd class="col-sm-9">@Model.Korisnik?.Email</dd>
+        </dl>
     </div>
 </div>
+
+<form asp-action="Delete" method="post" class="mt-4">
+    <input type="hidden" asp-for="IdPrijava" />
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash-alt me-1"></i> Obriši
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Nazad na listu
+        </a>
+    </div>
+</form>

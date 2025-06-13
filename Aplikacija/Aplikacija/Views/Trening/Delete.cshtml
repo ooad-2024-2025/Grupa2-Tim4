@@ -1,51 +1,115 @@
-﻿@model Aplikacija.Models.Trening
-
+﻿@model Aplikacija.Models.Vezba
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Obriši vežbu";
 }
 
-<h1>Delete</h1>
+<div class="container mt-5">
+    <h1 class="mb-4 text-danger">
+        <i class="fas fa-trash-alt me-2"></i>Obriši vežbu
+    </h1>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Trening</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Datum)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Datum)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Vrijeme)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Vrijeme)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Tip)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Tip)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Clan)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Clan.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Trener)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Trener.Email)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="IdTrening" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+    <div class="alert alert-warning border-warning shadow-sm">
+        <h5><i class="fas fa-exclamation-triangle me-2"></i>Jeste li sigurni da želite obrisati ovu vežbu?</h5>
+        <p class="mb-0">Ova radnja je nepovratna!</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <strong>Informacije o treningu</strong>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Datum:</dt>
+                        <dd class="col-sm-8">@Model.Trening?.Termin?.Datum.ToString("dd.MM.yyyy")</dd>
+
+                        <dt class="col-sm-4">Vrijeme:</dt>
+                        <dd class="col-sm-8">@Model.Trening?.Termin?.Vrijeme.ToString(@"hh\:mm")</dd>
+
+                        <dt class="col-sm-4">Član:</dt>
+                        <dd class="col-sm-8">@Model.Trening?.Clan?.Email</dd>
+
+                        <dt class="col-sm-4">Trener:</dt>
+                        <dd class="col-sm-8">@Model.Trening?.Termin?.Trener?.Email</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <strong>Detalji vežbe za brisanje</strong>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Naziv:</dt>
+                        <dd class="col-sm-8"><strong>@Model.NazivVezbe</strong></dd>
+
+                        <dt class="col-sm-4">Redosled:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-secondary">@Model.Redosled</span>
+                        </dd>
+
+                        <dt class="col-sm-4">Serije:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Serije > 0)
+                            {
+                                <span class="badge bg-info">@Model.Serije</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Ponavljanja:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Ponavljanja > 0)
+                            {
+                                <span class="badge bg-primary">@Model.Ponavljanja</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </dd>
+
+                        @if (Model.Tezina.HasValue)
+                        {
+                            <dt class="col-sm-4">Težina:</dt>
+                            <dd class="col-sm-8"><strong>@Model.Tezina.Value kg</strong></dd>
+                        }
+
+                        @if (Model.Trajanje.HasValue)
+                        {
+                            <dt class="col-sm-4">Trajanje:</dt>
+                            <dd class="col-sm-8">
+                                <span class="badge bg-warning text-dark">
+                                    @Model.Trajanje.Value.ToString(@"mm\:ss")
+                                </span>
+                            </dd>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.Napomene))
+                        {
+                            <dt class="col-sm-4">Napomene:</dt>
+                            <dd class="col-sm-8">@Model.Napomene</dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="Delete" method="post" class="mt-4 d-flex gap-2">
+        <input type="hidden" asp-for="IdVezba" />
+        <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash-alt me-1"></i> Obriši vežbu
+        </button>
+        <a asp-action="Details" asp-route-id="@Model.TreningId" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Nazad na trening
+        </a>
     </form>
 </div>

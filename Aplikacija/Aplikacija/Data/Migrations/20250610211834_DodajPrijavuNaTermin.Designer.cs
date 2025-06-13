@@ -4,6 +4,7 @@ using Aplikacija.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aplikacija.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250610211834_DodajPrijavuNaTermin")]
+    partial class DodajPrijavuNaTermin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,7 +100,7 @@ namespace Aplikacija.Data.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("Korisnik", (string)null);
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Aplikacija.Models.Kupovina", b =>
@@ -161,9 +164,10 @@ namespace Aplikacija.Data.Migrations
 
                     b.Property<string>("Plan")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                    b.Property<int>("Visina")
+                    b.Property<int>("TipCilja")
                         .HasColumnType("int");
 
                     b.HasKey("IdPlanishrane");
@@ -172,6 +176,30 @@ namespace Aplikacija.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("PlanIshrane", (string)null);
+                });
+
+            modelBuilder.Entity("Aplikacija.Models.PrijavaNaTermin", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClanId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("TerminId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClanId");
+
+                    b.HasIndex("TerminId");
+
+                    b.ToTable("PrijaveNaTermine");
                 });
 
             modelBuilder.Entity("Aplikacija.Models.PrijavaZaZaposljavanje", b =>
@@ -223,8 +251,8 @@ namespace Aplikacija.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdTermin"));
 
-                    b.Property<DateTime>("Datum")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("Datum")
+                        .HasColumnType("date");
 
                     b.Property<string>("TrenerId")
                         .IsRequired()
@@ -255,83 +283,26 @@ namespace Aplikacija.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("DatumKreiranja")
+                    b.Property<DateTime>("Datum")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("KorisnikId")
+                    b.Property<int>("Tip")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TrenerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Napomene")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("PlanTreninga")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<DateTime?>("PoslednaIzmena")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TerminId")
-                        .HasColumnType("int");
+                    b.Property<TimeSpan>("Vrijeme")
+                        .HasColumnType("time");
 
                     b.HasKey("IdTrening");
 
                     b.HasIndex("ClanId");
 
-                    b.HasIndex("KorisnikId");
-
-                    b.HasIndex("TerminId");
+                    b.HasIndex("TrenerId");
 
                     b.ToTable("Trening", (string)null);
-                });
-
-            modelBuilder.Entity("Aplikacija.Models.Vezba", b =>
-                {
-                    b.Property<int>("IdVezba")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdVezba"));
-
-                    b.Property<string>("Napomene")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("NazivVezbe")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("Ponavljanja")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Redosled")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Serije")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("Tezina")
-                        .HasColumnType("decimal(5,2)");
-
-                    b.Property<TimeSpan?>("Trajanje")
-                        .HasColumnType("time");
-
-                    b.Property<int>("TreningId")
-                        .HasColumnType("int");
-
-                    b.HasKey("IdVezba");
-
-                    b.HasIndex("TreningId");
-
-                    b.HasIndex("TreningId", "Redosled")
-                        .IsUnique();
-
-                    b.ToTable("Vezba", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -471,30 +442,6 @@ namespace Aplikacija.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("PrijavaNaTermin", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClanId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("TerminId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClanId");
-
-                    b.HasIndex("TerminId");
-
-                    b.ToTable("PrijaveNaTermine");
-                });
-
             modelBuilder.Entity("Aplikacija.Models.Kupovina", b =>
                 {
                     b.HasOne("Aplikacija.Models.Korisnik", "Korisnik")
@@ -515,6 +462,25 @@ namespace Aplikacija.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Clan");
+                });
+
+            modelBuilder.Entity("Aplikacija.Models.PrijavaNaTermin", b =>
+                {
+                    b.HasOne("Aplikacija.Models.Korisnik", "Clan")
+                        .WithMany()
+                        .HasForeignKey("ClanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Aplikacija.Models.Termin", "Termin")
+                        .WithMany()
+                        .HasForeignKey("TerminId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Clan");
+
+                    b.Navigation("Termin");
                 });
 
             modelBuilder.Entity("Aplikacija.Models.PrijavaZaZaposljavanje", b =>
@@ -544,33 +510,18 @@ namespace Aplikacija.Data.Migrations
                     b.HasOne("Aplikacija.Models.Korisnik", "Clan")
                         .WithMany("TreninziKaoClan")
                         .HasForeignKey("ClanId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Aplikacija.Models.Korisnik", null)
+                    b.HasOne("Aplikacija.Models.Korisnik", "Trener")
                         .WithMany("TreninziKaoTrener")
-                        .HasForeignKey("KorisnikId");
-
-                    b.HasOne("Aplikacija.Models.Termin", "Termin")
-                        .WithMany("RealizovaniTreninzi")
-                        .HasForeignKey("TerminId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("TrenerId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Clan");
 
-                    b.Navigation("Termin");
-                });
-
-            modelBuilder.Entity("Aplikacija.Models.Vezba", b =>
-                {
-                    b.HasOne("Aplikacija.Models.Trening", "Trening")
-                        .WithMany("Vezbe")
-                        .HasForeignKey("TreningId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Trening");
+                    b.Navigation("Trener");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -624,25 +575,6 @@ namespace Aplikacija.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PrijavaNaTermin", b =>
-                {
-                    b.HasOne("Aplikacija.Models.Korisnik", "Clan")
-                        .WithMany()
-                        .HasForeignKey("ClanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Aplikacija.Models.Termin", "Termin")
-                        .WithMany("Prijave")
-                        .HasForeignKey("TerminId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Clan");
-
-                    b.Navigation("Termin");
-                });
-
             modelBuilder.Entity("Aplikacija.Models.Korisnik", b =>
                 {
                     b.Navigation("Kupovine");
@@ -656,18 +588,6 @@ namespace Aplikacija.Data.Migrations
                     b.Navigation("TreninziKaoClan");
 
                     b.Navigation("TreninziKaoTrener");
-                });
-
-            modelBuilder.Entity("Aplikacija.Models.Termin", b =>
-                {
-                    b.Navigation("Prijave");
-
-                    b.Navigation("RealizovaniTreninzi");
-                });
-
-            modelBuilder.Entity("Aplikacija.Models.Trening", b =>
-                {
-                    b.Navigation("Vezbe");
                 });
 #pragma warning restore 612, 618
         }

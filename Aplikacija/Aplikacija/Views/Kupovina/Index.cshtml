@@ -2,46 +2,52 @@
     ViewData["Title"] = "Kupovina - Narudžbe";
 }
 
-<h2 class="fw-bold text-center my-4">Sve narudžbe</h2>
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold text-center mb-4">Sve narudžbe</h2>
 
-@if (ViewBag.Narudzbe != null)
-{
-    <table class="table table-bordered">
-        <thead class="table-light">
-            <tr>
-                <th>Datum</th>
-                <th>Korisnik</th>
-                <th>Proizvodi</th>
-                <th>Ukupno</th>
-                <th>Akcija</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var narudzba in ViewBag.Narudzbe)
-            {
+    @if (ViewBag.Narudzbe != null)
+    {
+        <table class="table table-bordered table-striped shadow-sm">
+            <thead class="table-dark">
                 <tr>
-                    <td>@narudzba.Datum.ToString("dd.MM.yyyy")</td>
-                    <td>@narudzba.Korisnik</td>
-                    <td>
-                        <ul class="mb-0">
-                            @foreach (var stavka in narudzba.Stavke)
-                            {
-                                <li>@stavka.Naziv x @stavka.Kolicina</li>
-                            }
-                        </ul>
-                    </td>
-                    <td>@string.Format("{0:0.00} KM", narudzba.Ukupno)</td>
-                    <td>
-                        <form asp-controller="Kupovina" asp-action="DeleteByRacun" asp-route-racun="@narudzba.Racun" method="post" onsubmit="return confirm('Jeste li sigurni da želite obrisati ovu narudžbu?');">
-                            <button type="submit" class="btn btn-danger btn-sm">Obriši</button>
-                        </form>
-                    </td>
+                    <th>Datum</th>
+                    <th>Korisnik</th>
+                    <th>Proizvodi</th>
+                    <th>Ukupno</th>
+                    <th>Akcija</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p class="text-center">Nema dostupnih narudžbi.</p>
-}
+            </thead>
+            <tbody>
+                @foreach (var narudzba in ViewBag.Narudzbe)
+                {
+                    <tr>
+                        <td>@narudzba.Datum.ToString("dd.MM.yyyy")</td>
+                        <td>@narudzba.Korisnik</td>
+                        <td>
+                            <ul class="mb-0">
+                                @foreach (var stavka in narudzba.Stavke)
+                                {
+                                    <li>@stavka.Naziv x @stavka.Kolicina</li>
+                                }
+                            </ul>
+                        </td>
+                        <td>@string.Format("{0:0.00} KM", narudzba.Ukupno)</td>
+                        <td>
+                            <form asp-controller="Kupovina" asp-action="DeleteByRacun" asp-route-racun="@narudzba.Racun" method="post" onsubmit="return confirm('Jeste li sigurni da želite obrisati ovu narudžbu?');">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Obriši">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            Nema dostupnih narudžbi.
+        </div>
+    }
+</div>

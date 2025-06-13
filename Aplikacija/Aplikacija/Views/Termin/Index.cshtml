@@ -1,53 +1,52 @@
 ﻿@model IEnumerable<Aplikacija.Models.Termin>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lista termina";
 }
 
-<h1>Index</h1>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-dark fw-bold"><i class="fas fa-calendar-alt me-2"></i>Lista termina</h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Napravi termin
+        </a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Datum)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Vrijeme)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Vrsta)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Trener)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Datum)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Vrijeme)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Vrsta)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Trener.Email)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdTermin">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdTermin">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdTermin">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <table class="table table-bordered table-striped shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Datum)</th>
+                <th>@Html.DisplayNameFor(model => model.Vrijeme)</th>
+                <th>@Html.DisplayNameFor(model => model.Vrsta)</th>
+                <th>@Html.DisplayNameFor(model => model.Trener)</th>
+                <th class="text-center">Akcije</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Datum)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Vrijeme)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Vrsta)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Trener.Email)</td>
+                    <td class="text-center">
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a asp-action="Details" asp-route-id="@item.IdTermin" class="btn btn-info" title="Detalji">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            @if (User.IsInRole("Admin") || User.IsInRole("Trener"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.IdTermin" class="btn btn-warning" title="Uredi">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.IdTermin" class="btn btn-danger" title="Obriši">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

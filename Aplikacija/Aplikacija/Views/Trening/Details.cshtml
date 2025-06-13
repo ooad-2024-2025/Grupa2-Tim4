@@ -1,48 +1,298 @@
 ﻿@model Aplikacija.Models.Trening
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalji treninga";
 }
 
-<h1>Details</h1>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-dark fw-bold">
+            <i class="fas fa-dumbbell me-2" style="color: #f55f3a;"></i>Detalji treninga
+        </h2>
+        <div class="btn-group">
+            <a asp-action="UpravljajStatusom" asp-route-id="@Model.IdTrening"
+               class="btn btn-warning">
+                <i class="fas fa-cog me-1"></i> Upravljaj
+            </a>
+            <a asp-action="Create" asp-route-treningId="@Model.IdTrening"
+               class="btn btn-success">
+                <i class="fas fa-plus me-1"></i> Dodaj vežbu
+            </a>
+        </div>
+    </div>
 
-<div>
-    <h4>Trening</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Datum)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Datum)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Vrijeme)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Vrijeme)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Tip)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Tip)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Clan)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Clan.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Trener)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Trener.Email)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdTrening">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Osnovne informacije o treningu -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header" style="background-color: #f55f3a; color: white;">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Osnovne informacije</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Datum:</dt>
+                        <dd class="col-sm-8">
+                            <strong>@Model.Datum.ToString("dd.MM.yyyy")</strong>
+                        </dd>
+
+                        <dt class="col-sm-4">Vrijeme:</dt>
+                        <dd class="col-sm-8">
+                            <strong>@Model.Vrijeme.ToString(@"hh\:mm")</strong>
+                        </dd>
+
+                        <dt class="col-sm-4">Tip:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge rounded-pill" style="background-color: #f55f3a;">
+                                @Model.Tip
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-4">Status:</dt>
+                        <dd class="col-sm-8">
+                            @switch (Model.Status)
+                            {
+                                case StatusTreninga.Planiran:
+                                    <span class="badge bg-info fs-6">📅 Planiran</span>
+                                    break;
+                                case StatusTreninga.UToku:
+                                    <span class="badge bg-warning fs-6">⏳ U toku</span>
+                                    break;
+                                case StatusTreninga.Zavrsen:
+                                    <span class="badge bg-success fs-6">✅ Završen</span>
+                                    break;
+                                case StatusTreninga.Otkazan:
+                                    <span class="badge bg-danger fs-6">❌ Otkazan</span>
+                                    break;
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Član:</dt>
+                        <dd class="col-sm-8">
+                            <i class="fas fa-user me-1"></i>
+                            @(Model.Clan?.Email ?? "Nije dodijeljen")
+                        </dd>
+
+                        <dt class="col-sm-4">Trener:</dt>
+                        <dd class="col-sm-8">
+                            <i class="fas fa-user-tie me-1"></i>
+                            @(Model.Trener?.Email ?? "Nije dodijeljen")
+                        </dd>
+
+                        <dt class="col-sm-4">Kreirano:</dt>
+                        <dd class="col-sm-8">
+                            @Model.DatumKreiranja.ToString("dd.MM.yyyy HH:mm")
+                        </dd>
+
+                        @if (Model.PoslednaIzmena.HasValue)
+                        {
+                            <dt class="col-sm-4">Izmenjeno:</dt>
+                            <dd class="col-sm-8">
+                                @Model.PoslednaIzmena.Value.ToString("dd.MM.yyyy HH:mm")
+                            </dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plan i napomene -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Plan i napomene</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Plan treninga:</h6>
+                        @if (!string.IsNullOrEmpty(Model.PlanTreninga))
+                        {
+                            <div class="bg-light p-3 rounded">
+                                @Model.PlanTreninga
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted fst-italic">Nema definisanog plana.</p>
+                        }
+                    </div>
+
+                    <div>
+                        <h6 class="fw-bold">Napomene:</h6>
+                        @if (!string.IsNullOrEmpty(Model.Napomene))
+                        {
+                            <div class="bg-light p-3 rounded">
+                                @Model.Napomene
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted fst-italic">Nema napomena.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista vežbi -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list-ol me-2"></i>
+                        Vežbe (@(Model.Vezbe?.Count ?? 0))
+                    </h5>
+                    <div>
+                        <a asp-action="Create" asp-route-treningId="@Model.IdTrening"
+                           class="btn btn-light btn-sm">
+                            <i class="fas fa-plus me-1"></i> Dodaj vežbu
+                        </a>
+                        <a asp-action="SabloniVezbi" asp-route-treningId="@Model.IdTrening"
+                           class="btn btn-outline-light btn-sm">
+                            <i class="fas fa-magic me-1"></i> Šabloni
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Model.Vezbe != null && Model.Vezbe.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 50px;">#</th>
+                                        <th>Naziv vežbe</th>
+                                        <th>Serije</th>
+                                        <th>Ponavljanja</th>
+                                        <th>Težina (kg)</th>
+                                        <th>Trajanje</th>
+                                        <th>Napomene</th>
+                                        <th style="width: 120px;">Akcije</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var vezba in Model.Vezbe.OrderBy(v => v.Redosled))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <span class="badge bg-secondary">@vezba.Redosled</span>
+                                            </td>
+                                            <td>
+                                                <strong>@vezba.NazivVezbe</strong>
+                                            </td>
+                                            <td>
+                                                @if (vezba.Serije > 0)
+                                                {
+                                                    <span class="badge bg-info">@vezba.Serije</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (vezba.Ponavljanja > 0)
+                                                {
+                                                    <span class="badge bg-primary">@vezba.Ponavljanja</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (vezba.Tezina.HasValue)
+                                                {
+                                                    <strong>@vezba.Tezina.Value kg</strong>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (vezba.Trajanje.HasValue)
+                                                {
+                                                    <span class="badge bg-warning text-dark">
+                                                        @vezba.Trajanje.Value.ToString(@"mm\:ss")
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(vezba.Napomene))
+                                                {
+                                                    <small class="text-muted">@vezba.Napomene</small>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a asp-action="Edit" asp-route-id="@vezba.IdVezba"
+                                                       class="btn btn-outline-warning" title="Uredi">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <form asp-action="Delete" asp-route-id="@vezba.IdVezba"
+                                                          method="post" class="d-inline"
+                                                          onsubmit="return confirm('Da li ste sigurni da želite da obrišete ovu vežbu?')">
+                                                        <button type="submit" class="btn btn-outline-danger" title="Obriši">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-clipboard fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Nema definisanih vežbi</h5>
+                            <p class="text-muted">Dodajte vežbe da biste kreirali plan treninga.</p>
+                            <a asp-action="Create" asp-route-treningId="@Model.IdTrening"
+                               class="btn btn-success">
+                                <i class="fas fa-plus me-1"></i> Dodaj prvu vežbu
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigacione dugmad -->
+    <div class="mt-4 d-flex gap-2">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Nazad na listu
+        </a>
+        <a asp-action="UpravljajStatusom" asp-route-id="@Model.IdTrening"
+           class="btn btn-warning">
+            <i class="fas fa-cog me-1"></i> Upravljaj statusom
+        </a>
+        @if (Model.Status == StatusTreninga.Planiran)
+        {
+            <a asp-action="SabloniVezbi" asp-route-treningId="@Model.IdTrening"
+               class="btn btn-info">
+                <i class="fas fa-magic me-1"></i> Koristi šablone
+            </a>
+        }
+    </div>
 </div>

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,10 +12,10 @@ namespace Aplikacija.Models
         public int IdTermin { get; set; }
 
         [Required]
-        [ValidateDate]
         [DisplayName("Datum:")]
         [DataType(DataType.Date)]
-        public required DateOnly Datum { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime Datum { get; set; }
 
         [Required]
         [DisplayName("Vrijeme:")]
@@ -26,18 +27,24 @@ namespace Aplikacija.Models
         [DisplayName("Vrsta treninga:")]
         public required VrstaTreninga Vrsta { get; set; }
 
-
-        public string TrenerId { get; set; }
+        [BindNever]
+        public string TrenerId { get; set; } = string.Empty;
 
         [ForeignKey("TrenerId")]
-        public required Korisnik Trener { get; set; }
+        [BindNever]
+        public Korisnik? Trener { get; set; }
 
+        // Navigation properties
+        public ICollection<PrijavaNaTermin> Prijave { get; set; } = new List<PrijavaNaTermin>();
 
+        // NOVO - veza sa realizovanim trenizima
+        public ICollection<Trening> RealizovaniTreninzi { get; set; } = new List<Trening>();
 
-        public bool ProvjeraTermina(DateOnly datum, TimeOnly vrijeme, VrstaTreninga vrsta)
+        public bool ProvjeraTermina(DateTime datum, TimeOnly vrijeme, VrstaTreninga vrsta)
         {
-            return Datum == datum && Vrijeme == vrijeme && Vrsta == vrsta;
+            return Datum.Date == datum.Date
+                && Vrijeme == vrijeme
+                && Vrsta == vrsta;
         }
-
     }
 }
