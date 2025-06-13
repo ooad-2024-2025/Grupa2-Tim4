@@ -41,20 +41,9 @@
                     <span asp-validation-for="ClanId" class="text-danger"></span>
                 </div>
 
-                @if (ViewBag.IsAdmin)
-                {
-                    <div class="mb-3">
-                        <label asp-for="TrenerId" class="form-label">Trener</label>
-                        <select asp-for="TrenerId" class="form-select" asp-items="ViewBag.TrenerId as SelectList">
-                            <option value="">Odaberite trenera</option>
-                        </select>
-                        <span asp-validation-for="TrenerId" class="text-danger"></span>
-                    </div>
-                }
-                else
-                {
-                    <input type="hidden" asp-for="TrenerId" />
-                }
+                
+                <input type="hidden" asp-for="TrenerId" />
+                
 
                 <button type="submit" class="btn btn-primary">Sačuvaj</button>
                 <a asp-action="Index" class="btn btn-secondary ms-2">Odustani</a>

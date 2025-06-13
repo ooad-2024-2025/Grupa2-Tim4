@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
@@ -74,7 +75,7 @@ namespace Aplikacija.Controllers
             return View(termin);
         }
 
-        // GET: Termin/Create - Samo za trenere i admine
+        // GET: Termin/Create - POPRAVLJENA VERZIJA
         [Authorize(Roles = "Trener,Admin")]
         public async Task<IActionResult> Create()
         {
@@ -83,10 +84,10 @@ namespace Aplikacija.Controllers
 
             var termin = new Termin
             {
-                Datum = DateTime.Today.AddDays(1), // Postavi default datum na sutra
+                Datum = DateTime.Today.AddDays(1),
                 Vrijeme = new TimeOnly(9, 0),
-                Vrsta = VrstaTreninga.Grupni,
-                TrenerId = string.Empty
+                Vrsta = VrstaTreninga.Grupni
+                // NE postavljamo TrenerId ovdje za default vrijednost
             };
 
             bool jeTrener = await _userManager.IsInRoleAsync(korisnik, "Trener");
@@ -94,7 +95,8 @@ namespace Aplikacija.Controllers
 
             if (jeTrener && !jeAdmin)
             {
-                termin.TrenerId = _userManager.GetUserId(User);
+                // Za trenera, postaviti TrenerId na njihov ID
+                termin.TrenerId = korisnik.Id;
                 ViewBag.JeTrener = true;
                 ViewBag.JeAdmin = false;
             }
@@ -108,13 +110,14 @@ namespace Aplikacija.Controllers
                     .Select(k => new { k.Id, k.Email })
                     .ToListAsync();
 
-                ViewData["TrenerId"] = new SelectList(treneri, "Id", "Email");
+                // KLJUČNO: Koristiti ViewBag umjesto ViewData
+                ViewBag.TrenerId = new SelectList(treneri, "Id", "Email");
             }
 
             return View(termin);
         }
 
-        // POST: Termin/Create - POBOLJŠANA VERZIJA
+        // POST: Termin/Create - POPRAVLJENA VERZIJA
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Trener,Admin")]
@@ -126,16 +129,25 @@ namespace Aplikacija.Controllers
             bool jeTrener = await _userManager.IsInRoleAsync(korisnik, "Trener");
             bool jeAdmin = await _userManager.IsInRoleAsync(korisnik, "Admin");
 
+            // Debug informacije PRIJE validacije
+            System.Diagnostics.Debug.WriteLine($"=== DEBUG INFORMACIJE ===");
+            System.Diagnostics.Debug.WriteLine($"jeTrener: {jeTrener}");
+            System.Diagnostics.Debug.WriteLine($"jeAdmin: {jeAdmin}");
+            System.Diagnostics.Debug.WriteLine($"Primljeni TrenerId: '{termin.TrenerId}'");
+            System.Diagnostics.Debug.WriteLine($"Korisnik ID: '{korisnik.Id}'");
+
             // Postavi TrenerId na osnovu uloge
             if (jeTrener && !jeAdmin)
             {
                 termin.TrenerId = korisnik.Id;
+                System.Diagnostics.Debug.WriteLine($"Postavljen TrenerId za trenera: '{termin.TrenerId}'");
             }
             else if (jeAdmin)
             {
                 if (string.IsNullOrEmpty(termin.TrenerId))
                 {
                     ModelState.AddModelError("TrenerId", "Morate izabrati trenera.");
+                    System.Diagnostics.Debug.WriteLine("ERROR: Admin nije izabrao trenera");
                 }
                 else
                 {
@@ -145,8 +157,14 @@ namespace Aplikacija.Controllers
                     if (!trenerPostoji)
                     {
                         ModelState.AddModelError("TrenerId", "Izabrani trener ne postoji.");
+                        System.Diagnostics.Debug.WriteLine($"ERROR: Trener sa ID '{termin.TrenerId}' ne postoji");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Admin izabrao validnog trenera: '{termin.TrenerId}'");
                     }
                 }
+               
             }
 
             // Validacija da datum nije u prošlosti
@@ -170,15 +188,12 @@ namespace Aplikacija.Controllers
                 ModelState.AddModelError("", "Termin sa istim datumom i vremenom već postoji za ovog trenera.");
             }
 
-            // Debug informacije
+            // Debug informacije o ModelState
             System.Diagnostics.Debug.WriteLine($"ModelState.IsValid: {ModelState.IsValid}");
-            System.Diagnostics.Debug.WriteLine($"Datum: {termin.Datum}");
-            System.Diagnostics.Debug.WriteLine($"Vrijeme: {termin.Vrijeme}");
-            System.Diagnostics.Debug.WriteLine($"Vrsta: {termin.Vrsta}");
-            System.Diagnostics.Debug.WriteLine($"TrenerId: {termin.TrenerId}");
 
             if (!ModelState.IsValid)
             {
+                System.Diagnostics.Debug.WriteLine("=== GREŠKE U MODELSTATE ===");
                 foreach (var error in ModelState)
                 {
                     System.Diagnostics.Debug.WriteLine($"Key: {error.Key}, Errors: {string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))}");
@@ -189,6 +204,8 @@ namespace Aplikacija.Controllers
             {
                 try
                 {
+                    System.Diagnostics.Debug.WriteLine("Pokušavam da sačuvam termin...");
+
                     // Dodaj termin u kontekst
                     _context.Termin.Add(termin);
 
@@ -200,16 +217,18 @@ namespace Aplikacija.Controllers
                     if (result > 0)
                     {
                         TempData["SuccessMessage"] = "Termin je uspješno kreiran.";
+                        System.Diagnostics.Debug.WriteLine("SUCCESS: Termin je sačuvan");
                         return RedirectToAction(nameof(Index));
                     }
                     else
                     {
                         ModelState.AddModelError("", "Termin nije sačuvan u bazu podataka.");
+                        System.Diagnostics.Debug.WriteLine("ERROR: SaveChanges vratio 0");
                     }
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Greška pri čuvanju termina: {ex.Message}");
+                    System.Diagnostics.Debug.WriteLine($"EXCEPTION pri čuvanju termina: {ex.Message}");
                     System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
 
                     if (ex.InnerException != null)
@@ -237,7 +256,8 @@ namespace Aplikacija.Controllers
                     .Select(k => new { k.Id, k.Email })
                     .ToListAsync();
 
-                ViewData["TrenerId"] = new SelectList(treneri, "Id", "Email", termin.TrenerId);
+                // KLJUČNO: Koristiti ViewBag umjesto ViewData
+                ViewBag.TrenerId = new SelectList(treneri, "Id", "Email", termin.TrenerId);
             }
 
             return View(termin);
@@ -462,9 +482,10 @@ namespace Aplikacija.Controllers
             }
             else if (jeAdmin)
             {
-                if (string.IsNullOrEmpty(termin.TrenerId))
+                if (jeAdmin)
                 {
-                    ModelState.AddModelError("TrenerId", "Morate izabrati trenera.");
+                    // Admin ne može promijeniti TrenerId – zadržavamo originalni
+                    termin.TrenerId = originalTermin.TrenerId;
                 }
                 else
                 {

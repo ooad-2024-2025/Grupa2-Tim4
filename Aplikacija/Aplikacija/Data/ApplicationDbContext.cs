@@ -39,14 +39,14 @@ namespace Aplikacija.Data
                 .HasOne(t => t.Clan)
                 .WithMany(k => k.TreninziKaoClan)
                 .HasForeignKey(t => t.ClanId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Trening -> Trener
             modelBuilder.Entity<Trening>()
                 .HasOne(t => t.Trener)
                 .WithMany(k => k.TreninziKaoTrener)
                 .HasForeignKey(t => t.TrenerId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Termin -> Trener (jedan korisnik moze imati vise termina kao trener)
             modelBuilder.Entity<Termin>()

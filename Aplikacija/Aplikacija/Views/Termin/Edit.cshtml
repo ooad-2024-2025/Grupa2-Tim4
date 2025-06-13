@@ -32,11 +32,8 @@
                 <span asp-validation-for="Vrsta" class="text-danger"></span>
             </div>
 
-            <div class="mb-4">
-                <label asp-for="TrenerId" class="form-label"><strong>Trener</strong></label>
-                <select asp-for="TrenerId" class="form-control" asp-items="ViewBag.TrenerId"></select>
-                <span asp-validation-for="TrenerId" class="text-danger"></span>
-            </div>
+            <input type="hidden" asp-for="TrenerId" />
+
 
             <div class="d-flex gap-2">
                 <input type="submit" value="Sačuvaj promjene" class="btn text-white" style="background-color: #f55f3a;" />
