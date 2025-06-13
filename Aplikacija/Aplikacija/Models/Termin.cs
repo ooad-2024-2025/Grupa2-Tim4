@@ -27,22 +27,24 @@ namespace Aplikacija.Models
         [DisplayName("Vrsta treninga:")]
         public required VrstaTreninga Vrsta { get; set; }
 
-        
         [BindNever]
         public string TrenerId { get; set; } = string.Empty;
 
         [ForeignKey("TrenerId")]
         [BindNever]
-        public Korisnik? Trener { get; set; } // Uklonjen required - navigation property treba da bude nullable
+        public Korisnik? Trener { get; set; }
+
+        // Navigation properties
+        public ICollection<PrijavaNaTermin> Prijave { get; set; } = new List<PrijavaNaTermin>();
+
+        // NOVO - veza sa realizovanim trenizima
+        public ICollection<Trening> RealizovaniTreninzi { get; set; } = new List<Trening>();
 
         public bool ProvjeraTermina(DateTime datum, TimeOnly vrijeme, VrstaTreninga vrsta)
         {
-            // Upoređujemo samo datum (bez vremena) i vrijeme posebno
             return Datum.Date == datum.Date
                 && Vrijeme == vrijeme
                 && Vrsta == vrsta;
         }
-
-        public ICollection<PrijavaNaTermin> Prijave { get; set; } = new List<PrijavaNaTermin>();
     }
 }

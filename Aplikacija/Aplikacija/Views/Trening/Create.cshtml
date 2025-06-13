@@ -1,69 +1,211 @@
-﻿@model Aplikacija.Models.Trening
-
+﻿@model Aplikacija.Models.Vezba
 @{
-    ViewData["Title"] = "Napravi novi trening";
+    ViewData["Title"] = "Dodaj vežbu";
 }
 
-<h1>Napravi novi trening</h1>
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">
+        <i class="fas fa-plus me-2" style="color: #f55f3a;"></i>Dodaj vežbu
+    </h2>
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group">
-                <label asp-for="Datum" class="control-label"></label>
-                <input asp-for="Datum" class="form-control" />
-                <span asp-validation-for="Datum" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Vrijeme" class="control-label"></label>
-                <input asp-for="Vrijeme" class="form-control" />
-                <span asp-validation-for="Vrijeme" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Tip" class="control-label"></label>
-                <select asp-for="Tip" class="form-control" asp-items="Html.GetEnumSelectList<VrstaTreninga>()">
-                    <option selected="selected" value="">Odaberite vrstu treninga</option>
-                </select>
-                <span asp-validation-for="Tip" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="ClanId" class="control-label">Član</label>
-                <select asp-for="ClanId" class="form-control" asp-items="ViewBag.ClanId as SelectList">
-                    <option value="">Odaberite člana</option>
-                </select>
-                <span asp-validation-for="ClanId" class="text-danger"></span>
-            </div>
-
-            @if (ViewBag.IsAdmin)
-            {
-                <div class="form-group">
-                    <label asp-for="TrenerId" class="control-label">Trener</label>
-                    <select asp-for="TrenerId" class="form-control" asp-items="ViewBag.TrenerId as SelectList">
-                        <option value="">Odaberite trenera</option>
-                    </select>
-                    <span asp-validation-for="TrenerId" class="text-danger"></span>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header" style="background-color: #f55f3a; color: white;">
+                    <h5 class="mb-0">Informacije o treningu</h5>
                 </div>
-            }
-
-            <div class="form-group">
-                <input type="submit" value="Kreiraj" class="btn btn-primary" />
+                <div class="card-body">
+                    <p><strong>Datum:</strong> @ViewBag.Trening.Datum.ToString("dd.MM.yyyy")</p>
+                    <p><strong>Vrijeme:</strong> @ViewBag.Trening.Vrijeme.ToString(@"hh\:mm")</p>
+                    <p><strong>Član:</strong> @ViewBag.Trening.Clan?.Email</p>
+                </div>
             </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Nazad na listu</a>
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Nova vežba</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <input type="hidden" asp-for="TreningId" />
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="NazivVezbe" class="form-label"></label>
+                                    <input asp-for="NazivVezbe" class="form-control" placeholder="npr. Čučanj, Sklekovi..." />
+                                    <span asp-validation-for="NazivVezbe" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Redosled" class="form-label"></label>
+                                    <input asp-for="Redosled" class="form-control" type="number" min="1" max="50" />
+                                    <span asp-validation-for="Redosled" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Serije" class="form-label"></label>
+                                    <input asp-for="Serije" class="form-control" type="number" min="1" max="20" />
+                                    <span asp-validation-for="Serije" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Ponavljanja" class="form-label"></label>
+                                    <input asp-for="Ponavljanja" class="form-control" type="number" min="1" max="100" />
+                                    <span asp-validation-for="Ponavljanja" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Tezina" class="form-label"></label>
+                                    <div class="input-group">
+                                        <input asp-for="Tezina" class="form-control" type="number" step="0.5" min="0.5" max="500" />
+                                        <span class="input-group-text">kg</span>
+                                    </div>
+                                    <span asp-validation-for="Tezina" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Trajanje" class="form-label"></label>
+                                    <input asp-for="Trajanje" class="form-control" type="time" />
+                                    <span asp-validation-for="Trajanje" class="text-danger"></span>
+                                    <div class="form-text">Za kardio vežbe - unesite vreme trajanja</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Napomene" class="form-label"></label>
+                            <textarea asp-for="Napomene" class="form-control" rows="3"
+                                      placeholder="Napomene o vežbi (opciono)..."></textarea>
+                            <span asp-validation-for="Napomene" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-1"></i> Dodaj vežbu
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.TreningId" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Nazad
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Saveti za vežbe</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-dumbbell text-primary me-2"></i>
+                            <strong>Serije:</strong> Broj setova vežbe (obično 3-4)
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-redo text-primary me-2"></i>
+                            <strong>Ponavljanja:</strong> Broj ponavljanja po seriji
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-weight-hanging text-primary me-2"></i>
+                            <strong>Težina:</strong> Opciono za vežbe sa tegovima
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-clock text-primary me-2"></i>
+                            <strong>Trajanje:</strong> Za kardio vežbe (trčanje, bicikl...)
+                        </li>
+                        <li>
+                            <i class="fas fa-sort-numeric-up text-primary me-2"></i>
+                            <strong>Redosled:</strong> Redosled izvršavanja vežbe u treningu
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0"><i class="fas fa-star me-2"></i>Popularne vežbe</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                onclick="postaviVezbu('Čučanj', 3, 15)">
+                            Čučanj (3×15)
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                onclick="postaviVezbu('Sklekovi', 3, 12)">
+                            Sklekovi (3×12)
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                onclick="postaviVezbu('Mrtvo dizanje', 3, 8, 60)">
+                            Mrtvo dizanje (3×8, 60kg)
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                onclick="postaviVezbu('Bench press', 3, 10, 80)">
+                            Bench press (3×10, 80kg)
+                        </button>
+                        <button type="button" class="btn btn-outline-success btn-sm"
+                                onclick="postaviKardio('Trčanje', '00:30')">
+                            Trčanje (30 min)
+                        </button>
+                        <button type="button" class="btn btn-outline-success btn-sm"
+                                onclick="postaviKardio('Plank', '00:02')">
+                            Plank (2 min)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        function postaviVezbu(naziv, serije, ponavljanja, tezina = null) {
+            document.getElementById('NazivVezbe').value = naziv;
+            document.getElementById('Serije').value = serije;
+            document.getElementById('Ponavljanja').value = ponavljanja;
+
+            if (tezina) {
+                document.getElementById('Tezina').value = tezina;
+            }
+
+            // Ukloni trajanje za obične vežbe
+            document.getElementById('Trajanje').value = '';
+        }
+
+        function postaviKardio(naziv, trajanje) {
+            document.getElementById('NazivVezbe').value = naziv;
+            document.getElementById('Trajanje').value = trajanje;
+
+            // Za kardio vežbe obično nema serija/ponavljanja/težine
+            document.getElementById('Serije').value = 1;
+            document.getElementById('Ponavljanja').value = 1;
+            document.getElementById('Tezina').value = '';
+        }
+
+        // Auto-fokus na naziv vežbe
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('NazivVezbe').focus();
+        });
+    </script>
 }

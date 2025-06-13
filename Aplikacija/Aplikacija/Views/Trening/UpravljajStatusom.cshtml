@@ -1,0 +1,94 @@
+﻿@model Aplikacija.Models.Trening
+@{
+    ViewData["Title"] = "Upravljaj statusom treninga";
+}
+
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">
+        <i class="fas fa-cog me-2" style="color: #f55f3a;"></i>Upravljaj statusom treninga
+    </h2>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header" style="background-color: #f55f3a; color: white;">
+                    <h5 class="mb-0">Informacije o treningu</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Datum:</dt>
+                        <dd class="col-sm-9">@Model.Datum.ToString("dd.MM.yyyy") u @Model.Vrijeme.ToString(@"hh\:mm")</dd>
+
+                        <dt class="col-sm-3">Tip:</dt>
+                        <dd class="col-sm-9">@Model.Tip</dd>
+
+                        <dt class="col-sm-3">Član:</dt>
+                        <dd class="col-sm-9">@Model.Clan?.Email</dd>
+
+                        <dt class="col-sm-3">Trener:</dt>
+                        <dd class="col-sm-9">@Model.Trener?.Email</dd>
+                    </dl>
+
+                    <form asp-action="UpravljajStatusom" method="post">
+                        <input type="hidden" name="id" value="@Model.IdTrening" />
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Status treninga:</label>
+                            <select name="status" class="form-select" asp-items="ViewBag.StatusOptions">
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Plan treninga:</label>
+                            <textarea name="planTreninga" class="form-control" rows="4"
+                                      placeholder="Opišite plan treninga...">@Model.PlanTreninga</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Napomene:</label>
+                            <textarea name="napomene" class="form-control" rows="3"
+                                      placeholder="Dodajte napomene...">@Model.Napomene</textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-1"></i> Sačuvaj izmene
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.IdTrening" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Nazad
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">Objašnjenja statusa</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <span class="badge bg-info me-2">Planiran</span>
+                            Trening je zakazan
+                        </li>
+                        <li class="mb-2">
+                            <span class="badge bg-warning me-2">U toku</span>
+                            Trening je počeo
+                        </li>
+                        <li class="mb-2">
+                            <span class="badge bg-success me-2">Završen</span>
+                            Trening je završen
+                        </li>
+                        <li>
+                            <span class="badge bg-danger me-2">Otkazan</span>
+                            Trening je otkazan
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

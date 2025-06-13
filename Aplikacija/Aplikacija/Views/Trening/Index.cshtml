@@ -5,80 +5,212 @@
 
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-dark fw-bold">Lista treninga</h2>
-        <!-- Ako postoji dugme za novi trening, možeš ga dodati ovde -->
+        <h2 class="text-dark fw-bold">📋 Lista treninga</h2>
     </div>
 
-    <table class="table table-bordered table-striped shadow-sm">
-        <thead class="table-dark">
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.Datum)</th>
-                <th>@Html.DisplayNameFor(model => model.Vrijeme)</th>
-                <th>@Html.DisplayNameFor(model => model.Tip)</th>
-                <th>Član</th>
-                <th>@Html.DisplayNameFor(model => model.Trener)</th>
-                <th>Akcije</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.Any())
-            {
-                @foreach (var item in Model)
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Filteri -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                @if (ViewBag.IsAdmin)
                 {
-                    <tr>
-                        <td>@Html.DisplayFor(modelItem => item.Datum)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Vrijeme)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Tip)</td>
-                        <td>
-                            @if (item.Clan != null)
-                            {
-                                @Html.DisplayFor(modelItem => item.Clan.Email)
-                            }
-                            else
-                            {
-                                <span class="text-muted">Nije dodijeljen</span>
-                            }
-                        </td>
-                        <td>
-                            @if (item.Trener != null)
-                            {
-                                @Html.DisplayFor(modelItem => item.Trener.Email)
-                            }
-                            else
-                            {
-                                <span class="text-muted">Nije dodijeljen</span>
-                            }
-                        </td>
-                        <td>
-                            <div class="btn-group btn-group-sm" role="group">
-                                <a asp-action="Details" asp-route-id="@item.IdTrening" class="btn btn-info" title="Detalji">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                @if (ViewBag.IsAdmin || User.IsInRole("Trener"))
-                                {
-                                    <a asp-action="Edit" asp-route-id="@item.IdTrening" class="btn btn-warning" title="Uredi">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                }
-                                @if (ViewBag.IsAdmin)
-                                {
-                                    <a asp-action="Delete" asp-route-id="@item.IdTrening" class="btn btn-danger" title="Obriši">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                }
-                            </div>
-                        </td>
-                    </tr>
+                    <div class="col-md-4">
+                        <label class="form-label">Trener:</label>
+                        <select name="trenerId" class="form-select" asp-items="ViewBag.Treneri">
+                            <option value="">-- Svi treneri --</option>
+                        </select>
+                    </div>
                 }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="6" class="text-center">
-                        <em>Nema treninga za prikazivanje.</em>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                <div class="col-md-4">
+                    <label class="form-label">Status:</label>
+                    <select name="status" class="form-select" asp-items="ViewBag.StatusOptions">
+                        <option value="">-- Svi statusi --</option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-filter"></i> Filtriraj
+                    </button>
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i class="fas fa-times"></i> Resetuj
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabela treninga -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Datum</th>
+                            <th>Vrijeme</th>
+                            <th>Tip</th>
+                            <th>Član</th>
+                            <th>Trener</th>
+                            <th>Status</th>
+                            <th>Vežbe</th>
+                            <th>Akcije</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@item.Datum.ToString("dd.MM.yyyy")</strong>
+                                    </td>
+                                    <td>
+                                        @item.Vrijeme.ToString(@"hh\:mm")
+                                    </td>
+                                    <td>
+                                        <span class="badge rounded-pill" style="background-color: #f55f3a;">
+                                            @item.Tip
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (item.Clan != null)
+                                        {
+                                            <i class="fas fa-user me-1"></i>
+                                            @item.Clan.Email
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Nije dodijeljen</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.Trener != null)
+                                        {
+                                            <i class="fas fa-dumbbell me-1"></i>
+                                            @item.Trener.Email
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Nije dodijeljen</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @switch (item.Status)
+                                        {
+                                            case StatusTreninga.Planiran:
+                                                <span class="badge bg-info">📅 Planiran</span>
+                                                break;
+                                            case StatusTreninga.UToku:
+                                                <span class="badge bg-warning">⏳ U toku</span>
+                                                break;
+                                            case StatusTreninga.Zavrsen:
+                                                <span class="badge bg-success">✅ Završen</span>
+                                                break;
+                                            case StatusTreninga.Otkazan:
+                                                <span class="badge bg-danger">❌ Otkazan</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.Vezbe != null && item.Vezbe.Any())
+                                        {
+                                            <span class="badge bg-secondary">
+                                                <i class="fas fa-list-ol me-1"></i>@item.Vezbe.Count() vežbi
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Nema vežbi</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-action="Details" asp-route-id="@item.IdTrening"
+                                               class="btn btn-info" title="Detalji">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-action="UpravljajStatusom" asp-route-id="@item.IdTrening"
+                                               class="btn btn-warning" title="Upravljaj">
+                                                <i class="fas fa-cog"></i>
+                                            </a>
+                                            <a asp-action="Create" asp-route-treningId="@item.IdTrening"
+                                               class="btn btn-success" title="Dodaj vežbu">
+                                                <i class="fas fa-plus"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                                    <br>
+                                    <em>Nema treninga za prikazivanje.</em>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistike (bonus) -->
+    @if (Model.Any())
+    {
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card text-center" style="border-left: 4px solid #17a2b8;">
+                    <div class="card-body">
+                        <h5 class="card-title text-info">Planirani</h5>
+                        <h3 class="card-text">@Model.Count(t => t.Status == StatusTreninga.Planiran)</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center" style="border-left: 4px solid #ffc107;">
+                    <div class="card-body">
+                        <h5 class="card-title text-warning">U toku</h5>
+                        <h3 class="card-text">@Model.Count(t => t.Status == StatusTreninga.UToku)</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center" style="border-left: 4px solid #28a745;">
+                    <div class="card-body">
+                        <h5 class="card-title text-success">Završeni</h5>
+                        <h3 class="card-text">@Model.Count(t => t.Status == StatusTreninga.Zavrsen)</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center" style="border-left: 4px solid #dc3545;">
+                    <div class="card-body">
+                        <h5 class="card-title text-danger">Otkazani</h5>
+                        <h3 class="card-text">@Model.Count(t => t.Status == StatusTreninga.Otkazan)</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>

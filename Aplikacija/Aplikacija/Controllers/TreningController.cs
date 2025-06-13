@@ -1,4 +1,5 @@
-﻿using Aplikacija.Data;
+﻿// Controllers/TreningController.cs - ISPRAVLJEN SA STANDARDNIM NAZIVIMA
+using Aplikacija.Data;
 using Aplikacija.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -22,31 +23,41 @@ namespace Aplikacija.Controllers
             _userManager = userManager;
         }
 
-        // Prikaz treninga - za trenere i administratore
+        // GET: Prikaz treninga - za trenere i administratore
         [Authorize(Roles = "Trener,Admin")]
-        public async Task<IActionResult> Index(string trenerId = null)
+        public async Task<IActionResult> Index(string trenerId = null, StatusTreninga? status = null)
         {
             var korisnik = await _userManager.GetUserAsync(User);
             var isAdmin = await _userManager.IsInRoleAsync(korisnik, "Admin");
 
             IQueryable<Trening> treninzi = _context.Trening
+                .Include(t => t.Termin)
+                .ThenInclude(term => term.Trener)
                 .Include(t => t.Clan)
-                .Include(t => t.Trener);
+                .Include(t => t.Vezbe);
 
-            // Ako je administrator i specifičan trener je odabran
+            // Filtriranje po treneru
             if (isAdmin && !string.IsNullOrEmpty(trenerId))
             {
-                treninzi = treninzi.Where(t => t.TrenerId == trenerId);
+                treninzi = treninzi.Where(t => t.Termin.TrenerId == trenerId);
                 ViewBag.SelectedTrenerId = trenerId;
             }
-            // Ako je obični trener, prikaži samo njegove treninge
             else if (!isAdmin)
             {
-                treninzi = treninzi.Where(t => t.TrenerId == korisnik.Id);
+                treninzi = treninzi.Where(t => t.Termin.TrenerId == korisnik.Id);
             }
-            // Ako je administrator bez odabranog trenera, prikaži sve treninge
 
-            // Dropdown lista trenera (samo za administratore)
+            // Filtriranje po statusu
+            if (status.HasValue)
+            {
+                treninzi = treninzi.Where(t => t.Status == status.Value);
+                ViewBag.SelectedStatus = status.Value;
+            }
+
+            // Sortiranje po datumu termina
+            treninzi = treninzi.OrderByDescending(t => t.Termin.Datum).ThenByDescending(t => t.Termin.Vrijeme);
+
+            // Dropdown liste za filtriranje (samo za administratore)
             if (isAdmin)
             {
                 var treneri = await _context.Korisnik
@@ -62,10 +73,15 @@ namespace Aplikacija.Controllers
                 ViewBag.IsAdmin = false;
             }
 
+            // Dropdown za status
+            ViewBag.StatusOptions = new SelectList(Enum.GetValues(typeof(StatusTreninga))
+                .Cast<StatusTreninga>()
+                .Select(s => new { Value = s, Text = s.ToString() }), "Value", "Text", status);
+
             return View(await treninzi.ToListAsync());
         }
 
-        // Detalji treninga - dostupno oboma
+        // GET: Detalji treninga
         [Authorize(Roles = "Trener,Admin")]
         public async Task<IActionResult> Details(int? id)
         {
@@ -76,233 +92,405 @@ namespace Aplikacija.Controllers
             var isAdmin = await _userManager.IsInRoleAsync(korisnik, "Admin");
 
             var trening = await _context.Trening
+                .Include(t => t.Termin)
+                .ThenInclude(term => term.Trener)
                 .Include(t => t.Clan)
-                .Include(t => t.Trener)
+                .Include(t => t.Vezbe.OrderBy(v => v.Redosled))
                 .FirstOrDefaultAsync(m => m.IdTrening == id);
 
             if (trening == null)
                 return NotFound();
 
-            // Provjeri da li trener može pristupiti samo svojim treningu
-            if (!isAdmin && trening.TrenerId != korisnik.Id)
+            // Provjeri da li trener može pristupiti samo svojim treninzima
+            if (!isAdmin && trening.Termin?.TrenerId != korisnik.Id)
                 return Forbid();
 
             return View(trening);
         }
 
-        // Kreiranje treninga - samo treneri i administratori
+        // GET: Upravljanje statusom treninga
         [Authorize(Roles = "Trener,Admin")]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> UpravljajStatusom(int? id)
         {
-            var clanovi = _context.Korisnik
-                .Where(k => k.Tip == TipKorisnika.Clan)
-                .Select(k => new { k.Id, k.Email })
-                .ToList();
+            if (id == null)
+                return NotFound();
 
-            ViewData["ClanId"] = new SelectList(clanovi, "Id", "Email");
-
-            // Administrator može odabrati trenera
-            var korisnik = await _userManager.GetUserAsync(User);
-            var isAdmin = await _userManager.IsInRoleAsync(korisnik, "Admini");
-
-            if (isAdmin)
-            {
-                var treneri = _context.Korisnik
-                    .Where(k => k.Tip == TipKorisnika.Trener)
-                    .Select(k => new { k.Id, k.Email })
-                    .ToList();
-                ViewData["TrenerId"] = new SelectList(treneri, "Id", "Email");
-                ViewBag.IsAdmin = true;
-            }
-            else
-            {
-                ViewBag.IsAdmin = false;
-            }
-
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Trener,Admin")]
-        public async Task<IActionResult> Create([Bind("Datum,Vrijeme,Tip,ClanId,TrenerId")] Trening trening)
-        {
             var korisnik = await _userManager.GetUserAsync(User);
             var isAdmin = await _userManager.IsInRoleAsync(korisnik, "Admin");
 
-            // Ako nije admin, automatski postavi trenera na trenutnog korisnika
-            if (!isAdmin)
-            {
-                trening.TrenerId = korisnik.Id;
-            }
+            var trening = await _context.Trening
+                .Include(t => t.Termin)
+                .ThenInclude(term => term.Trener)
+                .Include(t => t.Clan)
+                .Include(t => t.Vezbe.OrderBy(v => v.Redosled))
+                .FirstOrDefaultAsync(m => m.IdTrening == id);
 
-            if (ModelState.IsValid)
-            {
-                _context.Add(trening);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+            if (trening == null)
+                return NotFound();
 
-            // Vraćanje dropdown lista u slučaju greške
-            var clanovi = _context.Korisnik
-                .Where(k => k.Tip == TipKorisnika.Clan)
-                .Select(k => new { k.Id, k.Email })
-                .ToList();
-            ViewData["ClanId"] = new SelectList(clanovi, "Id", "Email", trening.ClanId);
+            if (!isAdmin && trening.Termin?.TrenerId != korisnik.Id)
+                return Forbid();
 
-            if (isAdmin)
-            {
-                var treneri = _context.Korisnik
-                    .Where(k => k.Tip == TipKorisnika.Trener)
-                    .Select(k => new { k.Id, k.Email })
-                    .ToList();
-                ViewData["TrenerId"] = new SelectList(treneri, "Id", "Email", trening.TrenerId);
-                ViewBag.IsAdmin = true;
-            }
-            else
-            {
-                ViewBag.IsAdmin = false;
-            }
+            ViewBag.StatusOptions = new SelectList(Enum.GetValues(typeof(StatusTreninga))
+                .Cast<StatusTreninga>(), trening.Status);
 
             return View(trening);
         }
 
-        // Edit treninga - samo treneri i administratori
+        // POST: Ažuriraj status treninga
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Trener,Admin")]
+        public async Task<IActionResult> UpravljajStatusom(int id, StatusTreninga status, string planTreninga, string napomene)
+        {
+            var korisnik = await _userManager.GetUserAsync(User);
+            var isAdmin = await _userManager.IsInRoleAsync(korisnik, "Admin");
+
+            var trening = await _context.Trening
+                .Include(t => t.Termin)
+                .FirstOrDefaultAsync(t => t.IdTrening == id);
+
+            if (trening == null)
+                return NotFound();
+
+            if (!isAdmin && trening.Termin?.TrenerId != korisnik.Id)
+                return Forbid();
+
+            trening.Status = status;
+            trening.PlanTreninga = planTreninga;
+            trening.Napomene = napomene;
+            trening.PoslednaIzmena = DateTime.Now;
+
+            try
+            {
+                _context.Update(trening);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Status treninga je uspješno ažuriran.";
+                return RedirectToAction(nameof(Details), new { id = id });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Greška pri ažuriranju statusa: {ex.Message}");
+                ModelState.AddModelError("", "Greška pri ažuriranju statusa treninga.");
+
+                ViewBag.StatusOptions = new SelectList(Enum.GetValues(typeof(StatusTreninga))
+                    .Cast<StatusTreninga>(), status);
+
+                return View(await _context.Trening
+                    .Include(t => t.Termin)
+                    .ThenInclude(term => term.Trener)
+                    .Include(t => t.Clan)
+                    .Include(t => t.Vezbe)
+                    .FirstOrDefaultAsync(t => t.IdTrening == id));
+            }
+        }
+
+        // GET: Create vežbu (umesto DodajVezbu)
+        [Authorize(Roles = "Trener,Admin")]
+        public async Task<IActionResult> Create(int? treningId)
+        {
+            if (treningId == null)
+                return NotFound();
+
+            var korisnik = await _userManager.GetUserAsync(User);
+            var isAdmin = await _userManager.IsInRoleAsync(korisnik, "Admin");
+
+            var trening = await _context.Trening
+                .Include(t => t.Termin)
+                .Include(t => t.Vezbe)
+                .FirstOrDefaultAsync(t => t.IdTrening == treningId);
+
+            if (trening == null)
+                return NotFound();
+
+            if (!isAdmin && trening.Termin?.TrenerId != korisnik.Id)
+                return Forbid();
+
+            var vezba = new Vezba
+            {
+                TreningId = treningId.Value,
+                Redosled = (trening.Vezbe?.Count ?? 0) + 1,
+                Serije = 3,
+                Ponavljanja = 10
+            };
+
+            ViewBag.Trening = trening;
+            return View(vezba);
+        }
+
+        // POST: Create vežbu
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Trener,Admin")]
+        public async Task<IActionResult> Create([Bind("TreningId,NazivVezbe,Serije,Ponavljanja,Tezina,Trajanje,Napomene,Redosled")] Vezba vezba)
+        {
+            var korisnik = await _userManager.GetUserAsync(User);
+            var isAdmin = await _userManager.IsInRoleAsync(korisnik, "Admin");
+
+            var trening = await _context.Trening
+                .Include(t => t.Termin)
+                .FirstOrDefaultAsync(t => t.IdTrening == vezba.TreningId);
+
+            if (trening == null)
+                return NotFound();
+
+            if (!isAdmin && trening.Termin?.TrenerId != korisnik.Id)
+                return Forbid();
+
+            // Ukloni validation za navigation properties
+            ModelState.Remove("Trening");
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Vezbe.Add(vezba);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Vežba je uspješno dodana.";
+                    return RedirectToAction(nameof(Details), new { id = vezba.TreningId });
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Greška pri dodavanju vežbe: {ex.Message}");
+                    ModelState.AddModelError("", "Greška pri dodavanju vežbe.");
+                }
+            }
+
+            ViewBag.Trening = trening;
+            return View(vezba);
+        }
+
+        // GET: Edit vežbu
         [Authorize(Roles = "Trener,Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var trening = await _context.Trening.FindAsync(id);
-            if (trening == null)
-                return NotFound();
-
             var korisnik = await _userManager.GetUserAsync(User);
             var isAdmin = await _userManager.IsInRoleAsync(korisnik, "Admin");
 
-            // Provjeri da li trener može uređivati samo svoj trening
-            if (!isAdmin && trening.TrenerId != korisnik.Id)
+            var vezba = await _context.Vezbe
+                .Include(v => v.Trening)
+                .ThenInclude(t => t.Termin)
+                .FirstOrDefaultAsync(v => v.IdVezba == id);
+
+            if (vezba == null)
+                return NotFound();
+
+            if (!isAdmin && vezba.Trening?.Termin?.TrenerId != korisnik.Id)
                 return Forbid();
 
-            ViewData["ClanId"] = new SelectList(_context.Korisnik.Where(k => k.Tip == TipKorisnika.Clan), "Id", "Email", trening.ClanId);
-
-            if (isAdmin)
-            {
-                ViewData["TrenerId"] = new SelectList(_context.Korisnik.Where(k => k.Tip == TipKorisnika.Trener), "Id", "Email", trening.TrenerId);
-                ViewBag.IsAdmin = true;
-            }
-            else
-            {
-                ViewBag.IsAdmin = false;
-            }
-
-            return View(trening);
+            return View(vezba);
         }
 
+        // POST: Edit vežbu
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Trener,Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("IdTrening,Datum,Vrijeme,Tip,ClanId,TrenerId")] Trening trening)
+        public async Task<IActionResult> Edit(int id, [Bind("IdVezba,TreningId,NazivVezbe,Serije,Ponavljanja,Tezina,Trajanje,Napomene,Redosled")] Vezba vezba)
         {
-            if (id != trening.IdTrening)
+            if (id != vezba.IdVezba)
                 return NotFound();
 
             var korisnik = await _userManager.GetUserAsync(User);
             var isAdmin = await _userManager.IsInRoleAsync(korisnik, "Admin");
 
-            // Provjeri dozvole
-            var originalTrening = await _context.Trening.AsNoTracking().FirstOrDefaultAsync(t => t.IdTrening == id);
-            if (!isAdmin && originalTrening.TrenerId != korisnik.Id)
+            var originalVezba = await _context.Vezbe
+                .Include(v => v.Trening)
+                .ThenInclude(t => t.Termin)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(v => v.IdVezba == id);
+
+            if (originalVezba == null)
+                return NotFound();
+
+            if (!isAdmin && originalVezba.Trening?.Termin?.TrenerId != korisnik.Id)
                 return Forbid();
 
-            // Ako nije admin, ne dozvoli mijenjanje trenera
-            if (!isAdmin)
-            {
-                trening.TrenerId = korisnik.Id;
-            }
+            ModelState.Remove("Trening");
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(trening);
+                    _context.Update(vezba);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Vežba je uspješno ažurirana.";
+                    return RedirectToAction(nameof(Details), new { id = vezba.TreningId });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TreningExists(trening.IdTrening))
+                    if (!VezbaExists(vezba.IdVezba))
                         return NotFound();
                     else
                         throw;
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Greška pri ažuriranju vežbe: {ex.Message}");
+                    ModelState.AddModelError("", "Greška pri ažuriranju vežbe.");
+                }
             }
 
-            ViewData["ClanId"] = new SelectList(_context.Korisnik.Where(k => k.Tip == TipKorisnika.Clan), "Id", "Email", trening.ClanId);
-
-            if (isAdmin)
-            {
-                ViewData["TrenerId"] = new SelectList(_context.Korisnik.Where(k => k.Tip == TipKorisnika.Trener), "Id", "Email", trening.TrenerId);
-                ViewBag.IsAdmin = true;
-            }
-            else
-            {
-                ViewBag.IsAdmin = false;
-            }
-
-            return View(trening);
+            return View(vezba);
         }
 
-        // Brisanje treninga - samo treneri i administratori
+        // GET: Delete vežbu
         [Authorize(Roles = "Trener,Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var trening = await _context.Trening
-                .Include(t => t.Clan)
-                .Include(t => t.Trener)
-                .FirstOrDefaultAsync(m => m.IdTrening == id);
-
-            if (trening == null)
-                return NotFound();
-
             var korisnik = await _userManager.GetUserAsync(User);
             var isAdmin = await _userManager.IsInRoleAsync(korisnik, "Admin");
 
-            // Provjeri da li trener može brisati samo svoj trening
-            if (!isAdmin && trening.TrenerId != korisnik.Id)
+            var vezba = await _context.Vezbe
+                .Include(v => v.Trening)
+                .ThenInclude(t => t.Termin)
+                .ThenInclude(term => term.Trener)
+                .Include(v => v.Trening.Clan)
+                .FirstOrDefaultAsync(v => v.IdVezba == id);
+
+            if (vezba == null)
+                return NotFound();
+
+            if (!isAdmin && vezba.Trening?.Termin?.TrenerId != korisnik.Id)
                 return Forbid();
 
-            return View(trening);
+            return View(vezba);
         }
 
+        // POST: Delete vežbu
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Trener,Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var trening = await _context.Trening.FindAsync(id);
-            if (trening != null)
+            var korisnik = await _userManager.GetUserAsync(User);
+            var isAdmin = await _userManager.IsInRoleAsync(korisnik, "Admin");
+
+            var vezba = await _context.Vezbe
+                .Include(v => v.Trening)
+                .ThenInclude(t => t.Termin)
+                .FirstOrDefaultAsync(v => v.IdVezba == id);
+
+            if (vezba == null)
+                return NotFound();
+
+            if (!isAdmin && vezba.Trening?.Termin?.TrenerId != korisnik.Id)
+                return Forbid();
+
+            var treningId = vezba.TreningId;
+
+            try
             {
-                var korisnik = await _userManager.GetUserAsync(User);
-                var isAdmin = await _userManager.IsInRoleAsync(korisnik, "Admin");
-
-                // Provjeri dozvole
-                if (!isAdmin && trening.TrenerId != korisnik.Id)
-                    return Forbid();
-
-                _context.Trening.Remove(trening);
+                _context.Vezbe.Remove(vezba);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Vežba je uspješno obrisana.";
             }
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Greška pri brisanju vežbe: {ex.Message}");
+                TempData["ErrorMessage"] = "Greška pri brisanju vežbe.";
+            }
+
+            return RedirectToAction(nameof(Details), new { id = treningId });
         }
 
+        // GET: Moji treninzi (za članove)
+        [Authorize(Roles = "Korisnik")]
+        public async Task<IActionResult> MojiTreninzi()
+        {
+            var korisnik = await _userManager.GetUserAsync(User);
+            if (korisnik == null) return Forbid();
+
+            var mojiTreninzi = await _context.Trening
+                .Include(t => t.Termin)
+                .ThenInclude(term => term.Trener)
+                .Include(t => t.Vezbe.OrderBy(v => v.Redosled))
+                .Where(t => t.ClanId == korisnik.Id)
+                .OrderByDescending(t => t.Termin.Datum)
+                .ThenByDescending(t => t.Termin.Vrijeme)
+                .ToListAsync();
+
+            return View(mojiTreninzi);
+        }
+
+        // Helper metode
         private bool TreningExists(int id)
         {
             return _context.Trening.Any(e => e.IdTrening == id);
+        }
+
+        private bool VezbaExists(int id)
+        {
+            return _context.Vezbe.Any(e => e.IdVezba == id);
+        }
+
+        // GET: Šabloni vežbi (bonus funkcionalnost)
+        [Authorize(Roles = "Trener,Admin")]
+        public IActionResult SabloniVezbi(int treningId)
+        {
+            var sabloni = new List<Vezba>
+            {
+                new Vezba { NazivVezbe = "Čučanj", Serije = 3, Ponavljanja = 15, TreningId = treningId, Redosled = 1 },
+                new Vezba { NazivVezbe = "Sklekovi", Serije = 3, Ponavljanja = 12, TreningId = treningId, Redosled = 2 },
+                new Vezba { NazivVezbe = "Mrtvo dizanje", Serije = 3, Ponavljanja = 8, Tezina = 60, TreningId = treningId, Redosled = 3 },
+                new Vezba { NazivVezbe = "Bench press", Serije = 3, Ponavljanja = 10, Tezina = 80, TreningId = treningId, Redosled = 4 },
+                new Vezba { NazivVezbe = "Trčanje", Trajanje = TimeSpan.FromMinutes(30), TreningId = treningId, Redosled = 5 },
+                new Vezba { NazivVezbe = "Plank", Trajanje = TimeSpan.FromMinutes(2), TreningId = treningId, Redosled = 6 }
+            };
+
+            ViewBag.TreningId = treningId;
+            return View(sabloni);
+        }
+
+        // POST: Dodaj šablon vežbe
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Trener,Admin")]
+        public async Task<IActionResult> DodajSablonVezbe(int treningId, string nazivVezbe, int serije, int ponavljanja, decimal? tezina, TimeSpan? trajanje)
+        {
+            var korisnik = await _userManager.GetUserAsync(User);
+            var isAdmin = await _userManager.IsInRoleAsync(korisnik, "Admin");
+
+            var trening = await _context.Trening
+                .Include(t => t.Termin)
+                .Include(t => t.Vezbe)
+                .FirstOrDefaultAsync(t => t.IdTrening == treningId);
+
+            if (trening == null)
+                return NotFound();
+
+            if (!isAdmin && trening.Termin?.TrenerId != korisnik.Id)
+                return Forbid();
+
+            var vezba = new Vezba
+            {
+                TreningId = treningId,
+                NazivVezbe = nazivVezbe,
+                Serije = serije,
+                Ponavljanja = ponavljanja,
+                Tezina = tezina,
+                Trajanje = trajanje,
+                Redosled = (trening.Vezbe?.Count ?? 0) + 1
+            };
+
+            try
+            {
+                _context.Vezbe.Add(vezba);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Vežba '{nazivVezbe}' je uspješno dodana.";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Greška pri dodavanju šablon vežbe: {ex.Message}");
+                TempData["ErrorMessage"] = "Greška pri dodavanju vežbe.";
+            }
+
+            return RedirectToAction(nameof(SabloniVezbi), new { treningId = treningId });
         }
     }
 }
