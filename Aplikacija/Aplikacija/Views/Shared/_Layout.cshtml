@@ -150,7 +150,7 @@
                 else
                 {
                     <a class="fw-bold me-3 text-decoration-none text-dark" asp-controller="Korisnik" asp-action="MojProfil">Profil</a>
-                    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")" method="post">
+                    <form asp-controller="Account" asp-action="Logout" method="post">
                         <button type="submit" class="btn btn-outline-danger btn-sm">ODJAVA</button>
                     </form>
                 }

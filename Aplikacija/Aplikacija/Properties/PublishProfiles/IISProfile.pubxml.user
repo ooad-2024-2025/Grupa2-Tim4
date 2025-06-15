@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- https://go.microsoft.com/fwlink/?LinkID=208121. -->
+<Project>
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAAR/AnV3AdUmcQywlrNk7fgAAAAACAAAAAAAQZgAAAAEAACAAAAC5YFxP0aBfLVp4dFckMc11tBZjHOb5TT04GlWeSyRc3QAAAAAOgAAAAAIAACAAAAArTY1GSkY3zRKmBZ8YBwyC/UtFCHhYyHK1nkoZMQ7oGCAAAAAf/uBcv5SLeDIUFZu+jCMsPGz64CKO5SNqDCySWIA+vUAAAAALZwQPw0B7vSZwC6mphovcowlXVc2CLe2Wgct3ESONNIYY2Hq1T4nKDKkbmh+jhsdac6TVd6njIYvO/O591G+V</EncryptedPassword>
+    <History>True|2025-06-15T12:50:21.9426604Z||;True|2025-06-15T14:45:16.5018294+02:00||;True|2025-06-15T14:34:06.1984681+02:00||;True|2025-06-15T14:12:51.3396633+02:00||;True|2025-06-15T14:09:36.8050819+02:00||;True|2025-06-15T14:04:36.8208721+02:00||;True|2025-06-15T13:45:32.1975585+02:00||;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="AplikacijaContextConnection">
+      <Value>Data Source=SQL6032.site4now.net%3bInitial Catalog=db_ab930a_ooad2025%3bUser Id=db_ab930a_ooad2025_admin%3bPassword=OOADg2t4%24</Value>
+    </DestinationConnectionStrings>
+    <DestinationConnectionStrings Include="DefaultConnection">
+      <Value>Data Source=SQL6032.site4now.net%3bInitial Catalog=db_ab930a_ooad2025%3bUser Id=db_ab930a_ooad2025_admin%3bPassword=OOADg2t4%24</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+  <ItemGroup>
+    <EFMigrations Include="Aplikacija.Data.ApplicationDbContext">
+      <Value>Data Source=SQL6032.site4now.net%3bInitial Catalog=db_ab930a_ooad2025%3bUser Id=db_ab930a_ooad2025_admin%3bPassword=OOADg2t4%24</Value>
+    </EFMigrations>
+  </ItemGroup>
+</Project>
