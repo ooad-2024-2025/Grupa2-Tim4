@@ -1,64 +1,343 @@
 ﻿@model Aplikacija.Models.PrijavaZaZaposljavanje
-
 @{
     ViewData["Title"] = "Prijava za posao";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <h2 class="text-center mb-4 fw-bold" style="color: darkorange; text-transform: uppercase; font-size: 2rem;">
-                Prijava za posao
-            </h2>
-            <div class="card shadow-sm border-0">
-                <div class="card-body">
-                    <form asp-action="Create" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<style>
+    .job-application-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+        position: relative;
+        overflow: hidden;
+    }
 
-                        <div class="mb-3">
-                            <label asp-for="Ime" class="form-label">Ime</label>
-                            <input asp-for="Ime" class="form-control" />
-                            <span asp-validation-for="Ime" class="text-danger"></span>
-                        </div>
+        .job-application-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
 
-                        <div class="mb-3">
-                            <label asp-for="Prezime" class="form-label">Prezime</label>
-                            <input asp-for="Prezime" class="form-control" />
-                            <span asp-validation-for="Prezime" class="text-danger"></span>
-                        </div>
+    .application-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.1), 0 16px 32px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
 
-                        <div class="mb-3">
-                            <label asp-for="Email" class="form-label">Email adresa</label>
-                            <input asp-for="Email" class="form-control" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
+        .application-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
 
-                        <div class="mb-3">
-                            <label asp-for="CV" class="form-label">CV (biografija)</label>
-                            <textarea asp-for="CV" class="form-control" rows="6" placeholder="Unesite svoju biografiju..."></textarea>
-                            <span asp-validation-for="CV" class="text-danger"></span>
-                        </div>
+    @@keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
 
-                        @* Prikazuj checkbox samo ako je korisnik Admin *@
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" asp-for="Pregledano" />
-                                <label class="form-check-label" asp-for="Pregledano">Pregledano</label>
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    .application-title {
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.1);
+        font-weight: 800;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        letter-spacing: -0.02em;
+        position: relative;
+    }
+
+        .application-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: #ffffff;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+        }
+
+    .form-floating {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+        .form-floating .form-control {
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            border-radius: 16px;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            height: auto;
+            padding-top: 1.625rem;
+            padding-bottom: 0.625rem;
+        }
+
+            .form-floating .form-control:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15), 0 8px 24px rgba(102, 126, 234, 0.1);
+                background: rgba(255, 255, 255, 0.95);
+                transform: translateY(-1px);
+            }
+
+        .form-floating label {
+            color: #6c757d;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 1rem 1.25rem;
+        }
+
+        .form-floating .form-control:focus ~ label,
+        .form-floating .form-control:not(:placeholder-shown) ~ label {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .form-floating textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        width: 100%;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+    }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+        }
+
+            .submit-btn:hover::before {
+                left: 100%;
+            }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+    .admin-checkbox {
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 16px;
+        padding: 1.25rem;
+        border: 2px solid rgba(102, 126, 234, 0.1);
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .admin-checkbox:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(102, 126, 234, 0.2);
+        }
+
+    .form-check-input:checked {
+        background-color: #667eea;
+        border-color: #667eea;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .form-check-label {
+        font-weight: 500;
+        color: #495057;
+        margin-left: 0.5rem;
+    }
+
+    .warning-alert {
+        background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+        border: none;
+        border-radius: 16px;
+        color: white;
+        font-weight: 500;
+        padding: 1.25rem;
+        margin-top: 1.5rem;
+        box-shadow: 0 8px 24px rgba(255, 193, 7, 0.2);
+        backdrop-filter: blur(10px);
+    }
+
+        .warning-alert strong {
+            font-weight: 700;
+        }
+
+    .text-danger {
+        color: #dc3545 !important;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-top: 0.5rem;
+        display: block;
+    }
+
+    .validation-summary {
+        background: rgba(220, 53, 69, 0.1);
+        border: 1px solid rgba(220, 53, 69, 0.2);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        color: #dc3545;
+    }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .job-application-container {
+            padding: 1rem;
+        }
+
+        .application-title {
+            font-size: 2rem;
+        }
+
+        .application-card {
+            border-radius: 20px;
+            margin: 0 0.5rem;
+        }
+    }
+
+    /* Animation for form elements */
+    .form-floating {
+        animation: slideInUp 0.6s ease-out;
+        animation-fill-mode: both;
+    }
+
+        .form-floating:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .form-floating:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .form-floating:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .form-floating:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .submit-btn {
+        animation: slideInUp 0.6s ease-out 0.5s;
+        animation-fill-mode: both;
+    }
+</style>
+
+<div class="job-application-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <h1 class="application-title">Prijava za posao</h1>
+
+                <div class="application-card">
+                    <div class="card-body p-4 p-md-5">
+                        <form asp-action="Create" method="post" novalidate>
+                            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+                            <div class="form-floating">
+                                <input asp-for="Ime" class="form-control" placeholder="Unesite vaše ime" />
+                                <label asp-for="Ime">Ime</label>
+                                <span asp-validation-for="Ime" class="text-danger"></span>
                             </div>
-                        }
 
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">Pošalji prijavu</button>
-                        </div>
-                        @if (!User.Identity.IsAuthenticated)
-                        {
-                            <div class="alert alert-warning mt-3">
-                                <strong>Upozorenje:</strong> Niste prijavljeni. Prijava za posao neće biti sačuvana!
+                            <div class="form-floating">
+                                <input asp-for="Prezime" class="form-control" placeholder="Unesite vaše prezime" />
+                                <label asp-for="Prezime">Prezime</label>
+                                <span asp-validation-for="Prezime" class="text-danger"></span>
                             </div>
-                        }
 
-                    </form>
+                            <div class="form-floating">
+                                <input asp-for="Email" class="form-control" type="email" placeholder="name@example.com" />
+                                <label asp-for="Email">Email adresa</label>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating">
+                                <textarea asp-for="CV" class="form-control" placeholder="Opišite vaše iskustvo, obrazovanje i vještine..."></textarea>
+                                <label asp-for="CV">CV (biografija)</label>
+                                <span asp-validation-for="CV" class="text-danger"></span>
+                            </div>
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <div class="admin-checkbox">
+                                    <div class="form-check">
+                                        <input class="form-check-input" asp-for="Pregledano" />
+                                        <label class="form-check-label" asp-for="Pregledano">
+                                            Pregledano
+                                        </label>
+                                    </div>
+                                </div>
+                            }
+
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-paper-plane me-2"></i>
+                                Pošalji prijavu
+                            </button>
+
+                            @if (!User.Identity.IsAuthenticated)
+                            {
+                                <div class="warning-alert">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <strong>Upozorenje:</strong> Niste prijavljeni. Prijava za posao neće biti sačuvana!
+                                </div>
+                            }
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -69,4 +348,50 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        // Enhanced form interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const formControls = document.querySelectorAll('.form-control');
+
+            formControls.forEach(control => {
+                // Add focus animation
+                control.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'translateY(-2px)';
+                });
+
+                control.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'translateY(0)';
+                });
+
+                // Character counter for CV field
+                if (control.tagName === 'TEXTAREA') {
+                    const maxLength = 1000;
+                    const counter = document.createElement('div');
+                    counter.className = 'character-counter';
+                    counter.style.cssText = 'text-align: right; font-size: 0.875rem; color: #6c757d; margin-top: 0.5rem;';
+
+                    const updateCounter = () => {
+                        const remaining = maxLength - control.value.length;
+                        counter.textContent = `${control.value.length}/${maxLength} karaktera`;
+                        counter.style.color = remaining < 100 ? '#dc3545' : '#6c757d';
+                    };
+
+                    control.setAttribute('maxlength', maxLength);
+                    control.parentElement.appendChild(counter);
+                    control.addEventListener('input', updateCounter);
+                    updateCounter();
+                }
+            });
+
+            // Form submission animation
+            const form = document.querySelector('form');
+            const submitBtn = document.querySelector('.submit-btn');
+
+            form.addEventListener('submit', function() {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Šalje se...';
+                submitBtn.disabled = true;
+            });
+        });
+    </script>
 }

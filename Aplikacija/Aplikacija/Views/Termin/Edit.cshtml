@@ -1,45 +1,458 @@
 ﻿@model Aplikacija.Models.Termin
-
 @{
     ViewData["Title"] = "Uredi termin";
 }
 
-<h1 class="mb-4" style="color: #f55f3a;">
-    <i class="fas fa-edit me-2"></i>Uredi termin
-</h1>
+<style>
+    .edit-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+        position: relative;
+        overflow: hidden;
+    }
 
-<div class="card shadow-sm border-0">
-    <div class="card-body">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-            <input type="hidden" asp-for="IdTermin" />
+        .edit-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
 
-            <div class="mb-3">
-                <label asp-for="Datum" class="form-label"><strong>Datum</strong></label>
-                <input asp-for="Datum" class="form-control" type="date" />
-                <span asp-validation-for="Datum" class="text-danger"></span>
+    .edit-title {
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-weight: 800;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        letter-spacing: -0.02em;
+        position: relative;
+        animation: slideInDown 0.6s ease-out;
+    }
+
+        .edit-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: #ffffff;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+        }
+
+    .edit-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.1), 0 16px 32px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        position: relative;
+        overflow: hidden;
+        animation: slideInUp 0.8s ease-out 0.2s;
+        animation-fill-mode: both;
+    }
+
+        .edit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f55f3a, #e44e2e, #f55f3a);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+    @@keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    .card-body-modern {
+        padding: 2.5rem;
+    }
+
+    .validation-summary {
+        background: rgba(220, 53, 69, 0.1);
+        border: 1px solid rgba(220, 53, 69, 0.2);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        color: #dc3545;
+    }
+
+    .form-floating {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+        .form-floating .form-control, .form-floating .form-select {
+            border: 2px solid rgba(245, 95, 58, 0.1);
+            border-radius: 16px;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            height: auto;
+            padding-top: 1.625rem;
+            padding-bottom: 0.625rem;
+        }
+
+            .form-floating .form-control:focus, .form-floating .form-select:focus {
+                border-color: #f55f3a;
+                box-shadow: 0 0 0 0.2rem rgba(245, 95, 58, 0.15), 0 8px 24px rgba(245, 95, 58, 0.1);
+                background: rgba(255, 255, 255, 0.95);
+                transform: translateY(-1px);
+            }
+
+        .form-floating label {
+            color: #6c757d;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-floating .form-control:focus ~ label,
+        .form-floating .form-control:not(:placeholder-shown) ~ label,
+        .form-floating .form-select:focus ~ label,
+        .form-floating .form-select:not([value=""]) ~ label {
+            color: #f55f3a;
+            font-weight: 700;
+        }
+
+    .label-icon {
+        background: linear-gradient(135deg, #f55f3a, #e44e2e);
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        box-shadow: 0 2px 6px rgba(245, 95, 58, 0.3);
+        flex-shrink: 0;
+    }
+
+    .text-danger {
+        color: #dc3545 !important;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-top: 0.5rem;
+        display: block;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .save-btn {
+        background: linear-gradient(135deg, #f55f3a 0%, #e44e2e 100%);
+        border: none;
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(245, 95, 58, 0.3);
+        min-width: 180px;
+    }
+
+        .save-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(245, 95, 58, 0.4);
+        }
+
+            .save-btn:hover::before {
+                left: 100%;
+            }
+
+        .save-btn:active {
+            transform: translateY(0);
+        }
+
+    .back-btn {
+        background: rgba(108, 117, 125, 0.1);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(108, 117, 125, 0.2);
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        min-width: 140px;
+    }
+
+        .back-btn:hover {
+            background: rgba(108, 117, 125, 0.2);
+            border-color: rgba(108, 117, 125, 0.4);
+            color: #495057;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(108, 117, 125, 0.2);
+            text-decoration: none;
+        }
+
+    .edit-info {
+        background: linear-gradient(135deg, rgba(245, 95, 58, 0.03), rgba(228, 78, 46, 0.03));
+        border-radius: 16px;
+        border: 1px solid rgba(245, 95, 58, 0.1);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+        .edit-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #f55f3a, #e44e2e);
+            border-radius: 1px;
+        }
+
+    .edit-info-title {
+        color: #f55f3a;
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .edit-info-text {
+        color: #6c757d;
+        font-size: 0.95rem;
+        font-weight: 500;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    @@keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Animation delays for form fields */
+    .form-floating:nth-child(2) {
+        animation: slideInLeft 0.6s ease-out 0.4s;
+        animation-fill-mode: both;
+    }
+
+    .form-floating:nth-child(3) {
+        animation: slideInLeft 0.6s ease-out 0.5s;
+        animation-fill-mode: both;
+    }
+
+    .form-floating:nth-child(4) {
+        animation: slideInLeft 0.6s ease-out 0.6s;
+        animation-fill-mode: both;
+    }
+
+    @@keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .button-group {
+        animation: slideInUp 0.6s ease-out 0.8s;
+        animation-fill-mode: both;
+    }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .edit-container {
+            padding: 1.5rem 1rem;
+        }
+
+        .edit-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .edit-card {
+            border-radius: 20px;
+            margin: 0 0.5rem;
+        }
+
+        .card-body-modern {
+            padding: 2rem;
+        }
+
+        .button-group {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .save-btn,
+        .back-btn {
+            width: 100%;
+            max-width: none;
+        }
+
+        .edit-info {
+            padding: 1.25rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .edit-title {
+            font-size: 1.8rem;
+        }
+
+        .card-body-modern {
+            padding: 1.5rem;
+        }
+
+        .label-icon {
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+        }
+    }
+</style>
+
+<div class="edit-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <h1 class="edit-title position-relative">
+                    <i class="fas fa-edit me-3"></i>Uredi termin
+                </h1>
+
+                <div class="edit-card">
+                    <div class="card-body-modern">
+                        <div class="edit-info">
+                            <div class="edit-info-title">
+                                <i class="fas fa-info-circle"></i>
+                                Uređivanje termina
+                            </div>
+                            <p class="edit-info-text">
+                                Možete promeniti datum, vreme i vrstu treninga. Postojeće rezervacije će biti zadržane.
+                            </p>
+                        </div>
+
+                        <form asp-action="Edit" novalidate>
+                            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+                            <input type="hidden" asp-for="IdTermin" />
+                            <input type="hidden" asp-for="TrenerId" />
+
+                            <div class="form-floating">
+                                <input asp-for="Datum" class="form-control" type="date" placeholder="Datum" />
+                                <label asp-for="Datum">
+                                    <div class="label-icon">
+                                        <i class="fas fa-calendar-day"></i>
+                                    </div>
+                                    Datum
+                                </label>
+                                <span asp-validation-for="Datum" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating">
+                                <input asp-for="Vrijeme" class="form-control" type="time" placeholder="Vrijeme" />
+                                <label asp-for="Vrijeme">
+                                    <div class="label-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    Vrijeme
+                                </label>
+                                <span asp-validation-for="Vrijeme" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating">
+                                <select asp-for="Vrsta" class="form-select" asp-items="Html.GetEnumSelectList<VrstaTreninga>()">
+                                    <option value="">-- Izaberite vrstu treninga --</option>
+                                </select>
+                                <label asp-for="Vrsta">
+                                    <div class="label-icon">
+                                        <i class="fas fa-dumbbell"></i>
+                                    </div>
+                                    Vrsta treninga
+                                </label>
+                                <span asp-validation-for="Vrsta" class="text-danger"></span>
+                            </div>
+
+                            <div class="button-group">
+                                <input type="submit" value="Sačuvaj promjene" class="save-btn" />
+                                <a asp-action="Index" class="back-btn">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Nazad
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label asp-for="Vrijeme" class="form-label"><strong>Vrijeme</strong></label>
-                <input asp-for="Vrijeme" class="form-control" type="time" />
-                <span asp-validation-for="Vrijeme" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Vrsta" class="form-label"><strong>Vrsta treninga</strong></label>
-                <select asp-for="Vrsta" class="form-control" asp-items="Html.GetEnumSelectList<VrstaTreninga>()"></select>
-                <span asp-validation-for="Vrsta" class="text-danger"></span>
-            </div>
-
-            <input type="hidden" asp-for="TrenerId" />
-
-
-            <div class="d-flex gap-2">
-                <input type="submit" value="Sačuvaj promjene" class="btn text-white" style="background-color: #f55f3a;" />
-                <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
@@ -47,4 +460,26 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Set minimum date to today
+            var today = new Date().toISOString().split('T')[0];
+            var dateInput = document.querySelector('input[type="date"]');
+            if (dateInput) {
+                dateInput.setAttribute('min', today);
+            }
+
+            // Form submission animation
+            var form = document.querySelector('form');
+            var saveBtn = document.querySelector('.save-btn');
+
+            if (form && saveBtn) {
+                form.addEventListener('submit', function() {
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Čuvam...';
+                    saveBtn.disabled = true;
+                });
+            }
+        });
+    </script>
 }

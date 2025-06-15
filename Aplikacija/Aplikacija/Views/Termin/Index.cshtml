@@ -3,50 +3,507 @@
     ViewData["Title"] = "Lista termina";
 }
 
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-dark fw-bold"><i class="fas fa-calendar-alt me-2"></i>Lista termina</h2>
-        <a asp-action="Create" class="btn btn-primary">
-            <i class="fas fa-plus me-1"></i> Napravi termin
-        </a>
-    </div>
+<style>
+    .list-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+        position: relative;
+        overflow: hidden;
+    }
 
-    <table class="table table-bordered table-striped shadow-sm">
-        <thead class="table-dark">
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.Datum)</th>
-                <th>@Html.DisplayNameFor(model => model.Vrijeme)</th>
-                <th>@Html.DisplayNameFor(model => model.Vrsta)</th>
-                <th>@Html.DisplayNameFor(model => model.Trener)</th>
-                <th class="text-center">Akcije</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@Html.DisplayFor(modelItem => item.Datum)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Vrijeme)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Vrsta)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Trener.Email)</td>
-                    <td class="text-center">
-                        <div class="btn-group btn-group-sm" role="group">
-                            <a asp-action="Details" asp-route-id="@item.IdTermin" class="btn btn-info" title="Detalji">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            @if (User.IsInRole("Admin") || User.IsInRole("Trener"))
-                            {
-                                <a asp-action="Edit" asp-route-id="@item.IdTermin" class="btn btn-warning" title="Uredi">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a asp-action="Delete" asp-route-id="@item.IdTermin" class="btn btn-danger" title="Obriši">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            }
-                        </div>
-                    </td>
-                </tr>
+        .list-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        animation: slideInDown 0.6s ease-out;
+    }
+
+    .list-title {
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-weight: 800;
+        font-size: 2.5rem;
+        margin: 0;
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .create-btn {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        border-radius: 16px;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(40, 167, 69, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .create-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(40, 167, 69, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+            .create-btn:hover::before {
+                left: 100%;
             }
-        </tbody>
-    </table>
+
+    .table-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.1), 0 16px 32px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        position: relative;
+        overflow: hidden;
+        animation: slideInUp 0.8s ease-out 0.2s;
+        animation-fill-mode: both;
+    }
+
+        .table-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+    @@keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    .table-modern {
+        margin: 0;
+        border: none;
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+    }
+
+        .table-modern thead th {
+            background: linear-gradient(135deg, #343a40, #495057);
+            color: white;
+            border: none;
+            padding: 1.25rem 1rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+
+            .table-modern thead th:first-child {
+                border-top-left-radius: 20px;
+            }
+
+            .table-modern thead th:last-child {
+                border-top-right-radius: 20px;
+            }
+
+            .table-modern thead th::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            }
+
+        .table-modern tbody tr {
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+            .table-modern tbody tr:hover {
+                background: rgba(102, 126, 234, 0.03);
+                transform: scale(1.005);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+            }
+
+            .table-modern tbody tr:nth-child(even) {
+                background: rgba(248, 249, 250, 0.5);
+            }
+
+                .table-modern tbody tr:nth-child(even):hover {
+                    background: rgba(102, 126, 234, 0.05);
+                }
+
+        .table-modern tbody td {
+            border: none;
+            padding: 1rem;
+            font-weight: 500;
+            color: #495057;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .table-modern tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+            .table-modern tbody tr:last-child td:first-child {
+                border-bottom-left-radius: 20px;
+            }
+
+            .table-modern tbody tr:last-child td:last-child {
+                border-bottom-right-radius: 20px;
+            }
+
+    .btn-group-modern {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .btn-modern {
+        border: none;
+        border-radius: 10px;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+    }
+
+        .btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-modern:hover::before {
+            left: 100%;
+        }
+
+    .btn-info-modern {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: white;
+        box-shadow: 0 3px 8px rgba(23, 162, 184, 0.3);
+    }
+
+        .btn-info-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(23, 162, 184, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-warning-modern {
+        background: linear-gradient(135deg, #ffc107, #ff8c00);
+        color: white;
+        box-shadow: 0 3px 8px rgba(255, 193, 7, 0.3);
+    }
+
+        .btn-warning-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 193, 7, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-danger-modern {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+        box-shadow: 0 3px 8px rgba(220, 53, 69, 0.3);
+    }
+
+        .btn-danger-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #6c757d;
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.6;
+        color: #495057;
+    }
+
+    .empty-state-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #495057;
+    }
+
+    .empty-state-text {
+        font-size: 1.1rem;
+        opacity: 0.8;
+    }
+
+    @@keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Row animations */
+    .table-modern tbody tr {
+        animation: slideInLeft 0.6s ease-out;
+        animation-fill-mode: both;
+    }
+
+        .table-modern tbody tr:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .table-modern tbody tr:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .table-modern tbody tr:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .table-modern tbody tr:nth-child(4) {
+            animation-delay: 0.25s;
+        }
+
+        .table-modern tbody tr:nth-child(5) {
+            animation-delay: 0.3s;
+        }
+
+        .table-modern tbody tr:nth-child(6) {
+            animation-delay: 0.35s;
+        }
+
+        .table-modern tbody tr:nth-child(7) {
+            animation-delay: 0.4s;
+        }
+
+        .table-modern tbody tr:nth-child(8) {
+            animation-delay: 0.45s;
+        }
+
+    @@keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .list-container {
+            padding: 1.5rem 1rem;
+        }
+
+        .header-section {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: stretch;
+        }
+
+        .list-title {
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .create-btn {
+            align-self: center;
+            width: fit-content;
+        }
+
+        .table-container {
+            border-radius: 20px;
+            overflow-x: auto;
+        }
+
+        .table-modern {
+            min-width: 600px;
+        }
+
+            .table-modern thead th,
+            .table-modern tbody td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+            }
+
+        .btn-group-modern {
+            gap: 0.25rem;
+        }
+
+        .btn-modern {
+            min-width: 32px;
+            height: 32px;
+            padding: 0.4rem;
+            font-size: 0.8rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .list-title {
+            font-size: 1.8rem;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .table-modern {
+            min-width: 550px;
+        }
+    }
+</style>
+
+<div class="list-container">
+    <div class="container">
+        <div class="header-section">
+            <h2 class="list-title">
+                <i class="fas fa-calendar-alt"></i>
+                Lista termina
+            </h2>
+            <a asp-action="Create" class="create-btn">
+                <i class="fas fa-plus"></i>
+                Napravi termin
+            </a>
+        </div>
+
+        <div class="table-container">
+            @if (Model.Any())
+            {
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.Datum)</th>
+                            <th>@Html.DisplayNameFor(model => model.Vrijeme)</th>
+                            <th>@Html.DisplayNameFor(model => model.Vrsta)</th>
+                            <th>@Html.DisplayNameFor(model => model.Trener)</th>
+                            <th class="text-center">Akcije</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.Datum)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Vrijeme)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Vrsta)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Trener.Email)</td>
+                                <td class="text-center">
+                                    <div class="btn-group-modern">
+                                        <a asp-action="Details" asp-route-id="@item.IdTermin"
+                                           class="btn-modern btn-info-modern"
+                                           title="Detalji">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Trener"))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.IdTermin"
+                                               class="btn-modern btn-warning-modern"
+                                               title="Uredi">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.IdTermin"
+                                               class="btn-modern btn-danger-modern"
+                                               title="Obriši">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <h3 class="empty-state-title">Nema termina</h3>
+                    <p class="empty-state-text">Trenutno nema kreiranih termina u sistemu.</p>
+                </div>
+            }
+        </div>
+    </div>
 </div>

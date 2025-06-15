@@ -1,39 +1,505 @@
 ﻿@model Aplikacija.Models.Termin
-
 @{
     ViewData["Title"] = "Detalji termina";
 }
 
-<h1 class="mb-4" style="color: #f55f3a;">
-    <i class="fas fa-calendar-alt me-2"></i>Detalji termina
-</h1>
+<style>
+    .details-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+        position: relative;
+        overflow: hidden;
+    }
 
-<div class="card shadow-sm mt-3" style="border: 1px solid #f55f3a;">
-    <div class="card-header text-white" style="background-color: #f55f3a;">
-        <strong>Informacije o terminu</strong>
+        .details-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+    .details-title {
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-weight: 800;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        letter-spacing: -0.02em;
+        position: relative;
+        animation: slideInDown 0.6s ease-out;
+    }
+
+        .details-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: #ffffff;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+        }
+
+    .appointment-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.1), 0 16px 32px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        position: relative;
+        overflow: hidden;
+        animation: slideInUp 0.8s ease-out 0.2s;
+        animation-fill-mode: both;
+    }
+
+        .appointment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f55f3a, #e44e2e, #f55f3a);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+    @@keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    .card-header-modern {
+        background: linear-gradient(135deg, #f55f3a 0%, #e44e2e 100%);
+        color: white;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .card-header-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ffffff, rgba(255, 255, 255, 0.5), #ffffff);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+        .card-header-modern::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        }
+
+    .header-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .header-icon {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+    }
+
+    .details-section {
+        padding: 2rem;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        padding: 1.25rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+    }
+
+        .detail-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .detail-item:hover {
+            background: rgba(245, 95, 58, 0.03);
+            padding-left: 1rem;
+            box-shadow: 0 4px 12px rgba(245, 95, 58, 0.05);
+        }
+
+    .detail-icon {
+        background: linear-gradient(135deg, #f55f3a, #e44e2e);
+        color: white;
+        width: 45px;
+        height: 45px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1.25rem;
+        flex-shrink: 0;
+        font-size: 1.1rem;
+        box-shadow: 0 6px 16px rgba(245, 95, 58, 0.25);
+        transition: all 0.3s ease;
+    }
+
+    .detail-item:hover .detail-icon {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(245, 95, 58, 0.35);
+    }
+
+    .detail-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .detail-label {
+        font-weight: 700;
+        color: #495057;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+        opacity: 0.8;
+    }
+
+    .detail-value {
+        color: #2c3e50;
+        font-size: 1.2rem;
+        font-weight: 500;
+        word-break: break-word;
+        line-height: 1.4;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        animation: slideInUp 0.6s ease-out 0.8s;
+        animation-fill-mode: both;
+    }
+
+    .edit-btn {
+        background: linear-gradient(135deg, #f55f3a 0%, #e44e2e 100%);
+        border: none;
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(245, 95, 58, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: 140px;
+        justify-content: center;
+    }
+
+        .edit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(245, 95, 58, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+            .edit-btn:hover::before {
+                left: 100%;
+            }
+
+        .edit-btn:active {
+            transform: translateY(0);
+        }
+
+    .back-btn {
+        background: rgba(108, 117, 125, 0.1);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(108, 117, 125, 0.2);
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: 140px;
+        justify-content: center;
+    }
+
+        .back-btn:hover {
+            background: rgba(108, 117, 125, 0.2);
+            border-color: rgba(108, 117, 125, 0.4);
+            color: #495057;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(108, 117, 125, 0.2);
+            text-decoration: none;
+        }
+
+    .status-badge {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 6px 16px rgba(40, 167, 69, 0.2);
+        margin-bottom: 1rem;
+        animation: slideInLeft 0.6s ease-out 0.6s;
+        animation-fill-mode: both;
+    }
+
+    @@keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Animation delays for detail items */
+    .detail-item:nth-child(1) {
+        animation: slideInLeft 0.6s ease-out 0.4s;
+        animation-fill-mode: both;
+    }
+
+    .detail-item:nth-child(2) {
+        animation: slideInLeft 0.6s ease-out 0.5s;
+        animation-fill-mode: both;
+    }
+
+    .detail-item:nth-child(3) {
+        animation: slideInLeft 0.6s ease-out 0.6s;
+        animation-fill-mode: both;
+    }
+
+    .detail-item:nth-child(4) {
+        animation: slideInLeft 0.6s ease-out 0.7s;
+        animation-fill-mode: both;
+    }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .details-container {
+            padding: 1.5rem 1rem;
+        }
+
+        .details-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .appointment-card {
+            border-radius: 20px;
+            margin: 0 0.5rem;
+        }
+
+        .card-header-modern,
+        .details-section {
+            padding: 1.5rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .edit-btn,
+        .back-btn {
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .detail-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 1rem 0;
+        }
+
+        .detail-icon {
+            margin-right: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-content {
+            width: 100%;
+        }
+
+        .detail-value {
+            font-size: 1.1rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .details-title {
+            font-size: 1.8rem;
+        }
+
+        .card-header-modern,
+        .details-section {
+            padding: 1.25rem;
+        }
+
+        .detail-icon {
+            width: 40px;
+            height: 40px;
+        }
+    }
+</style>
+
+<div class="details-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <h1 class="details-title position-relative">
+                    <i class="fas fa-calendar-alt me-3"></i>Detalji termina
+                </h1>
+
+                <div class="status-badge">
+                    <i class="fas fa-check-circle"></i>
+                    Aktivan termin
+                </div>
+
+                <div class="appointment-card">
+                    <div class="card-header-modern">
+                        <h4 class="header-title">
+                            <div class="header-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            Informacije o terminu
+                        </h4>
+                    </div>
+
+                    <div class="details-section">
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Datum</div>
+                                <div class="detail-value">@Html.DisplayFor(model => model.Datum)</div>
+                            </div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Vrijeme</div>
+                                <div class="detail-value">@Html.DisplayFor(model => model.Vrijeme)</div>
+                            </div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-dumbbell"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Vrsta treninga</div>
+                                <div class="detail-value">@Html.DisplayFor(model => model.Vrsta)</div>
+                            </div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Trener</div>
+                                <div class="detail-value">@Html.DisplayFor(model => model.Trener.Email)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <a asp-action="Edit" asp-route-id="@Model?.IdTermin" class="edit-btn">
+                        <i class="fas fa-edit"></i>
+                        Uredi termin
+                    </a>
+                    <a asp-action="Index" class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                        Nazad na listu
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-        <dl class="row mb-0">
-            <dt class="col-sm-3">Datum:</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.Datum)</dd>
-
-            <dt class="col-sm-3">Vrijeme:</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.Vrijeme)</dd>
-
-            <dt class="col-sm-3">Vrsta treninga:</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.Vrsta)</dd>
-
-            <dt class="col-sm-3">Trener:</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.Trener.Email)</dd>
-        </dl>
-    </div>
-</div>
-
-<div class="mt-4 d-flex gap-2">
-    <a asp-action="Edit" asp-route-id="@Model?.IdTermin" class="btn text-white" style="background-color: #f55f3a;">
-        <i class="fas fa-edit me-1"></i> Uredi
-    </a>
-    <a asp-action="Index" class="btn btn-secondary">
-        <i class="fas fa-arrow-left me-1"></i> Nazad na listu
-    </a>
 </div>

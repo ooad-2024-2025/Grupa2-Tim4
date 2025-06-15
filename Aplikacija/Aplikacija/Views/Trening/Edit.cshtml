@@ -3,130 +3,767 @@
     ViewData["Title"] = "Uredi vežbu";
 }
 
-<div class="container mt-5">
-    <h2 class="text-dark fw-bold mb-4">
-        <i class="fas fa-edit me-2" style="color: #f55f3a;"></i>Uredi vežbu
-    </h2>
+<style>
+    .edit-exercise-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+        position: relative;
+        overflow: hidden;
+    }
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header" style="background-color: #f55f3a; color: white;">
-                    <h5 class="mb-0">Informacije o treningu</h5>
-                </div>
-                <div class="card-body">
-                    <p><strong>Datum:</strong> @Model.Trening?.Termin?.Datum.ToString("dd.MM.yyyy")</p>
-                    <p><strong>Vrijeme:</strong> @Model.Trening?.Termin?.Vrijeme.ToString(@"hh\:mm")</p>
-                    <p><strong>Član:</strong> @Model.Trening?.Clan?.Email</p>
-                </div>
-            </div>
+        .edit-exercise-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
 
-            <div class="card shadow-sm mt-4">
-                <div class="card-header bg-warning text-dark">
-                    <h5 class="mb-0">Uredi vežbu</h5>
-                </div>
-                <div class="card-body">
-                    <form asp-action="Edit">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    .edit-title {
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-weight: 800;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        letter-spacing: -0.02em;
+        position: relative;
+        animation: slideInDown 0.6s ease-out;
+    }
 
-                        <input type="hidden" asp-for="IdVezba" />
-                        <input type="hidden" asp-for="TreningId" />
+        .edit-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: #ffffff;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+        }
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="NazivVezbe" class="form-label"></label>
-                                    <input asp-for="NazivVezbe" class="form-control" />
-                                    <span asp-validation-for="NazivVezbe" class="text-danger"></span>
-                                </div>
+    .info-card, .form-card, .values-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.1), 0 16px 32px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .info-card {
+        animation: slideInLeft 0.8s ease-out 0.2s;
+        animation-fill-mode: both;
+    }
+
+    .form-card {
+        animation: slideInLeft 0.8s ease-out 0.4s;
+        animation-fill-mode: both;
+    }
+
+    .values-card {
+        animation: slideInRight 0.8s ease-out 0.6s;
+        animation-fill-mode: both;
+    }
+
+    .info-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #f55f3a, #e44e2e, #f55f3a);
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
+    }
+
+    .form-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #ffc107, #ff8c00, #ffc107);
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
+    }
+
+    .values-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #17a2b8, #138496, #17a2b8);
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
+    }
+
+    @@keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    .card-header-modern {
+        padding: 1.5rem 2rem;
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 700;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .info-header {
+        background: linear-gradient(135deg, #f55f3a, #e44e2e);
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, #ffc107, #ff8c00);
+        color: #333;
+    }
+
+    .values-header {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+    }
+
+    .header-icon {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+    }
+
+    .card-body-modern {
+        padding: 2rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        margin-bottom: 0.5rem;
+    }
+
+        .info-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+    .info-icon {
+        background: linear-gradient(135deg, #f55f3a, #e44e2e);
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 0.9rem;
+        box-shadow: 0 3px 8px rgba(245, 95, 58, 0.3);
+    }
+
+    .info-label {
+        font-weight: 700;
+        color: #495057;
+        margin-right: 0.5rem;
+    }
+
+    .info-value {
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    .validation-summary {
+        background: rgba(220, 53, 69, 0.1);
+        border: 1px solid rgba(220, 53, 69, 0.2);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        color: #dc3545;
+    }
+
+    .form-floating {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+        .form-floating .form-control, .form-floating .form-select {
+            border: 2px solid rgba(255, 193, 7, 0.1);
+            border-radius: 16px;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            height: auto;
+            padding-top: 1.625rem;
+            padding-bottom: 0.625rem;
+        }
+
+            .form-floating .form-control:focus, .form-floating .form-select:focus {
+                border-color: #ffc107;
+                box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.15), 0 8px 24px rgba(255, 193, 7, 0.1);
+                background: rgba(255, 255, 255, 0.95);
+                transform: translateY(-1px);
+            }
+
+        .form-floating label {
+            color: #6c757d;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-floating .form-control:focus ~ label,
+        .form-floating .form-control:not(:placeholder-shown) ~ label,
+        .form-floating .form-select:focus ~ label {
+            color: #ffc107;
+            font-weight: 700;
+        }
+
+    .label-icon {
+        background: linear-gradient(135deg, #ffc107, #ff8c00);
+        color: white;
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        box-shadow: 0 2px 6px rgba(255, 193, 7, 0.3);
+        flex-shrink: 0;
+    }
+
+    .input-group-modern {
+        position: relative;
+    }
+
+    .input-group-text-modern {
+        background: linear-gradient(135deg, #6c757d, #5a6268);
+        color: white;
+        border: none;
+        border-radius: 0 16px 16px 0;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .textarea-floating {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+        .textarea-floating textarea {
+            border: 2px solid rgba(255, 193, 7, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem 1.25rem 0.75rem;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+            .textarea-floating textarea:focus {
+                border-color: #ffc107;
+                box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.15), 0 8px 24px rgba(255, 193, 7, 0.1);
+                background: rgba(255, 255, 255, 0.95);
+                transform: translateY(-1px);
+            }
+
+        .textarea-floating label {
+            position: absolute;
+            top: 1rem;
+            left: 1.25rem;
+            color: #6c757d;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            background: transparent;
+            padding: 0 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .textarea-floating textarea:focus ~ label,
+        .textarea-floating textarea:not(:placeholder-shown) ~ label {
+            top: -0.5rem;
+            left: 1rem;
+            font-size: 0.85rem;
+            color: #ffc107;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0 0.5rem;
+            border-radius: 4px;
+        }
+
+    .text-danger {
+        color: #dc3545 !important;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-top: 0.5rem;
+        display: block;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .save-btn {
+        background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+        border: none;
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(255, 193, 7, 0.3);
+        min-width: 180px;
+    }
+
+        .save-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(255, 193, 7, 0.4);
+        }
+
+            .save-btn:hover::before {
+                left: 100%;
+            }
+
+    .back-btn {
+        background: rgba(108, 117, 125, 0.1);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(108, 117, 125, 0.2);
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        min-width: 140px;
+    }
+
+        .back-btn:hover {
+            background: rgba(108, 117, 125, 0.2);
+            border-color: rgba(108, 117, 125, 0.4);
+            color: #495057;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(108, 117, 125, 0.2);
+            text-decoration: none;
+        }
+
+    .current-values {
+        padding: 0;
+    }
+
+    .value-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+        .value-item:last-child {
+            border-bottom: none;
+        }
+
+    .value-label {
+        font-weight: 700;
+        color: #495057;
+        font-size: 0.9rem;
+    }
+
+    .value-data {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    @@keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Animation delays for form fields */
+    .form-floating:nth-child(2) {
+        animation: slideInUp 0.6s ease-out 0.6s;
+        animation-fill-mode: both;
+    }
+
+    .form-floating:nth-child(3) {
+        animation: slideInUp 0.6s ease-out 0.7s;
+        animation-fill-mode: both;
+    }
+
+    .form-floating:nth-child(4) {
+        animation: slideInUp 0.6s ease-out 0.8s;
+        animation-fill-mode: both;
+    }
+
+    .form-floating:nth-child(5) {
+        animation: slideInUp 0.6s ease-out 0.9s;
+        animation-fill-mode: both;
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .edit-exercise-container {
+            padding: 1.5rem 1rem;
+        }
+
+        .edit-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-card, .form-card, .values-card {
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header-modern,
+        .card-body-modern {
+            padding: 1.5rem;
+        }
+
+        .button-group {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .save-btn,
+        .back-btn {
+            width: 100%;
+            max-width: none;
+        }
+
+        .info-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .info-icon {
+            margin-right: 0;
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .edit-title {
+            font-size: 1.8rem;
+        }
+
+        .card-header-modern,
+        .card-body-modern {
+            padding: 1.25rem;
+        }
+
+        .label-icon {
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+        }
+    }
+</style>
+
+<div class="edit-exercise-container">
+    <div class="container">
+        <h2 class="edit-title position-relative">
+            <i class="fas fa-edit me-3"></i>Uredi vežbu
+        </h2>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Training Info Card -->
+                <div class="info-card">
+                    <div class="card-header-modern info-header">
+                        <div class="header-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        Informacije o treningu
+                    </div>
+                    <div class="card-body-modern">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-calendar-day"></i>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="Redosled" class="form-label"></label>
-                                    <input asp-for="Redosled" class="form-control" type="number" min="1" max="50" />
-                                    <span asp-validation-for="Redosled" class="text-danger"></span>
-                                </div>
+                            <div>
+                                <span class="info-label">Datum:</span>
+                                <span class="info-value">@Model.Trening?.Termin?.Datum.ToString("dd.MM.yyyy")</span>
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="Serije" class="form-label"></label>
-                                    <input asp-for="Serije" class="form-control" type="number" min="1" max="20" />
-                                    <span asp-validation-for="Serije" class="text-danger"></span>
-                                </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-clock"></i>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="Ponavljanja" class="form-label"></label>
-                                    <input asp-for="Ponavljanja" class="form-control" type="number" min="1" max="100" />
-                                    <span asp-validation-for="Ponavljanja" class="text-danger"></span>
-                                </div>
+                            <div>
+                                <span class="info-label">Vrijeme:</span>
+                                <span class="info-value">@Model.Trening?.Termin?.Vrijeme.ToString(@"hh\:mm")</span>
                             </div>
                         </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <span class="info-label">Član:</span>
+                                <span class="info-value">@Model.Trening?.Clan?.Email</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="Tezina" class="form-label"></label>
-                                    <div class="input-group">
-                                        <input asp-for="Tezina" class="form-control" type="number" step="0.5" min="0.5" max="500" />
-                                        <span class="input-group-text">kg</span>
+                <!-- Edit Form Card -->
+                <div class="form-card">
+                    <div class="card-header-modern form-header">
+                        <div class="header-icon">
+                            <i class="fas fa-dumbbell"></i>
+                        </div>
+                        Uredi vežbu
+                    </div>
+                    <div class="card-body-modern">
+                        <form asp-action="Edit" novalidate>
+                            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+                            <input type="hidden" asp-for="IdVezba" />
+                            <input type="hidden" asp-for="TreningId" />
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input asp-for="NazivVezbe" class="form-control" placeholder="Naziv vježbe" />
+                                        <label asp-for="NazivVezbe">
+                                            <div class="label-icon">
+                                                <i class="fas fa-tag"></i>
+                                            </div>
+                                            Naziv vježbe
+                                        </label>
+                                        <span asp-validation-for="NazivVezbe" class="text-danger"></span>
                                     </div>
-                                    <span asp-validation-for="Tezina" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input asp-for="Redosled" class="form-control" type="number" min="1" max="50" placeholder="Redosled" />
+                                        <label asp-for="Redosled">
+                                            <div class="label-icon">
+                                                <i class="fas fa-sort-numeric-up"></i>
+                                            </div>
+                                            Redosled
+                                        </label>
+                                        <span asp-validation-for="Redosled" class="text-danger"></span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="Trajanje" class="form-label"></label>
-                                    <input asp-for="Trajanje" class="form-control" type="time" />
-                                    <span asp-validation-for="Trajanje" class="text-danger"></span>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input asp-for="Serije" class="form-control" type="number" min="1" max="20" placeholder="Serije" />
+                                        <label asp-for="Serije">
+                                            <div class="label-icon">
+                                                <i class="fas fa-layer-group"></i>
+                                            </div>
+                                            Serije
+                                        </label>
+                                        <span asp-validation-for="Serije" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input asp-for="Ponavljanja" class="form-control" type="number" min="1" max="100" placeholder="Ponavljanja" />
+                                        <label asp-for="Ponavljanja">
+                                            <div class="label-icon">
+                                                <i class="fas fa-redo"></i>
+                                            </div>
+                                            Ponavljanja
+                                        </label>
+                                        <span asp-validation-for="Ponavljanja" class="text-danger"></span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Napomene" class="form-label"></label>
-                            <textarea asp-for="Napomene" class="form-control" rows="3"></textarea>
-                            <span asp-validation-for="Napomene" class="text-danger"></span>
-                        </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating input-group-modern">
+                                        <input asp-for="Tezina" class="form-control" type="number" step="0.5" min="0.5" max="500" placeholder="Tezina" />
+                                        <span class="input-group-text-modern">kg</span>
+                                        <label asp-for="Tezina">
+                                            <div class="label-icon">
+                                                <i class="fas fa-weight-hanging"></i>
+                                            </div>
+                                            Tezina
+                                        </label>
+                                        <span asp-validation-for="Tezina" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input asp-for="Trajanje" class="form-control" type="time" placeholder="Trajanje" />
+                                        <label asp-for="Trajanje">
+                                            <div class="label-icon">
+                                                <i class="fas fa-stopwatch"></i>
+                                            </div>
+                                            Trajanje
+                                        </label>
+                                        <span asp-validation-for="Trajanje" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-warning">
-                                <i class="fas fa-save me-1"></i> Sačuvaj izmene
-                            </button>
-                            <a asp-action="Details" asp-route-id="@Model.TreningId" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left me-1"></i> Nazad
-                            </a>
-                        </div>
-                    </form>
+                            <div class="textarea-floating">
+                                <textarea asp-for="Napomene" class="form-control" rows="3" placeholder="Napomene..."></textarea>
+                                <label asp-for="Napomene">
+                                    <div class="label-icon">
+                                        <i class="fas fa-sticky-note"></i>
+                                    </div>
+                                    Napomene
+                                </label>
+                                <span asp-validation-for="Napomene" class="text-danger"></span>
+                            </div>
+
+                            <div class="button-group">
+                                <button type="submit" class="save-btn">
+                                    <i class="fas fa-save me-2"></i>
+                                    Sačuvaj izmene
+                                </button>
+                                <a asp-action="Details" asp-route-id="@Model.TreningId" class="back-btn">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Nazad
+                                </a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header bg-info text-white">
-                    <h6 class="mb-0">Trenutne vrednosti</h6>
-                </div>
-                <div class="card-body">
-                    <dl class="mb-0">
-                        <dt>Naziv:</dt>
-                        <dd>@Model.NazivVezbe</dd>
-                        <dt>Serije × Ponavljanja:</dt>
-                        <dd>@Model.Serije × @Model.Ponavljanja</dd>
-                        @if (Model.Tezina.HasValue)
-                        {
-                            <dt>Težina:</dt>
-                            <dd>@Model.Tezina kg</dd>
-                        }
-                        @if (Model.Trajanje.HasValue)
-                        {
-                            <dt>Trajanje:</dt>
-                            <dd>@Model.Trajanje.Value.ToString(@"mm\:ss")</dd>
-                        }
-                    </dl>
+            <div class="col-lg-4">
+                <!-- Current Values Card -->
+                <div class="values-card">
+                    <div class="card-header-modern values-header">
+                        <div class="header-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        Trenutne vrednosti
+                    </div>
+                    <div class="card-body-modern">
+                        <div class="current-values">
+                            <div class="value-item">
+                                <span class="value-label">Naziv:</span>
+                                <span class="value-data">@Model.NazivVezbe</span>
+                            </div>
+                            <div class="value-item">
+                                <span class="value-label">Serije × Ponavljanja:</span>
+                                <span class="value-data">@Model.Serije × @Model.Ponavljanja</span>
+                            </div>
+                            @if (Model.Tezina.HasValue)
+                            {
+                                <div class="value-item">
+                                    <span class="value-label">Težina:</span>
+                                    <span class="value-data">@Model.Tezina kg</span>
+                                </div>
+                            }
+                            @if (Model.Trajanje.HasValue)
+                            {
+                                <div class="value-item">
+                                    <span class="value-label">Trajanje:</span>
+                                    <span class="value-data">@Model.Trajanje.Value.ToString(@"mm\:ss")</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -137,4 +774,19 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Form submission animation
+            var form = document.querySelector('form');
+            var saveBtn = document.querySelector('.save-btn');
+
+            if (form && saveBtn) {
+                form.addEventListener('submit', function() {
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Čuvam...';
+                    saveBtn.disabled = true;
+                });
+            }
+        });
+    </script>
 }

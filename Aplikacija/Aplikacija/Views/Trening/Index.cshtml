@@ -3,78 +3,670 @@
     ViewData["Title"] = "Lista treninga";
 }
 
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-dark fw-bold">📋 Lista treninga</h2>
-    </div>
-
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+<style>
+    .workouts-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+        position: relative;
+        overflow: hidden;
     }
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @TempData["ErrorMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+        .workouts-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+    .workouts-title {
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-weight: 800;
+        font-size: 2.8rem;
+        text-align: center;
+        margin-bottom: 3rem;
+        letter-spacing: -0.02em;
+        position: relative;
+        animation: slideInDown 0.6s ease-out;
     }
 
-    <!-- Filteri -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <form method="get" class="row g-3">
-                @if (ViewBag.IsAdmin)
-                {
+        .workouts-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: #ffffff;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+        }
+
+    .alert-modern {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: none;
+        border-radius: 16px;
+        color: #495057;
+        font-weight: 500;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid;
+        animation: slideInLeft 0.6s ease-out 0.2s;
+        animation-fill-mode: both;
+    }
+
+        .alert-modern.alert-success {
+            border-left-color: #28a745;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(255, 255, 255, 0.95));
+        }
+
+        .alert-modern.alert-danger {
+            border-left-color: #dc3545;
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(255, 255, 255, 0.95));
+        }
+
+    .filters-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        animation: slideInUp 0.6s ease-out 0.4s;
+        animation-fill-mode: both;
+    }
+
+        .filters-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #28a745, #20c997, #28a745);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+    @@keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    .filters-body {
+        padding: 2rem;
+    }
+
+    .form-floating {
+        margin-bottom: 1rem;
+    }
+
+        .form-floating .form-select {
+            border: 2px solid rgba(40, 167, 69, 0.1);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            height: auto;
+            padding-top: 1.625rem;
+            padding-bottom: 0.625rem;
+        }
+
+            .form-floating .form-select:focus {
+                border-color: #28a745;
+                box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15);
+                background: rgba(255, 255, 255, 0.95);
+            }
+
+        .form-floating label {
+            color: #6c757d;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 1rem 1.25rem;
+        }
+
+        .form-floating .form-select:focus ~ label {
+            color: #28a745;
+            font-weight: 700;
+        }
+
+    .filter-buttons {
+        display: flex;
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .btn-filter {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+
+        .btn-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+            color: white;
+        }
+
+    .btn-reset {
+        background: rgba(108, 117, 125, 0.1);
+        border: 2px solid rgba(108, 117, 125, 0.2);
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .btn-reset:hover {
+            background: rgba(108, 117, 125, 0.2);
+            color: #495057;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+
+    .table-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.1), 0 16px 32px rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        animation: slideInUp 0.8s ease-out 0.6s;
+        animation-fill-mode: both;
+    }
+
+        .table-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+    .table-modern {
+        margin: 0;
+        border: none;
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+    }
+
+        .table-modern thead th {
+            background: linear-gradient(135deg, #343a40, #495057);
+            color: white;
+            border: none;
+            padding: 1.25rem 1rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+
+            .table-modern thead th:first-child {
+                border-top-left-radius: 20px;
+            }
+
+            .table-modern thead th:last-child {
+                border-top-right-radius: 20px;
+            }
+
+        .table-modern tbody tr {
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+            .table-modern tbody tr:hover {
+                background: rgba(102, 126, 234, 0.05);
+                transform: scale(1.002);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+            }
+
+            .table-modern tbody tr:nth-child(even) {
+                background: rgba(248, 249, 250, 0.5);
+            }
+
+        .table-modern tbody td {
+            border: none;
+            padding: 1rem;
+            font-weight: 500;
+            color: #495057;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .table-modern tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .badge-modern {
+        border-radius: 12px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        border: none;
+    }
+
+    .badge-tip {
+        background: linear-gradient(135deg, #f55f3a, #e44e2e);
+        color: white;
+    }
+
+    .badge-planiran {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: white;
+    }
+
+    .badge-utoku {
+        background: linear-gradient(135deg, #ffc107, #ff8c00);
+        color: white;
+    }
+
+    .badge-zavrsen {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+    }
+
+    .badge-otkazan {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+    }
+
+    .badge-vezbe {
+        background: linear-gradient(135deg, #6c757d, #5a6268);
+        color: white;
+    }
+
+    .btn-group-modern {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-action {
+        border: none;
+        border-radius: 8px;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 32px;
+        height: 32px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+    .btn-info-action {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: white;
+    }
+
+        .btn-info-action:hover {
+            box-shadow: 0 4px 12px rgba(23, 162, 184, 0.4);
+            color: white;
+        }
+
+    .btn-warning-action {
+        background: linear-gradient(135deg, #ffc107, #ff8c00);
+        color: white;
+    }
+
+        .btn-warning-action:hover {
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+            color: white;
+        }
+
+    .btn-success-action {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+    }
+
+        .btn-success-action:hover {
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+            color: white;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #6c757d;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.6;
+    }
+
+    .stats-section {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 2rem;
+        animation: slideInUp 0.8s ease-out 0.8s;
+        animation-fill-mode: both;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        text-align: center;
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card.stat-planiran::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(135deg, #17a2b8, #138496);
+        }
+
+        .stat-card.stat-utoku::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(135deg, #ffc107, #ff8c00);
+        }
+
+        .stat-card.stat-zavrsen::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .stat-card.stat-otkazan::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+    .stat-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        opacity: 0.8;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .stat-planiran .stat-title,
+    .stat-planiran .stat-number {
+        color: #17a2b8;
+    }
+
+    .stat-utoku .stat-title,
+    .stat-utoku .stat-number {
+        color: #ffc107;
+    }
+
+    .stat-zavrsen .stat-title,
+    .stat-zavrsen .stat-number {
+        color: #28a745;
+    }
+
+    .stat-otkazan .stat-title,
+    .stat-otkazan .stat-number {
+        color: #dc3545;
+    }
+
+    @@keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .workouts-container {
+            padding: 1.5rem 1rem;
+        }
+
+        .workouts-title {
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .filters-body {
+            padding: 1.5rem;
+        }
+
+        .filter-buttons {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn-filter,
+        .btn-reset {
+            width: 100%;
+        }
+
+        .table-card {
+            border-radius: 20px;
+            overflow-x: auto;
+        }
+
+        .table-modern {
+            min-width: 800px;
+        }
+
+            .table-modern thead th,
+            .table-modern tbody td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+            }
+
+        .stats-section {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .workouts-title {
+            font-size: 1.8rem;
+        }
+
+        .table-modern {
+            min-width: 700px;
+        }
+
+        .btn-group-modern {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .btn-action {
+            width: 100%;
+            min-width: auto;
+        }
+    }
+</style>
+
+<div class="workouts-container">
+    <div class="container">
+        <h2 class="workouts-title">
+            📋 Lista treninga
+        </h2>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert-modern alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert-modern alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <!-- Filteri -->
+        <div class="filters-card">
+            <div class="filters-body">
+                <form method="get" class="row g-3">
+                    @if (ViewBag.IsAdmin)
+                    {
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <select name="trenerId" class="form-select" asp-items="ViewBag.Treneri">
+                                    <option value="">-- Svi treneri --</option>
+                                </select>
+                                <label>Trener</label>
+                            </div>
+                        </div>
+                    }
                     <div class="col-md-4">
-                        <label class="form-label">Trener:</label>
-                        <select name="trenerId" class="form-select" asp-items="ViewBag.Treneri">
-                            <option value="">-- Svi treneri --</option>
-                        </select>
+                        <div class="form-floating">
+                            <select name="status" class="form-select" asp-items="ViewBag.StatusOptions">
+                                <option value="">-- Svi statusi --</option>
+                            </select>
+                            <label>Status</label>
+                        </div>
                     </div>
-                }
-                <div class="col-md-4">
-                    <label class="form-label">Status:</label>
-                    <select name="status" class="form-select" asp-items="ViewBag.StatusOptions">
-                        <option value="">-- Svi statusi --</option>
-                    </select>
-                </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary me-2">
-                        <i class="fas fa-filter"></i> Filtriraj
-                    </button>
-                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
-                        <i class="fas fa-times"></i> Resetuj
-                    </a>
-                </div>
-            </form>
+                    <div class="col-md-4">
+                        <div class="filter-buttons">
+                            <button type="submit" class="btn-filter">
+                                <i class="fas fa-filter me-2"></i>Filtriraj
+                            </button>
+                            <a href="@Url.Action("Index")" class="btn-reset">
+                                <i class="fas fa-times me-2"></i>Resetuj
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <!-- Tabela treninga -->
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Datum</th>
-                            <th>Vrijeme</th>
-                            <th>Tip</th>
-                            <th>Član</th>
-                            <th>Trener</th>
-                            <th>Status</th>
-                            <th>Vežbe</th>
-                            <th>Akcije</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model.Any())
-                        {
+        <!-- Tabela treninga -->
+        <div class="table-card">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table-modern">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Vrijeme</th>
+                                <th>Tip</th>
+                                <th>Član</th>
+                                <th>Trener</th>
+                                <th>Status</th>
+                                <th>Vežbe</th>
+                                <th>Akcije</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                             @foreach (var item in Model)
                             {
                                 <tr>
@@ -85,7 +677,7 @@
                                         @item.Vrijeme.ToString(@"hh\:mm")
                                     </td>
                                     <td>
-                                        <span class="badge rounded-pill" style="background-color: #f55f3a;">
+                                        <span class="badge-modern badge-tip">
                                             @item.Tip
                                         </span>
                                     </td>
@@ -115,102 +707,86 @@
                                         @switch (item.Status)
                                         {
                                             case StatusTreninga.Planiran:
-                                                <span class="badge bg-info">📅 Planiran</span>
+                                                <span class="badge-modern badge-planiran">📅 Planiran</span>
                                                 break;
                                             case StatusTreninga.UToku:
-                                                <span class="badge bg-warning">⏳ U toku</span>
+                                                <span class="badge-modern badge-utoku">⏳ U toku</span>
                                                 break;
                                             case StatusTreninga.Zavrsen:
-                                                <span class="badge bg-success">✅ Završen</span>
+                                                <span class="badge-modern badge-zavrsen">✅ Završen</span>
                                                 break;
                                             case StatusTreninga.Otkazan:
-                                                <span class="badge bg-danger">❌ Otkazan</span>
+                                                <span class="badge-modern badge-otkazan">❌ Otkazan</span>
                                                 break;
                                         }
                                     </td>
                                     <td>
                                         @if (item.Vezbe != null && item.Vezbe.Any())
                                         {
-                                            <span class="badge bg-secondary">
+                                            <span class="badge-modern badge-vezbe">
                                                 <i class="fas fa-list-ol me-1"></i>@item.Vezbe.Count() vežbi
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="text-muted">Nema vežbi</span>
+                                            <span class="text-muted">Nema vježbi</span>
                                         }
                                     </td>
                                     <td>
-                                        <div class="btn-group btn-group-sm" role="group">
+                                        <div class="btn-group-modern">
                                             <a asp-action="Details" asp-route-id="@item.IdTrening"
-                                               class="btn btn-info" title="Detalji">
+                                               class="btn-action btn-info-action" title="Detalji">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <a asp-action="UpravljajStatusom" asp-route-id="@item.IdTrening"
-                                               class="btn btn-warning" title="Upravljaj">
+                                               class="btn-action btn-warning-action" title="Upravljaj">
                                                 <i class="fas fa-cog"></i>
                                             </a>
                                             <a asp-action="Create" asp-route-treningId="@item.IdTrening"
-                                               class="btn btn-success" title="Dodaj vežbu">
+                                               class="btn-action btn-success-action" title="Dodaj vežbu">
                                                 <i class="fas fa-plus"></i>
                                             </a>
                                         </div>
                                     </td>
                                 </tr>
                             }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="8" class="text-center text-muted py-4">
-                                    <i class="fas fa-inbox fa-2x mb-2"></i>
-                                    <br>
-                                    <em>Nema treninga za prikazivanje.</em>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <h3>Nema treninga</h3>
+                    <p>Trenutno nema treninga za prikazivanje.</p>
+                </div>
+            }
         </div>
-    </div>
 
-    <!-- Statistike (bonus) -->
-    @if (Model.Any())
-    {
-        <div class="row mt-4">
-            <div class="col-md-3">
-                <div class="card text-center" style="border-left: 4px solid #17a2b8;">
-                    <div class="card-body">
-                        <h5 class="card-title text-info">Planirani</h5>
-                        <h3 class="card-text">@Model.Count(t => t.Status == StatusTreninga.Planiran)</h3>
-                    </div>
+        <!-- Statistike -->
+        @if (Model.Any())
+        {
+            <div class="stats-section">
+                <div class="stat-card stat-planiran">
+                    <div class="stat-title">Planirani</div>
+                    <h3 class="stat-number">@Model.Count(t => t.Status == StatusTreninga.Planiran)</h3>
+                </div>
+                <div class="stat-card stat-utoku">
+                    <div class="stat-title">U toku</div>
+                    <h3 class="stat-number">@Model.Count(t => t.Status == StatusTreninga.UToku)</h3>
+                </div>
+                <div class="stat-card stat-zavrsen">
+                    <div class="stat-title">Završeni</div>
+                    <h3 class="stat-number">@Model.Count(t => t.Status == StatusTreninga.Zavrsen)</h3>
+                </div>
+                <div class="stat-card stat-otkazan">
+                    <div class="stat-title">Otkazani</div>
+                    <h3 class="stat-number">@Model.Count(t => t.Status == StatusTreninga.Otkazan)</h3>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card text-center" style="border-left: 4px solid #ffc107;">
-                    <div class="card-body">
-                        <h5 class="card-title text-warning">U toku</h5>
-                        <h3 class="card-text">@Model.Count(t => t.Status == StatusTreninga.UToku)</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center" style="border-left: 4px solid #28a745;">
-                    <div class="card-body">
-                        <h5 class="card-title text-success">Završeni</h5>
-                        <h3 class="card-text">@Model.Count(t => t.Status == StatusTreninga.Zavrsen)</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center" style="border-left: 4px solid #dc3545;">
-                    <div class="card-body">
-                        <h5 class="card-title text-danger">Otkazani</h5>
-                        <h3 class="card-text">@Model.Count(t => t.Status == StatusTreninga.Otkazan)</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
+        }
+    </div>
 </div>

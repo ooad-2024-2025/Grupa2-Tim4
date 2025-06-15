@@ -641,27 +641,17 @@
                         </div>
                     </div>
 
-                </form>
-            </div>
+                    <!-- Submit Section -->
+                    <div class="submit-section">
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-magic me-2"></i>Kreiraj plan
+                        </button>
+                    </div>
 
-            <!-- Submit Section -->
-            <div class="submit-section">
-                <button type="submit" form="nutrition-form" class="submit-btn">
-                    <i class="fas fa-magic me-2"></i>Kreiraj plan
-                </button>
+                </form>
             </div>
 
         </div>
 
     </div>
 </div>
-
-<script>
-    // Add form id to the form element
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.querySelector('form[asp-action="Create"]');
-        if (form) {
-            form.id = 'nutrition-form';
-        }
-    });
-</script>

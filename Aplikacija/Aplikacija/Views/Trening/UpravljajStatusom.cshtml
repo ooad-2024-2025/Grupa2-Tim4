@@ -3,92 +3,733 @@
     ViewData["Title"] = "Upravljaj statusom treninga";
 }
 
-<div class="container mt-5">
-    <h2 class="text-dark fw-bold mb-4">
-        <i class="fas fa-cog me-2" style="color: #f55f3a;"></i>Upravljaj statusom treninga
-    </h2>
+<style>
+    .manage-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+        position: relative;
+        overflow: hidden;
+    }
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header" style="background-color: #f55f3a; color: white;">
-                    <h5 class="mb-0">Informacije o treningu</h5>
+        .manage-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+    .manage-title {
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-weight: 800;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        letter-spacing: -0.02em;
+        position: relative;
+        animation: slideInDown 0.6s ease-out;
+    }
+
+        .manage-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: #ffffff;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+        }
+
+    .info-card, .status-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.1), 0 16px 32px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .info-card {
+        animation: slideInLeft 0.8s ease-out 0.2s;
+        animation-fill-mode: both;
+    }
+
+    .status-card {
+        animation: slideInRight 0.8s ease-out 0.4s;
+        animation-fill-mode: both;
+    }
+
+    .info-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #f55f3a, #e44e2e, #f55f3a);
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
+    }
+
+    .status-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #17a2b8, #138496, #17a2b8);
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
+    }
+
+    @@keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    .card-header-modern {
+        padding: 1.5rem 2rem;
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 700;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .info-header {
+        background: linear-gradient(135deg, #f55f3a, #e44e2e);
+    }
+
+    .status-header {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+    }
+
+    .header-icon {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+    }
+
+    .card-body-modern {
+        padding: 2rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
+
+        .info-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .info-item:hover {
+            background: rgba(245, 95, 58, 0.03);
+            padding-left: 1rem;
+            box-shadow: 0 2px 8px rgba(245, 95, 58, 0.05);
+        }
+
+    .info-icon {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 0.9rem;
+        box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);
+        flex-shrink: 0;
+    }
+
+    .info-label {
+        font-weight: 700;
+        color: #495057;
+        margin-right: 0.5rem;
+        min-width: 80px;
+    }
+
+    .info-value {
+        color: #2c3e50;
+        font-weight: 500;
+        flex: 1;
+    }
+
+    .form-floating {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+        .form-floating .form-control, .form-floating .form-select {
+            border: 2px solid rgba(245, 95, 58, 0.1);
+            border-radius: 16px;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            height: auto;
+            padding-top: 1.625rem;
+            padding-bottom: 0.625rem;
+        }
+
+            .form-floating .form-control:focus, .form-floating .form-select:focus {
+                border-color: #f55f3a;
+                box-shadow: 0 0 0 0.2rem rgba(245, 95, 58, 0.15), 0 8px 24px rgba(245, 95, 58, 0.1);
+                background: rgba(255, 255, 255, 0.95);
+                transform: translateY(-1px);
+            }
+
+        .form-floating label {
+            color: #6c757d;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-floating .form-control:focus ~ label,
+        .form-floating .form-control:not(:placeholder-shown) ~ label,
+        .form-floating .form-select:focus ~ label {
+            color: #f55f3a;
+            font-weight: 700;
+        }
+
+    .label-icon {
+        background: linear-gradient(135deg, #f55f3a, #e44e2e);
+        color: white;
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        box-shadow: 0 2px 6px rgba(245, 95, 58, 0.3);
+        flex-shrink: 0;
+    }
+
+    .textarea-floating {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+        .textarea-floating textarea {
+            border: 2px solid rgba(245, 95, 58, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem 1.25rem 0.75rem;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+            .textarea-floating textarea:focus {
+                border-color: #f55f3a;
+                box-shadow: 0 0 0 0.2rem rgba(245, 95, 58, 0.15), 0 8px 24px rgba(245, 95, 58, 0.1);
+                background: rgba(255, 255, 255, 0.95);
+                transform: translateY(-1px);
+            }
+
+        .textarea-floating label {
+            position: absolute;
+            top: 1rem;
+            left: 1.25rem;
+            color: #6c757d;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            background: transparent;
+            padding: 0 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .textarea-floating textarea:focus ~ label,
+        .textarea-floating textarea:not(:placeholder-shown) ~ label {
+            top: -0.5rem;
+            left: 1rem;
+            font-size: 0.85rem;
+            color: #f55f3a;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0 0.5rem;
+            border-radius: 4px;
+        }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .save-btn {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border: none;
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(40, 167, 69, 0.3);
+        min-width: 180px;
+    }
+
+        .save-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(40, 167, 69, 0.4);
+        }
+
+            .save-btn:hover::before {
+                left: 100%;
+            }
+
+    .back-btn {
+        background: rgba(108, 117, 125, 0.1);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(108, 117, 125, 0.2);
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        min-width: 140px;
+    }
+
+        .back-btn:hover {
+            background: rgba(108, 117, 125, 0.2);
+            border-color: rgba(108, 117, 125, 0.4);
+            color: #495057;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(108, 117, 125, 0.2);
+            text-decoration: none;
+        }
+
+    .status-explanations {
+        padding: 0;
+    }
+
+    .status-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-item:hover {
+            background: rgba(23, 162, 184, 0.03);
+            padding-left: 1rem;
+            box-shadow: 0 2px 8px rgba(23, 162, 184, 0.05);
+        }
+
+    .status-badge {
+        border-radius: 12px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        border: none;
+        margin-right: 1rem;
+        min-width: 80px;
+        text-align: center;
+    }
+
+    .badge-planiran {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: white;
+    }
+
+    .badge-utoku {
+        background: linear-gradient(135deg, #ffc107, #ff8c00);
+        color: white;
+    }
+
+    .badge-zavrsen {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+    }
+
+    .badge-otkazan {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+    }
+
+    .status-description {
+        color: #495057;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    @@keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Animation delays for form fields */
+    .form-floating:nth-child(1) {
+        animation: slideInUp 0.6s ease-out 0.6s;
+        animation-fill-mode: both;
+    }
+
+    .form-floating:nth-child(2) {
+        animation: slideInUp 0.6s ease-out 0.7s;
+        animation-fill-mode: both;
+    }
+
+    .textarea-floating:nth-child(1) {
+        animation: slideInUp 0.6s ease-out 0.8s;
+        animation-fill-mode: both;
+    }
+
+    .textarea-floating:nth-child(2) {
+        animation: slideInUp 0.6s ease-out 0.9s;
+        animation-fill-mode: both;
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .button-group {
+        animation: slideInUp 0.6s ease-out 1s;
+        animation-fill-mode: both;
+    }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .manage-container {
+            padding: 1.5rem 1rem;
+        }
+
+        .manage-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-card, .status-card {
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header-modern,
+        .card-body-modern {
+            padding: 1.5rem;
+        }
+
+        .button-group {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .save-btn,
+        .back-btn {
+            width: 100%;
+            max-width: none;
+        }
+
+        .info-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .info-icon {
+            margin-right: 0;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-label {
+            min-width: auto;
+        }
+
+        .status-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+            text-align: left;
+        }
+
+        .status-badge {
+            margin-right: 0;
+            margin-bottom: 0.25rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .manage-title {
+            font-size: 1.8rem;
+        }
+
+        .card-header-modern,
+        .card-body-modern {
+            padding: 1.25rem;
+        }
+
+        .label-icon {
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+        }
+    }
+</style>
+
+<div class="manage-container">
+    <div class="container">
+        <h2 class="manage-title position-relative">
+            <i class="fas fa-cog me-3"></i>Upravljaj statusom treninga
+        </h2>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Training Info Card -->
+                <div class="info-card">
+                    <div class="card-header-modern info-header">
+                        <div class="header-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        Informacije o treningu
+                    </div>
+                    <div class="card-body-modern">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <span class="info-label">Datum:</span>
+                            <span class="info-value">@Model.Datum.ToString("dd.MM.yyyy") u @Model.Vrijeme.ToString(@"hh\:mm")</span>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-dumbbell"></i>
+                            </div>
+                            <span class="info-label">Tip:</span>
+                            <span class="info-value">@Model.Tip</span>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span class="info-label">Član:</span>
+                            <span class="info-value">@Model.Clan?.Email</span>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <span class="info-label">Trener:</span>
+                            <span class="info-value">@Model.Trener?.Email</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <dl class="row">
-                        <dt class="col-sm-3">Datum:</dt>
-                        <dd class="col-sm-9">@Model.Datum.ToString("dd.MM.yyyy") u @Model.Vrijeme.ToString(@"hh\:mm")</dd>
 
-                        <dt class="col-sm-3">Tip:</dt>
-                        <dd class="col-sm-9">@Model.Tip</dd>
-
-                        <dt class="col-sm-3">Član:</dt>
-                        <dd class="col-sm-9">@Model.Clan?.Email</dd>
-
-                        <dt class="col-sm-3">Trener:</dt>
-                        <dd class="col-sm-9">@Model.Trener?.Email</dd>
-                    </dl>
-
-                    <form asp-action="UpravljajStatusom" method="post">
-                        <input type="hidden" name="id" value="@Model.IdTrening" />
-
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Status treninga:</label>
-                            <select name="status" class="form-select" asp-items="ViewBag.StatusOptions">
-                            </select>
+                <!-- Status Management Form -->
+                <div class="info-card">
+                    <div class="card-header-modern info-header">
+                        <div class="header-icon">
+                            <i class="fas fa-edit"></i>
                         </div>
+                        Upravljanje treningom
+                    </div>
+                    <div class="card-body-modern">
+                        <form asp-action="UpravljajStatusom" method="post" novalidate>
+                            <input type="hidden" name="id" value="@Model.IdTrening" />
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Plan treninga:</label>
-                            <textarea name="planTreninga" class="form-control" rows="4"
-                                      placeholder="Opišite plan treninga...">@Model.PlanTreninga</textarea>
-                        </div>
+                            <div class="form-floating">
+                                <select name="status" class="form-select" asp-items="ViewBag.StatusOptions" asp-for="Status">
+                                </select>
+                                <label>
+                                    <div class="label-icon">
+                                        <i class="fas fa-tasks"></i>
+                                    </div>
+                                    Status treninga
+                                </label>
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Napomene:</label>
-                            <textarea name="napomene" class="form-control" rows="3"
-                                      placeholder="Dodajte napomene...">@Model.Napomene</textarea>
-                        </div>
+                            <div class="textarea-floating">
+                                <textarea name="planTreninga" class="form-control" rows="4"
+                                          placeholder="Opišite plan treninga...">@Model.PlanTreninga</textarea>
+                                <label>
+                                    <div class="label-icon">
+                                        <i class="fas fa-clipboard-list"></i>
+                                    </div>
+                                    Plan treninga
+                                </label>
+                            </div>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save me-1"></i> Sačuvaj izmene
-                            </button>
-                            <a asp-action="Details" asp-route-id="@Model.IdTrening" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left me-1"></i> Nazad
-                            </a>
-                        </div>
-                    </form>
+                            <div class="textarea-floating">
+                                <textarea name="napomene" class="form-control" rows="3"
+                                          placeholder="Dodajte napomene...">@Model.Napomene</textarea>
+                                <label>
+                                    <div class="label-icon">
+                                        <i class="fas fa-sticky-note"></i>
+                                    </div>
+                                    Napomene
+                                </label>
+                            </div>
+
+                            <div class="button-group">
+                                <button type="submit" class="save-btn">
+                                    <i class="fas fa-save me-2"></i>
+                                    Sačuvaj izmene
+                                </button>
+                                <a asp-action="Details" asp-route-id="@Model.IdTrening" class="back-btn">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Nazad
+                                </a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header bg-info text-white">
-                    <h6 class="mb-0">Objašnjenja statusa</h6>
-                </div>
-                <div class="card-body">
-                    <ul class="list-unstyled mb-0">
-                        <li class="mb-2">
-                            <span class="badge bg-info me-2">Planiran</span>
-                            Trening je zakazan
-                        </li>
-                        <li class="mb-2">
-                            <span class="badge bg-warning me-2">U toku</span>
-                            Trening je počeo
-                        </li>
-                        <li class="mb-2">
-                            <span class="badge bg-success me-2">Završen</span>
-                            Trening je završen
-                        </li>
-                        <li>
-                            <span class="badge bg-danger me-2">Otkazan</span>
-                            Trening je otkazan
-                        </li>
-                    </ul>
+            <div class="col-lg-4">
+                <!-- Status Explanations Card -->
+                <div class="status-card">
+                    <div class="card-header-modern status-header">
+                        <div class="header-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        Objašnjenja statusa
+                    </div>
+                    <div class="card-body-modern">
+                        <div class="status-explanations">
+                            <div class="status-item">
+                                <span class="status-badge badge-planiran">Planiran</span>
+                                <span class="status-description">Trening je zakazan i čeka izvršavanje</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-badge badge-utoku">U toku</span>
+                                <span class="status-description">Trening je počeo i trenutno se izvršava</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-badge badge-zavrsen">Završen</span>
+                                <span class="status-description">Trening je uspešno završen</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-badge badge-otkazan">Otkazan</span>
+                                <span class="status-description">Trening je otkazan iz bilo kojeg razloga</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Form submission animation
+            var form = document.querySelector('form');
+            var saveBtn = document.querySelector('.save-btn');
+
+            if (form && saveBtn) {
+                form.addEventListener('submit', function() {
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Čuvam...';
+                    saveBtn.disabled = true;
+                });
+            }
+        });
+    </script>
+}

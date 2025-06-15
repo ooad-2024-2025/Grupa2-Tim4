@@ -1,48 +1,540 @@
 ﻿@model Aplikacija.Models.PrijavaZaZaposljavanje
-
 @{
     ViewData["Title"] = "Obriši prijavu";
 }
 
-<h1 class="mb-4 text-danger"><i class="fas fa-trash-alt me-2"></i>Obriši prijavu</h1>
+<style>
+    .delete-container {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 50%, #dc3545 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+        position: relative;
+        overflow: hidden;
+    }
 
-<div class="alert alert-warning border-warning shadow-sm">
-    <h5><i class="fas fa-exclamation-triangle me-2"></i>Jeste li sigurni da želite obrisati ovu prijavu?</h5>
-    <p class="mb-0">Ova radnja je nepovratna!</p>
+        .delete-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(255, 107, 107, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+    .delete-title {
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-weight: 800;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        letter-spacing: -0.02em;
+        animation: slideInDown 0.6s ease-out;
+    }
+
+        .delete-title i {
+            animation: shake 2s infinite;
+        }
+
+    @@keyframes shake {
+        0%, 100% {
+            transform: rotate(0deg);
+        }
+
+        10%, 30%, 50%, 70%, 90% {
+            transform: rotate(-10deg);
+        }
+
+        20%, 40%, 60%, 80% {
+            transform: rotate(10deg);
+        }
+    }
+
+    @@keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .warning-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 2px solid rgba(255, 193, 7, 0.3);
+        box-shadow: 0 20px 40px rgba(255, 193, 7, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        animation: slideInLeft 0.6s ease-out 0.2s;
+        animation-fill-mode: both;
+    }
+
+        .warning-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ffc107, #ff8c00, #ffc107);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+    @@keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    .warning-card .card-body {
+        padding: 2rem;
+    }
+
+    .warning-title {
+        color: #ff8c00;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+        .warning-title i {
+            animation: pulse 2s infinite;
+        }
+
+    @@keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+    }
+
+    .warning-text {
+        color: #6c757d;
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .details-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 2px solid rgba(220, 53, 69, 0.2);
+        box-shadow: 0 20px 40px rgba(220, 53, 69, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        overflow: hidden;
+        margin-bottom: 2rem;
+        animation: slideInRight 0.6s ease-out 0.4s;
+        animation-fill-mode: both;
+    }
+
+    .details-header {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+        padding: 1.5rem 2rem;
+        font-size: 1.25rem;
+        font-weight: 700;
+        position: relative;
+    }
+
+        .details-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        }
+
+    .details-body {
+        padding: 2rem;
+    }
+
+    .detail-row {
+        display: flex;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row:hover {
+            background: rgba(220, 53, 69, 0.02);
+            padding-left: 0.5rem;
+            border-radius: 8px;
+        }
+
+    .detail-label {
+        font-weight: 700;
+        color: #495057;
+        min-width: 140px;
+        flex-shrink: 0;
+    }
+
+    .detail-value {
+        color: #6c757d;
+        flex: 1;
+        word-break: break-word;
+    }
+
+    .cv-content {
+        background: rgba(248, 249, 250, 0.8);
+        border-radius: 12px;
+        padding: 1rem;
+        max-height: 150px;
+        overflow-y: auto;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.5;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        animation: slideInUp 0.6s ease-out 0.6s;
+        animation-fill-mode: both;
+    }
+
+    .delete-btn {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        border: none;
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(220, 53, 69, 0.3);
+        min-width: 140px;
+    }
+
+        .delete-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .delete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(220, 53, 69, 0.4);
+        }
+
+            .delete-btn:hover::before {
+                left: 100%;
+            }
+
+        .delete-btn:active {
+            transform: translateY(0);
+        }
+
+    .cancel-btn {
+        background: rgba(108, 117, 125, 0.1);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(108, 117, 125, 0.2);
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 140px;
+    }
+
+        .cancel-btn:hover {
+            background: rgba(108, 117, 125, 0.2);
+            border-color: rgba(108, 117, 125, 0.4);
+            color: #495057;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(108, 117, 125, 0.2);
+            text-decoration: none;
+        }
+
+    @@keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .delete-container {
+            padding: 1rem;
+        }
+
+        .delete-title {
+            font-size: 2rem;
+        }
+
+        .warning-card .card-body,
+        .details-body {
+            padding: 1.5rem;
+        }
+
+        .details-header {
+            padding: 1.25rem 1.5rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .delete-btn,
+        .cancel-btn {
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .detail-row {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .detail-label {
+            min-width: auto;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+<div class="delete-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <h1 class="delete-title">
+                    <i class="fas fa-trash-alt me-3"></i>Obriši prijavu
+                </h1>
+
+                <div class="warning-card">
+                    <div class="card-body">
+                        <h5 class="warning-title">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Jeste li sigurni da želite obrisati ovu prijavu?
+                        </h5>
+                        <p class="warning-text">
+                            Ova radnja je nepovratna i svi podaci će biti trajno uklonjeni!
+                        </p>
+                    </div>
+                </div>
+
+                <div class="details-card">
+                    <div class="details-header">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Detalji prijave
+                    </div>
+                    <div class="details-body">
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-user me-2 text-primary"></i>Ime:
+                            </div>
+                            <div class="detail-value">@Model.Ime</div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-user me-2 text-primary"></i>Prezime:
+                            </div>
+                            <div class="detail-value">@Model.Prezime</div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-envelope me-2 text-info"></i>Email:
+                            </div>
+                            <div class="detail-value">@Model.Email</div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-file-alt me-2 text-success"></i>CV:
+                            </div>
+                            <div class="detail-value">
+                                <div class="cv-content">
+                                    @Model.CV
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-user-circle me-2 text-warning"></i>Korisnik:
+                            </div>
+                            <div class="detail-value">@Model.Korisnik?.Email</div>
+                        </div>
+                    </div>
+                </div>
+
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="IdPrijava" />
+                    <div class="action-buttons">
+                        <button type="submit" class="delete-btn">
+                            <i class="fas fa-trash-alt me-2"></i>
+                            Obriši prijavu
+                        </button>
+                        <a asp-action="Index" class="cancel-btn">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Nazad na listu
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="card shadow-sm border-danger mt-4">
-    <div class="card-header bg-danger text-white">
-        <strong>Detalji prijave</strong>
-    </div>
-    <div class="card-body">
-        <dl class="row mb-0">
-            <dt class="col-sm-3">Ime:</dt>
-            <dd class="col-sm-9">@Model.Ime</dd>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const deleteBtn = document.querySelector('.delete-btn');
 
-            <dt class="col-sm-3">Prezime:</dt>
-            <dd class="col-sm-9">@Model.Prezime</dd>
+        // Confirmation dialog
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
 
-            <dt class="col-sm-3">Email adresa:</dt>
-            <dd class="col-sm-9">@Model.Email</dd>
+            // Create custom confirmation modal
+            const confirmModal = document.createElement('div');
+            confirmModal.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.7);
+                    backdrop-filter: blur(5px);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9999;
+                    animation: fadeIn 0.3s ease-out;
+                ">
+                    <div style="
+                        background: white;
+                        border-radius: 20px;
+                        padding: 2rem;
+                        max-width: 400px;
+                        width: 90%;
+                        text-align: center;
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                        animation: scaleIn 0.3s ease-out;
+                    ">
+                        <div style="
+                            font-size: 3rem;
+                            color: #dc3545;
+                            margin-bottom: 1rem;
+                        ">⚠️</div>
+                        <h4 style="color: #dc3545; margin-bottom: 1rem;">Poslednje upozorenje!</h4>
+                        <p style="color: #6c757d; margin-bottom: 2rem;">Da li ste apsolutno sigurni da želite da obrišete ovu prijavu?</p>
+                        <div style="display: flex; gap: 1rem; justify-content: center;">
+                            <button id="confirmDelete" style="
+                                background: linear-gradient(135deg, #dc3545, #c82333);
+                                border: none;
+                                border-radius: 12px;
+                                padding: 0.75rem 1.5rem;
+                                color: white;
+                                font-weight: 600;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                            ">Da, obriši</button>
+                            <button id="cancelDelete" style="
+                                background: #6c757d;
+                                border: none;
+                                border-radius: 12px;
+                                padding: 0.75rem 1.5rem;
+                                color: white;
+                                font-weight: 600;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                            ">Otkaži</button>
+                        </div>
+                    </div>
+                </div>
+                <style>
+                    @@keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                    @@keyframes scaleIn {
+                        from { opacity: 0; transform: scale(0.8); }
+                        to { opacity: 1; transform: scale(1); }
+                    }
+                </style>
+            `;
 
-            <dt class="col-sm-3">CV:</dt>
-            <dd class="col-sm-9">@Model.CV</dd>
+            document.body.appendChild(confirmModal);
 
-            <dt class="col-sm-3">Korisnik:</dt>
-            <dd class="col-sm-9">@Model.Korisnik?.Email</dd>
-        </dl>
-    </div>
-</div>
+            // Handle confirmation
+            document.getElementById('confirmDelete').addEventListener('click', function() {
+                deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Briše se...';
+                deleteBtn.disabled = true;
+                document.body.removeChild(confirmModal);
+                form.submit();
+            });
 
-<form asp-action="Delete" method="post" class="mt-4">
-    <input type="hidden" asp-for="IdPrijava" />
-    <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-danger">
-            <i class="fas fa-trash-alt me-1"></i> Obriši
-        </button>
-        <a asp-action="Index" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-1"></i> Nazad na listu
-        </a>
-    </div>
-</form>
+            // Handle cancellation
+            document.getElementById('cancelDelete').addEventListener('click', function() {
+                document.body.removeChild(confirmModal);
+            });
+        });
+    });
+</script>

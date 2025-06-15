@@ -1,62 +1,702 @@
 ﻿@using Aplikacija.Extensions
 @model Aplikacija.Models.ViewModels.PlanIshraneDetailsViewModel
-
 @{
     ViewData["Title"] = "Detalji plana ishrane";
 }
 
-<div class="container mt-5">
-    <div class="card shadow-lg rounded-4">
-        <!-- NARANDŽASTI HEADER -->
-        <div class="card-header text-white" style="background-color: #f55f3a;">
-            <h4 class="mb-0">Detalji vašeg plana ishrane</h3>
-        </div>
+<style>
+    .plan-details-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 0 2rem 0;
+        margin-top: -20px;
+        position: relative;
+        overflow: hidden;
+        min-height: 180px;
+    }
 
-        <!-- DETALJI -->
-        <div class="card-body">
-            <div class="row mb-3">
-                <div class="col-md-4 fw-bold text-muted">🎯 Cilj plana:</div>
-                <div class="col-md-8">@Model.Plan.Ciljevi.GetDisplayName()</div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-4 fw-bold text-muted">📅 Datum generisanja:</div>
-                <div class="col-md-8">@Model.Plan.DatumGenerisanja.ToShortDateString()</div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-4 fw-bold text-muted">⚖️ Kilaža:</div>
-                <div class="col-md-8">@Model.Plan.Kilaza kg</div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-4 fw-bold text-muted">📏 Visina:</div>
-                <div class="col-md-8">@Model.Plan.Visina cm</div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-4 fw-bold text-muted">👤 Godine:</div>
-                <div class="col-md-8">@Model.Plan.Godine</div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-4 fw-bold text-muted">📊 BMI:</div>
-                <div class="col-md-8">@Model.BMI.ToString("F2")</div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-4 fw-bold text-muted">🔥 Preporučene kalorije dnevno:</div>
-                <div class="col-md-8">@Model.PotrebneKalorije kcal</div>
-            </div>
-            <div class="row mb-4">
-                <div class="col-md-4 fw-bold text-muted">🏃‍♂️ Preporučeni način vežbanja:</div>
-                <div class="col-md-8">@Model.NacinVjezbanja</div>
-            </div>
+        .plan-details-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
 
-            <div class="border-top pt-4 mt-4">
-                <h5 class="fw-bold mb-3 text-muted">🍽️ Detaljan plan ishrane</h5>
-                <div class="bg-light p-4 rounded-3">
-                    @Html.Raw(Model.Plan.Plan.Replace("-", "<br><strong>•</strong>").Replace("Preporuka:", "<br><br><strong>Preporuka:</strong>"))
+    .hero-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(circle at 25% 75%, rgba(255,255,255,0.1) 2px, transparent 2px);
+        background-size: 60px 60px;
+        z-index: 1;
+        animation: detailsPattern 20s linear infinite;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        padding: 1rem 0;
+    }
+
+    .hero-title {
+        font-size: 3.2rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+        animation: fadeInUp 1s ease-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+    }
+
+    .hero-icon {
+        width: 85px;
+        height: 85px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #667eea;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        animation: planDetailsPulse 3s ease-in-out infinite;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border: 3px solid white;
+    }
+
+    .hero-subtitle {
+        font-size: 1.3rem;
+        opacity: 1;
+        margin-top: 1rem;
+        animation: fadeInUp 1s ease-out 0.3s both;
+        color: white;
+        font-weight: 600;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .content-container {
+        background: #f8f9fa;
+        padding: 3rem 0;
+        margin-top: -50px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .plan-details-card {
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        border: none;
+        overflow: hidden;
+        animation: fadeInUp 1s ease-out 0.6s both;
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+        .plan-details-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 30%, #f55f3a 60%, #ff7b54 100%);
+            z-index: 1;
+        }
+
+    .card-header-custom {
+        background: linear-gradient(135deg, #f55f3a 0%, #ff7b54 100%);
+        color: white;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        margin-top: 8px;
+        position: relative;
+    }
+
+    .plan-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem auto;
+        font-size: 2rem;
+        animation: planIconFloat 4s ease-in-out infinite;
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .card-body-custom {
+        padding: 3rem 2.5rem;
+    }
+
+    .details-section {
+        margin-bottom: 3rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid #ecf0f1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #f55f3a 0%, #ff7b54 100%);
+        }
+
+    .section-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #f55f3a 0%, #ff7b54 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.1rem;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .detail-item {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 2rem;
+        border-radius: 20px;
+        border-left: 5px solid #f55f3a;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .detail-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(245, 95, 58, 0.05) 0%, rgba(255, 123, 84, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .detail-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-left-color: #667eea;
+        }
+
+            .detail-item:hover::before {
+                opacity: 1;
+            }
+
+    .detail-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #f55f3a 0%, #ff7b54 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 15px rgba(245, 95, 58, 0.3);
+        position: relative;
+        z-index: 2;
+        transition: all 0.3s ease;
+    }
+
+    .detail-item:hover .detail-icon {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .detail-label {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .detail-value {
+        font-size: 1.2rem;
+        color: #2c3e50;
+        font-weight: 700;
+        position: relative;
+        z-index: 2;
+    }
+
+    .bmi-highlight {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 800;
+        font-size: 1.1rem;
+        display: inline-block;
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    .calories-highlight {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 800;
+        font-size: 1.1rem;
+        display: inline-block;
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        animation: caloriesGlow 2s ease-in-out infinite alternate;
+    }
+
+    .exercise-highlight {
+        background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: inline-block;
+        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+    }
+
+    .nutrition-plan-section {
+        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        border: 2px solid #ff9800;
+        border-radius: 20px;
+        padding: 3rem;
+        margin: 2rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .nutrition-plan-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient( 45deg, transparent, transparent 15px, rgba(255, 152, 0, 0.05) 15px, rgba(255, 152, 0, 0.05) 30px );
+            animation: planShine 25s linear infinite;
+        }
+
+    .nutrition-plan-content {
+        position: relative;
+        z-index: 2;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #e65100;
+        font-weight: 500;
+    }
+
+        .nutrition-plan-content strong {
+            color: #bf360c;
+            font-weight: 700;
+        }
+
+    .stats-overview {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1.5rem;
+        margin: 3rem 0;
+        animation: fadeInUp 1s ease-out 1.2s both;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 2rem 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #f55f3a;
+        transition: all 0.3s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+    .stat-icon {
+        font-size: 2rem;
+        color: #f55f3a;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .actions-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 2.5rem;
+        text-align: center;
+        animation: fadeInUp 1s ease-out 0.9s both;
+    }
+
+    .back-btn {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+        padding: 1.2rem 3rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes planDetailsPulse {
+        0%, 100% {
+            transform: scale(1) rotate(0deg);
+        }
+
+        50% {
+            transform: scale(1.05) rotate(3deg);
+        }
+    }
+
+    @@keyframes detailsPattern {
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: 60px 60px;
+        }
+    }
+
+    @@keyframes planIconFloat {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+        }
+
+        50% {
+            transform: translateY(-10px) rotate(5deg);
+        }
+    }
+
+    @@keyframes caloriesGlow {
+        from {
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        to {
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.8);
+        }
+    }
+
+    @@keyframes planShine {
+        0% {
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+
+        100% {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+            flex-direction: column;
+        }
+
+        .hero-icon {
+            width: 70px;
+            height: 70px;
+            font-size: 1.8rem;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .card-body-custom {
+            padding: 2rem 1.5rem;
+        }
+
+        .nutrition-plan-section {
+            padding: 2rem 1.5rem;
+        }
+
+        .stats-overview {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .actions-container {
+            padding: 2rem 1.5rem;
+        }
+
+        .back-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<!-- Hero sekcija -->
+<div class="plan-details-hero">
+    <div class="hero-pattern"></div>
+    <div class="container hero-content">
+        <h1 class="hero-title">
+            <div class="hero-icon">
+                <i class="fas fa-chart-pie"></i>
+            </div>
+            Detalji plana ishrane
+        </h1>
+        <p class="hero-subtitle">Vaš personalizovani plan ishrane i preporuke</p>
+    </div>
+</div>
+
+<!-- Content container -->
+<div class="content-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+
+                <!-- Plan Details Card -->
+                <div class="card plan-details-card">
+
+                    <div class="card-header-custom">
+                        <div class="plan-icon">
+                            <i class="fas fa-apple-alt"></i>
+                        </div>
+                        <h4 class="card-title">Detalji vašeg plana ishrane</h4>
+                    </div>
+
+                    <div class="card-body-custom">
+
+                        <!-- Basic Information Section -->
+                        <div class="details-section">
+                            <h5 class="section-title">
+                                <div class="section-icon">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                Osnovne informacije
+                            </h5>
+
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-bullseye"></i>
+                                    </div>
+                                    <div class="detail-label">Cilj plana</div>
+                                    <div class="detail-value">@Model.Plan.Ciljevi.GetDisplayName()</div>
+                                </div>
+
+                                <div class="detail-item">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <div class="detail-label">Datum generisanja</div>
+                                    <div class="detail-value">@Model.Plan.DatumGenerisanja.ToShortDateString()</div>
+                                </div>
+
+                                <div class="detail-item">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-weight"></i>
+                                    </div>
+                                    <div class="detail-label">Kilaža</div>
+                                    <div class="detail-value">@Model.Plan.Kilaza kg</div>
+                                </div>
+
+                                <div class="detail-item">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-ruler-vertical"></i>
+                                    </div>
+                                    <div class="detail-label">Visina</div>
+                                    <div class="detail-value">@Model.Plan.Visina cm</div>
+                                </div>
+
+                                <div class="detail-item">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-birthday-cake"></i>
+                                    </div>
+                                    <div class="detail-label">Godine</div>
+                                    <div class="detail-value">@Model.Plan.Godine godina</div>
+                                </div>
+
+                                <div class="detail-item">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-calculator"></i>
+                                    </div>
+                                    <div class="detail-label">BMI</div>
+                                    <div class="detail-value">
+                                        <span class="bmi-highlight">@Model.BMI.ToString("F2")</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recommendations Section -->
+                        <div class="details-section">
+                            <h5 class="section-title">
+                                <div class="section-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                Preporuke i ciljevi
+                            </h5>
+
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-fire"></i>
+                                    </div>
+                                    <div class="detail-label">Preporučene kalorije dnevno</div>
+                                    <div class="detail-value">
+                                        <span class="calories-highlight">@Model.PotrebneKalorije kcal</span>
+                                    </div>
+                                </div>
+
+                                <div class="detail-item">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-running"></i>
+                                    </div>
+                                    <div class="detail-label">Preporučeni način vježbanja</div>
+                                    <div class="detail-value">
+                                        <span class="exercise-highlight">@Model.NacinVjezbanja</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Stats Overview -->
+                        <div class="stats-overview">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-target"></i>
+                                </div>
+                                <div class="stat-label">Status</div>
+                                <div class="stat-value">Aktivan</div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="stat-label">Trajanje</div>
+                                <div class="stat-value">30 dana</div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="stat-label">Nivo</div>
+                                <div class="stat-value">Personalizovan</div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-heartbeat"></i>
+                                </div>
+                                <div class="stat-label">Zdravlje</div>
+                                <div class="stat-value">Optimalno</div>
+                            </div>
+                        </div>
+
+                        <!-- Nutrition Plan Content Section -->
+                        <div class="details-section">
+                            <h5 class="section-title">
+                                <div class="section-icon">
+                                    <i class="fas fa-utensils"></i>
+                                </div>
+                                Detaljan plan ishrane
+                            </h5>
+
+                            <div class="nutrition-plan-section">
+                                <div class="nutrition-plan-content">
+                                    @Html.Raw(Model.Plan.Plan.Replace("-", "<br><strong>•</strong>").Replace("Preporuka:", "<br><br><strong>Preporuka:</strong>"))
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Actions Footer -->
+                    <div class="actions-container">
+                        <a asp-action="Index" class="back-btn">
+                            <i class="fas fa-arrow-left"></i>
+                            Nazad na listu
+                        </a>
+                    </div>
+
                 </div>
-            </div>
-        </div>
 
-        <div class="card-footer text-end">
-            <a asp-action="Index" class="btn btn-outline-secondary">Nazad na listu</a>
+            </div>
         </div>
     </div>
 </div>

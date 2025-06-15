@@ -23,7 +23,7 @@
 
             <div class="card shadow-sm mt-4">
                 <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">Nova vežba</h5>
+                    <h5 class="mb-0">Nova vježba</h5>
                 </div>
                 <div class="card-body">
                     <form asp-action="Create">
@@ -89,13 +89,13 @@
                         <div class="mb-3">
                             <label asp-for="Napomene" class="form-label"></label>
                             <textarea asp-for="Napomene" class="form-control" rows="3"
-                                      placeholder="Napomene o vežbi (opciono)..."></textarea>
+                                      placeholder="Napomene o vježbi (opciono)..."></textarea>
                             <span asp-validation-for="Napomene" class="text-danger"></span>
                         </div>
 
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save me-1"></i> Dodaj vežbu
+                                <i class="fas fa-save me-1"></i> Dodaj vježbu
                             </button>
                             <a asp-action="Details" asp-route-id="@Model.TreningId" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left me-1"></i> Nazad
@@ -109,7 +109,7 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header bg-info text-white">
-                    <h6 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Saveti za vežbe</h6>
+                    <h6 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Savjeti za vežbe</h6>
                 </div>
                 <div class="card-body">
                     <ul class="list-unstyled mb-0">
@@ -123,7 +123,7 @@
                         </li>
                         <li class="mb-2">
                             <i class="fas fa-weight-hanging text-primary me-2"></i>
-                            <strong>Težina:</strong> Opciono za vežbe sa tegovima
+                            <strong>Težina:</strong> Opciono za vježbe sa tegovima
                         </li>
                         <li class="mb-2">
                             <i class="fas fa-clock text-primary me-2"></i>
@@ -131,7 +131,7 @@
                         </li>
                         <li>
                             <i class="fas fa-sort-numeric-up text-primary me-2"></i>
-                            <strong>Redosled:</strong> Redosled izvršavanja vežbe u treningu
+                            <strong>Redoslijed:</strong> Redoslijed izvršavanja vježbe u treningu
                         </li>
                     </ul>
                 </div>
@@ -139,7 +139,7 @@
 
             <div class="card mt-3">
                 <div class="card-header bg-warning text-dark">
-                    <h6 class="mb-0"><i class="fas fa-star me-2"></i>Popularne vežbe</h6>
+                    <h6 class="mb-0"><i class="fas fa-star me-2"></i>Popularne vježbe</h6>
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
@@ -194,7 +194,7 @@
         }
 
         function postaviKardio(naziv, trajanje) {
-            document.getElementById('NazivVezbe').value = naziv;
+            document.getElementById('NazivVjezbe').value = naziv;
             document.getElementById('Trajanje').value = trajanje;
 
             // Za kardio vežbe obično nema serija/ponavljanja/težine
@@ -203,9 +203,9 @@
             document.getElementById('Tezina').value = '';
         }
 
-        // Auto-fokus na naziv vežbe
+        // Auto-fokus na naziv vježbe
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('NazivVezbe').focus();
+            document.getElementById('NazivVjezbe').focus();
         });
     </script>
 }

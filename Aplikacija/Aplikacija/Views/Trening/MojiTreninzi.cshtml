@@ -3,102 +3,640 @@
     ViewData["Title"] = "Moji treninzi";
 }
 
-<div class="container mt-5">
-    <h2 class="text-dark fw-bold mb-4">
-        <i class="fas fa-user me-2" style="color: #f55f3a;"></i>Moji treninzi
-    </h2>
+<style>
+    .my-workouts-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+        position: relative;
+        overflow: hidden;
+    }
 
-    @if (Model.Any())
-    {
-        <div class="row">
-            @foreach (var trening in Model)
-            {
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-header" style="background-color: #f55f3a; color: white;">
-                            <h6 class="mb-0">
-                                <i class="fas fa-calendar me-1"></i>
-                                @trening.Datum.ToString("dd.MM.yyyy") u @trening.Vrijeme.ToString(@"hh\:mm")
-                            </h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-2">
-                                <strong>Tip:</strong>
-                                <span class="badge rounded-pill" style="background-color: #f55f3a;">
-                                    @trening.Tip
-                                </span>
-                            </div>
+        .my-workouts-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
 
-                            <div class="mb-2">
-                                <strong>Trener:</strong>
-                                <i class="fas fa-user-tie me-1"></i>@trening.Trener?.Email
-                            </div>
+    .workouts-title {
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-weight: 800;
+        font-size: 2.8rem;
+        text-align: center;
+        margin-bottom: 3rem;
+        letter-spacing: -0.02em;
+        position: relative;
+        animation: slideInDown 0.6s ease-out;
+    }
 
-                            <div class="mb-2">
-                                <strong>Status:</strong>
-                                @switch (trening.Status)
-                                {
-                                    case StatusTreninga.Planiran:
-                                        <span class="badge bg-info">📅 Planiran</span>
-                                        break;
-                                    case StatusTreninga.UToku:
-                                        <span class="badge bg-warning">⏳ U toku</span>
-                                        break;
-                                    case StatusTreninga.Zavrsen:
-                                        <span class="badge bg-success">✅ Završen</span>
-                                        break;
-                                    case StatusTreninga.Otkazan:
-                                        <span class="badge bg-danger">❌ Otkazan</span>
-                                        break;
-                                }
-                            </div>
+        .workouts-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: #ffffff;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+        }
 
-                            <div class="mb-3">
-                                <strong>Vežbe:</strong>
-                                @if (trening.Vezbe != null && trening.Vezbe.Any())
-                                {
-                                    <span class="badge bg-secondary">
-                                        <i class="fas fa-list-ol me-1"></i>@trening.Vezbe.Count()
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="text-muted">Nema vežbi</span>
-                                }
-                            </div>
+    .workout-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
 
-                            @if (!string.IsNullOrEmpty(trening.PlanTreninga))
-                            {
-                                <div class="mb-3">
-                                    <strong>Plan:</strong>
-                                    <p class="small text-muted mb-0">
-                                        @(trening.PlanTreninga.Length > 100 ?
-                                                                    trening.PlanTreninga.Substring(0, 100) + "..." :
-                                                                    trening.PlanTreninga)
-                        </p>
-                    </div>
-                                        }
-                        </div>
-                        <div class="card-footer bg-light">
-                            <small class="text-muted">
-                                <i class="fas fa-clock me-1"></i>
-                                Kreirano: @trening.DatumKreiranja.ToString("dd.MM.yyyy")
-                            </small>
-                        </div>
-                    </div>
-                </div>
+        .workout-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f55f3a, #e44e2e, #f55f3a);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+    @@keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    .workout-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.15), 0 16px 32px rgba(245, 95, 58, 0.1);
+    }
+
+    .card-header-modern {
+        background: linear-gradient(135deg, #f55f3a, #e44e2e);
+        color: white;
+        padding: 1.5rem 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .card-header-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ffffff, rgba(255, 255, 255, 0.5), #ffffff);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+    .header-content {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .header-icon {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.4rem;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+    }
+
+    .card-body-modern {
+        padding: 2rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .workout-detail {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        gap: 0.75rem;
+        transition: all 0.3s ease;
+        padding: 0.5rem 0;
+        border-radius: 8px;
+    }
+
+        .workout-detail:hover {
+            background: rgba(245, 95, 58, 0.03);
+            padding-left: 0.5rem;
+        }
+
+    .detail-icon {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        box-shadow: 0 3px 8px rgba(102, 126, 234, 0.25);
+        flex-shrink: 0;
+    }
+
+    .detail-label {
+        font-weight: 700;
+        color: #495057;
+        margin-right: 0.5rem;
+        min-width: 60px;
+    }
+
+    .badge-modern {
+        border-radius: 12px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .badge-tip {
+        background: linear-gradient(135deg, #f55f3a, #e44e2e);
+        color: white;
+    }
+
+    .badge-planiran {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: white;
+    }
+
+    .badge-utoku {
+        background: linear-gradient(135deg, #ffc107, #ff8c00);
+        color: white;
+    }
+
+    .badge-zavrsen {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+    }
+
+    .badge-otkazan {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+    }
+
+    .badge-vezbe {
+        background: linear-gradient(135deg, #6c757d, #5a6268);
+        color: white;
+    }
+
+    .plan-section {
+        background: rgba(248, 249, 250, 0.8);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-top: 1rem;
+        border-left: 4px solid #f55f3a;
+        backdrop-filter: blur(5px);
+    }
+
+    .plan-title {
+        font-weight: 700;
+        color: #495057;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .plan-text {
+        color: #6c757d;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        margin: 0;
+    }
+
+    .card-footer-modern {
+        background: linear-gradient(135deg, rgba(248, 249, 250, 0.9), rgba(255, 255, 255, 0.9));
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        padding: 1rem 2rem;
+        margin-top: auto;
+    }
+
+    .footer-content {
+        color: #6c757d;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .footer-icon {
+        background: linear-gradient(135deg, #6c757d, #5a6268);
+        color: white;
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        box-shadow: 0 2px 6px rgba(108, 117, 125, 0.3);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: rgba(255, 255, 255, 0.9);
+        animation: slideInUp 0.8s ease-out 0.4s;
+        animation-fill-mode: both;
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        margin-bottom: 2rem;
+        opacity: 0.7;
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 0.7;
+        }
+
+        50% {
+            transform: scale(1.05);
+            opacity: 1;
+        }
+    }
+
+    .empty-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .empty-text {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.8;
+        line-height: 1.5;
+    }
+
+    .cta-btn {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border: none;
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(40, 167, 69, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+        .cta-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(40, 167, 69, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+            .cta-btn:hover::before {
+                left: 100%;
             }
-        </div>
+
+    @@keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
-    else
-    {
-        <div class="text-center py-5">
-            <i class="fas fa-clipboard fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">Nemate treninga</h4>
-            <p class="text-muted">Rezervišite termine da biste videli svoje treninge ovde.</p>
-            <a asp-controller="Termin" asp-action="DostupniTermini" class="btn btn-primary">
-                <i class="fas fa-search me-1"></i> Pregledaj dostupne termine
-            </a>
-        </div>
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
+
+    /* Grid animations */
+    .col-md-6 {
+        animation: fadeInUp 0.6s ease-out;
+        animation-fill-mode: both;
+    }
+
+        .col-md-6:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .col-md-6:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .col-md-6:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .col-md-6:nth-child(4) {
+            animation-delay: 0.1s;
+        }
+
+        .col-md-6:nth-child(5) {
+            animation-delay: 0.2s;
+        }
+
+        .col-md-6:nth-child(6) {
+            animation-delay: 0.3s;
+        }
+
+        .col-md-6:nth-child(7) {
+            animation-delay: 0.1s;
+        }
+
+        .col-md-6:nth-child(8) {
+            animation-delay: 0.2s;
+        }
+
+        .col-md-6:nth-child(9) {
+            animation-delay: 0.3s;
+        }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .my-workouts-container {
+            padding: 1.5rem 1rem;
+        }
+
+        .workouts-title {
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .workout-card {
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header-modern,
+        .card-body-modern {
+            padding: 1.5rem;
+        }
+
+        .card-footer-modern {
+            padding: 1rem 1.5rem;
+        }
+
+        .workout-detail {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .detail-icon {
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-label {
+            min-width: auto;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+        }
+
+        .empty-title {
+            font-size: 1.8rem;
+        }
+
+        .empty-text {
+            font-size: 1.1rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .workouts-title {
+            font-size: 1.8rem;
+        }
+
+        .card-header-modern,
+        .card-body-modern {
+            padding: 1.25rem;
+        }
+
+        .header-content {
+            font-size: 1rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .workout-detail {
+            padding: 0.75rem 0;
+        }
+
+        .plan-section {
+            padding: 0.75rem;
+        }
+    }
+</style>
+
+<div class="my-workouts-container">
+    <div class="container">
+        <h2 class="workouts-title">
+            <i class="fas fa-user me-3"></i>Moji treninzi
+        </h2>
+
+        @if (Model.Any())
+        {
+            <div class="row">
+                @foreach (var trening in Model)
+                {
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="workout-card">
+                            <div class="card-header-modern">
+                                <h6 class="header-content">
+                                    <div class="header-icon">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                    <div>
+                                        @trening.Datum.ToString("dd.MM.yyyy")<br>
+                                        <small>u @trening.Vrijeme.ToString(@"hh\:mm")</small>
+                                    </div>
+                                </h6>
+                            </div>
+
+                            <div class="card-body-modern">
+                                <div class="workout-detail">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-dumbbell"></i>
+                                    </div>
+                                    <div>
+                                        <span class="detail-label">Tip:</span>
+                                        <span class="badge-modern badge-tip">@trening.Tip</span>
+                                    </div>
+                                </div>
+
+                                <div class="workout-detail">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-user-tie"></i>
+                                    </div>
+                                    <div>
+                                        <span class="detail-label">Trener:</span>
+                                        <span>@trening.Trener?.Email</span>
+                                    </div>
+                                </div>
+
+                                <div class="workout-detail">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-info-circle"></i>
+                                    </div>
+                                    <div>
+                                        <span class="detail-label">Status:</span>
+                                        @switch (trening.Status)
+                                        {
+                                            case StatusTreninga.Planiran:
+                                                <span class="badge-modern badge-planiran">📅 Planiran</span>
+                                                break;
+                                            case StatusTreninga.UToku:
+                                                <span class="badge-modern badge-utoku">⏳ U toku</span>
+                                                break;
+                                            case StatusTreninga.Zavrsen:
+                                                <span class="badge-modern badge-zavrsen">✅ Završen</span>
+                                                break;
+                                            case StatusTreninga.Otkazan:
+                                                <span class="badge-modern badge-otkazan">❌ Otkazan</span>
+                                                break;
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="workout-detail">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-list-ol"></i>
+                                    </div>
+                                    <div>
+                                        <span class="detail-label">Vežbe:</span>
+                                        @if (trening.Vezbe != null && trening.Vezbe.Any())
+                                        {
+                                            <span class="badge-modern badge-vezbe">
+                                                @trening.Vezbe.Count() vežbi
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Nema vežbi</span>
+                                        }
+                                    </div>
+                                </div>
+
+                                @if (!string.IsNullOrEmpty(trening.PlanTreninga))
+                                {
+                                    <div class="plan-section">
+                                        <div class="plan-title">
+                                            <i class="fas fa-clipboard-list me-1"></i>
+                                            Plan treninga:
+                                        </div>
+                                        <p class="plan-text">
+                                            @(trening.PlanTreninga.Length > 100 ?
+                                                                            trening.PlanTreninga.Substring(0, 100) + "..." :
+                                                                            trening.PlanTreninga)
+                            </p>
+                        </div>
+                                                }
+                            </div>
+
+                            <div class="card-footer-modern">
+                                <p class="footer-content">
+                                    <div class="footer-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    Kreirano: @trening.DatumKreiranja.ToString("dd.MM.yyyy")
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-clipboard"></i>
+                </div>
+                <h4 class="empty-title">Nemate treninga</h4>
+                <p class="empty-text">
+                    Rezervišite termine da biste videli svoje treninge ovde.<br>
+                    Započnite svoju fitness putanju danas!
+                </p>
+                <a asp-controller="Termin" asp-action="DostupniTermini" class="cta-btn">
+                    <i class="fas fa-search"></i>
+                    Pregledaj dostupne termine
+                </a>
+            </div>
+        }
+    </div>
 </div>

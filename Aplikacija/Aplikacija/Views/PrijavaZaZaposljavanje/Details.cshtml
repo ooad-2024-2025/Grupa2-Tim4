@@ -1,40 +1,372 @@
 ﻿@model Aplikacija.Models.PrijavaZaZaposljavanje
-
 @{
     ViewData["Title"] = "Detalji prijave";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-lg rounded-4">
-                <div class="card-header text-white rounded-top-4" style="background-color: #f55f3a;">
-                    <h4 class="mb-0">Detalji prijave za posao</h4>
-                </div>
+<style>
+    .details-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+        position: relative;
+        overflow: hidden;
+    }
 
-                <div class="card-body">
-                    <dl class="row">
-                        <dt class="col-sm-4 fw-bold text-muted">👤 Ime:</dt>
-                        <dd class="col-sm-8">@Model.Ime</dd>
+        .details-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
 
-                        <dt class="col-sm-4 fw-bold text-muted">👤 Prezime:</dt>
-                        <dd class="col-sm-8">@Model.Prezime</dd>
+    .details-title {
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-weight: 800;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        letter-spacing: -0.02em;
+        position: relative;
+    }
 
-                        <dt class="col-sm-4 fw-bold text-muted">📧 Email adresa:</dt>
-                        <dd class="col-sm-8">@Model.Email</dd>
+        .details-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: #ffffff;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+        }
 
-                        <dt class="col-sm-4 fw-bold text-muted">🔐 Korisnik:</dt>
-                        <dd class="col-sm-8">@Model.Korisnik?.Email</dd>
-                    </dl>
-                </div>
+    .application-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.1), 0 16px 32px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        position: relative;
+        overflow: hidden;
+    }
 
-                <div class="card-body border-top pt-4" style="background-color: #fff7f4;">
-                    <h5 class="fw-bold mb-3 text-muted">CV (Biografija)</h5>
-                    <p class="mt-2">@Model.CV</p>
-                </div>
+    .card-header-modern {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
 
-                <div class="card-footer text-end rounded-bottom-4 bg-light">
-                    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+        .card-header-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ffffff, rgba(255, 255, 255, 0.5), #ffffff);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+    @@keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    .header-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .header-icon {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+    }
+
+    .details-section {
+        padding: 2rem;
+    }
+
+    .detail-row {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+    }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .detail-row:hover {
+            background: rgba(102, 126, 234, 0.03);
+            padding-left: 1rem;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.05);
+        }
+
+    .detail-label {
+        font-weight: 700;
+        color: #495057;
+        font-size: 1rem;
+        min-width: 150px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .detail-emoji {
+        font-size: 1.2rem;
+    }
+
+    .detail-value {
+        color: #2c3e50;
+        font-size: 1.1rem;
+        font-weight: 500;
+        flex: 1;
+        word-break: break-word;
+    }
+
+    .cv-section {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.03), rgba(118, 75, 162, 0.03));
+        border-radius: 20px;
+        border-top: 1px solid rgba(102, 126, 234, 0.1);
+        padding: 2rem;
+        position: relative;
+    }
+
+        .cv-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 1px;
+        }
+
+    .cv-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #495057;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .cv-icon {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.25);
+    }
+
+    .cv-content {
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #495057;
+        max-height: 200px;
+        overflow-y: auto;
+        box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+        .cv-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .cv-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 3px;
+        }
+
+        .cv-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 3px;
+        }
+
+    .card-footer-modern {
+        background: rgba(248, 249, 250, 0.8);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        padding: 1.5rem 2rem;
+        text-align: center;
+    }
+
+    .back-btn {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        border: none;
+        border-radius: 16px;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 6px 16px rgba(108, 117, 125, 0.2);
+    }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(108, 117, 125, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .back-btn:active {
+            transform: translateY(0);
+        }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .details-container {
+            padding: 1rem;
+        }
+
+        .details-title {
+            font-size: 2rem;
+        }
+
+        .application-card {
+            border-radius: 20px;
+            margin: 0 0.5rem;
+        }
+
+        .card-header-modern,
+        .details-section,
+        .cv-section {
+            padding: 1.5rem;
+        }
+
+        .card-footer-modern {
+            padding: 1.25rem 1.5rem;
+        }
+
+        .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .detail-label {
+            min-width: auto;
+        }
+
+        .cv-content {
+            max-height: 150px;
+        }
+    }
+</style>
+
+<div class="details-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <h1 class="details-title position-relative">
+                    <i class="fas fa-file-alt me-3"></i>Detalji prijave
+                </h1>
+
+                <div class="application-card">
+                    <div class="card-header-modern">
+                        <h4 class="header-title">
+                            <div class="header-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            Detalji prijave za posao
+                        </h4>
+                    </div>
+
+                    <div class="details-section">
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <span class="detail-emoji">👤</span>
+                                Ime:
+                            </div>
+                            <div class="detail-value">@Model.Ime</div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <span class="detail-emoji">👤</span>
+                                Prezime:
+                            </div>
+                            <div class="detail-value">@Model.Prezime</div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <span class="detail-emoji">📧</span>
+                                Email adresa:
+                            </div>
+                            <div class="detail-value">@Model.Email</div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <span class="detail-emoji">🔐</span>
+                                Korisnik:
+                            </div>
+                            <div class="detail-value">@Model.Korisnik?.Email</div>
+                        </div>
+                    </div>
+
+                    <div class="cv-section">
+                        <h5 class="cv-title">
+                            <div class="cv-icon">
+                                <i class="fas fa-file-text"></i>
+                            </div>
+                            CV (Biografija)
+                        </h5>
+                        <div class="cv-content">
+                            @Model.CV
+                        </div>
+                    </div>
+
+                    <div class="card-footer-modern">
+                        <a asp-action="Index" class="back-btn">
+                            <i class="fas fa-arrow-left"></i>
+                            Nazad
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

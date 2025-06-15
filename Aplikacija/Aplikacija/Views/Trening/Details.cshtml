@@ -3,296 +3,1043 @@
     ViewData["Title"] = "Detalji treninga";
 }
 
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-dark fw-bold">
-            <i class="fas fa-dumbbell me-2" style="color: #f55f3a;"></i>Detalji treninga
-        </h2>
-        <div class="btn-group">
-            <a asp-action="UpravljajStatusom" asp-route-id="@Model.IdTrening"
-               class="btn btn-warning">
-                <i class="fas fa-cog me-1"></i> Upravljaj
-            </a>
-            <a asp-action="Create" asp-route-treningId="@Model.IdTrening"
-               class="btn btn-success">
-                <i class="fas fa-plus me-1"></i> Dodaj vežbu
-            </a>
-        </div>
-    </div>
-
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+<style>
+    .workout-details-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+        position: relative;
+        overflow: hidden;
     }
 
-    <div class="row">
-        <!-- Osnovne informacije o treningu -->
-        <div class="col-md-6">
-            <div class="card shadow-sm h-100">
-                <div class="card-header" style="background-color: #f55f3a; color: white;">
-                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Osnovne informacije</h5>
-                </div>
-                <div class="card-body">
-                    <dl class="row mb-0">
-                        <dt class="col-sm-4">Datum:</dt>
-                        <dd class="col-sm-8">
-                            <strong>@Model.Datum.ToString("dd.MM.yyyy")</strong>
-                        </dd>
+        .workout-details-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
 
-                        <dt class="col-sm-4">Vrijeme:</dt>
-                        <dd class="col-sm-8">
-                            <strong>@Model.Vrijeme.ToString(@"hh\:mm")</strong>
-                        </dd>
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        animation: slideInDown 0.6s ease-out;
+    }
 
-                        <dt class="col-sm-4">Tip:</dt>
-                        <dd class="col-sm-8">
-                            <span class="badge rounded-pill" style="background-color: #f55f3a;">
-                                @Model.Tip
+    .details-title {
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-weight: 800;
+        font-size: 2.5rem;
+        margin: 0;
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .action-btn {
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+    .btn-manage {
+        background: linear-gradient(135deg, #ffc107, #ff8c00);
+        color: white;
+    }
+
+        .btn-manage:hover {
+            box-shadow: 0 10px 24px rgba(255, 193, 7, 0.4);
+            color: white;
+        }
+
+    .btn-add {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+    }
+
+        .btn-add:hover {
+            box-shadow: 0 10px 24px rgba(40, 167, 69, 0.4);
+            color: white;
+        }
+
+    .alert-modern {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: none;
+        border-radius: 16px;
+        color: #495057;
+        font-weight: 500;
+        padding: 1rem 1.25rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #28a745;
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(255, 255, 255, 0.95));
+        animation: slideInLeft 0.6s ease-out 0.2s;
+        animation-fill-mode: both;
+    }
+
+    .info-card, .plan-card, .exercises-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.1), 0 16px 32px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .info-card {
+        animation: slideInLeft 0.8s ease-out 0.4s;
+        animation-fill-mode: both;
+    }
+
+    .plan-card {
+        animation: slideInRight 0.8s ease-out 0.4s;
+        animation-fill-mode: both;
+    }
+
+    .exercises-card {
+        animation: slideInUp 0.8s ease-out 0.6s;
+        animation-fill-mode: both;
+    }
+
+    .info-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #f55f3a, #e44e2e, #f55f3a);
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
+    }
+
+    .plan-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #17a2b8, #138496, #17a2b8);
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
+    }
+
+    .exercises-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #28a745, #20c997, #28a745);
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
+    }
+
+    @@keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    .card-header-modern {
+        padding: 1.5rem 2rem;
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 700;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .info-header {
+        background: linear-gradient(135deg, #f55f3a, #e44e2e);
+    }
+
+    .plan-header {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+    }
+
+    .exercises-header {
+        background: linear-gradient(135deg, #28a745, #20c997);
+    }
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .header-icon {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+    }
+
+    .header-actions-mini {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-mini {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .btn-mini:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+
+    .card-body-modern {
+        padding: 2rem;
+        flex: 1;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
+
+        .info-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .info-item:hover {
+            background: rgba(245, 95, 58, 0.03);
+            padding-left: 1rem;
+            box-shadow: 0 2px 8px rgba(245, 95, 58, 0.05);
+        }
+
+    .info-label {
+        font-weight: 700;
+        color: #495057;
+        margin-right: 1rem;
+        min-width: 100px;
+        font-size: 0.9rem;
+    }
+
+    .info-value {
+        color: #2c3e50;
+        font-weight: 500;
+        flex: 1;
+    }
+
+    .badge-modern {
+        border-radius: 12px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .badge-tip {
+        background: linear-gradient(135deg, #f55f3a, #e44e2e);
+        color: white;
+    }
+
+    .badge-planiran {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: white;
+    }
+
+    .badge-utoku {
+        background: linear-gradient(135deg, #ffc107, #ff8c00);
+        color: white;
+    }
+
+    .badge-zavrsen {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+    }
+
+    .badge-otkazan {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+    }
+
+    .plan-section {
+        margin-bottom: 2rem;
+    }
+
+    .plan-title {
+        font-weight: 700;
+        color: #495057;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .plan-content {
+        background: linear-gradient(135deg, rgba(248, 249, 250, 0.8), rgba(255, 255, 255, 0.8));
+        border-radius: 12px;
+        padding: 1.5rem;
+        border-left: 4px solid #17a2b8;
+        backdrop-filter: blur(5px);
+        line-height: 1.6;
+        color: #495057;
+    }
+
+    .plan-empty {
+        color: #6c757d;
+        font-style: italic;
+        text-align: center;
+        padding: 2rem;
+        background: rgba(248, 249, 250, 0.5);
+        border-radius: 12px;
+        border: 2px dashed rgba(108, 117, 125, 0.3);
+    }
+
+    .table-modern {
+        margin: 0;
+        border: none;
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+    }
+
+        .table-modern thead th {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: #495057;
+            border: none;
+            padding: 1rem 0.75rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+
+        .table-modern tbody tr {
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+            .table-modern tbody tr:hover {
+                background: rgba(40, 167, 69, 0.03);
+                transform: scale(1.002);
+                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.1);
+            }
+
+            .table-modern tbody tr:nth-child(even) {
+                background: rgba(248, 249, 250, 0.5);
+            }
+
+        .table-modern tbody td {
+            border: none;
+            padding: 1rem 0.75rem;
+            font-weight: 500;
+            color: #495057;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .table-modern tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .exercise-badge {
+        border-radius: 8px;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .badge-order {
+        background: linear-gradient(135deg, #6c757d, #5a6268);
+        color: white;
+    }
+
+    .badge-sets {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: white;
+    }
+
+    .badge-reps {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .badge-duration {
+        background: linear-gradient(135deg, #ffc107, #ff8c00);
+        color: white;
+    }
+
+    .exercise-actions {
+        display: flex;
+        gap: 0.25rem;
+    }
+
+    .btn-exercise {
+        border: none;
+        border-radius: 6px;
+        padding: 0.3rem 0.5rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 28px;
+        height: 28px;
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #ffc107, #ff8c00);
+        color: white;
+        border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
+        .btn-edit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+        border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+
+        .btn-delete:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+            color: white;
+        }
+
+    .empty-exercises {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #6c757d;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.6;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #495057;
+    }
+
+    .empty-text {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        opacity: 0.8;
+    }
+
+    .navigation-section {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 3rem;
+        animation: slideInUp 0.8s ease-out 0.8s;
+        animation-fill-mode: both;
+    }
+
+    .nav-btn {
+        background: rgba(108, 117, 125, 0.1);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(108, 117, 125, 0.2);
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+        .nav-btn:hover {
+            background: rgba(108, 117, 125, 0.2);
+            border-color: rgba(108, 117, 125, 0.4);
+            color: #495057;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(108, 117, 125, 0.2);
+            text-decoration: none;
+        }
+
+        .nav-btn.btn-primary {
+            background: linear-gradient(135deg, #ffc107, #ff8c00);
+            border-color: rgba(255, 193, 7, 0.3);
+            color: white;
+        }
+
+            .nav-btn.btn-primary:hover {
+                box-shadow: 0 8px 24px rgba(255, 193, 7, 0.3);
+                color: white;
+            }
+
+        .nav-btn.btn-info {
+            background: linear-gradient(135deg, #17a2b8, #138496);
+            border-color: rgba(23, 162, 184, 0.3);
+            color: white;
+        }
+
+            .nav-btn.btn-info:hover {
+                box-shadow: 0 8px 24px rgba(23, 162, 184, 0.3);
+                color: white;
+            }
+
+    @@keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .workout-details-container {
+            padding: 1.5rem 1rem;
+        }
+
+        .header-section {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: stretch;
+        }
+
+        .details-title {
+            font-size: 2rem;
+            text-align: center;
+            justify-content: center;
+        }
+
+        .header-actions {
+            justify-content: center;
+        }
+
+        .info-card, .plan-card, .exercises-card {
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header-modern,
+        .card-body-modern {
+            padding: 1.5rem;
+        }
+
+        .card-header-modern {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .info-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .info-label {
+            min-width: auto;
+        }
+
+        .table-modern {
+            font-size: 0.85rem;
+        }
+
+            .table-modern thead th,
+            .table-modern tbody td {
+                padding: 0.75rem 0.5rem;
+            }
+
+        .navigation-section {
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-btn {
+            width: 100%;
+            max-width: 280px;
+            justify-content: center;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .details-title {
+            font-size: 1.8rem;
+        }
+
+        .card-header-modern,
+        .card-body-modern {
+            padding: 1.25rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .table-modern {
+            min-width: 600px;
+        }
+
+        .exercises-card {
+            overflow-x: auto;
+        }
+    }
+</style>
+
+<div class="workout-details-container">
+    <div class="container">
+        <div class="header-section">
+            <h2 class="details-title">
+                <i class="fas fa-dumbbell"></i>
+                Detalji treninga
+            </h2>
+            <div class="header-actions">
+                <a asp-action="Create" asp-route-treningId="@Model.IdTrening" class="action-btn btn-add">
+                    <i class="fas fa-plus"></i>
+                    Dodaj vježbu
+                </a>
+            </div>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert-modern alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="row">
+            <!-- Osnovne informacije -->
+            <div class="col-lg-6">
+                <div class="info-card">
+                    <div class="card-header-modern info-header">
+                        <div class="header-title">
+                            <div class="header-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            Osnovne informacije
+                        </div>
+                    </div>
+                    <div class="card-body-modern">
+                        <div class="info-item">
+                            <span class="info-label">Datum:</span>
+                            <span class="info-value"><strong>@Model.Datum.ToString("dd.MM.yyyy")</strong></span>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Vrijeme:</span>
+                            <span class="info-value"><strong>@Model.Vrijeme.ToString(@"hh\:mm")</strong></span>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Tip:</span>
+                            <span class="info-value">
+                                <span class="badge-modern badge-tip">@Model.Tip</span>
                             </span>
-                        </dd>
+                        </div>
 
-                        <dt class="col-sm-4">Status:</dt>
-                        <dd class="col-sm-8">
-                            @switch (Model.Status)
-                            {
-                                case StatusTreninga.Planiran:
-                                    <span class="badge bg-info fs-6">📅 Planiran</span>
-                                    break;
-                                case StatusTreninga.UToku:
-                                    <span class="badge bg-warning fs-6">⏳ U toku</span>
-                                    break;
-                                case StatusTreninga.Zavrsen:
-                                    <span class="badge bg-success fs-6">✅ Završen</span>
-                                    break;
-                                case StatusTreninga.Otkazan:
-                                    <span class="badge bg-danger fs-6">❌ Otkazan</span>
-                                    break;
-                            }
-                        </dd>
+                        <div class="info-item">
+                            <span class="info-label">Status:</span>
+                            <span class="info-value">
+                                @switch (Model.Status)
+                                {
+                                    case StatusTreninga.Planiran:
+                                        <span class="badge-modern badge-planiran">📅 Planiran</span>
+                                        break;
+                                    case StatusTreninga.UToku:
+                                        <span class="badge-modern badge-utoku">⏳ U toku</span>
+                                        break;
+                                    case StatusTreninga.Zavrsen:
+                                        <span class="badge-modern badge-zavrsen">✅ Završen</span>
+                                        break;
+                                    case StatusTreninga.Otkazan:
+                                        <span class="badge-modern badge-otkazan">❌ Otkazan</span>
+                                        break;
+                                }
+                            </span>
+                        </div>
 
-                        <dt class="col-sm-4">Član:</dt>
-                        <dd class="col-sm-8">
-                            <i class="fas fa-user me-1"></i>
-                            @(Model.Clan?.Email ?? "Nije dodijeljen")
-                        </dd>
+                        <div class="info-item">
+                            <span class="info-label">Član:</span>
+                            <span class="info-value">
+                                <i class="fas fa-user me-2"></i>
+                                @(Model.Clan?.Email ?? "Nije dodijeljen")
+                            </span>
+                        </div>
 
-                        <dt class="col-sm-4">Trener:</dt>
-                        <dd class="col-sm-8">
-                            <i class="fas fa-user-tie me-1"></i>
-                            @(Model.Trener?.Email ?? "Nije dodijeljen")
-                        </dd>
+                        <div class="info-item">
+                            <span class="info-label">Trener:</span>
+                            <span class="info-value">
+                                <i class="fas fa-user-tie me-2"></i>
+                                @(Model.Trener?.Email ?? "Nije dodijeljen")
+                            </span>
+                        </div>
 
-                        <dt class="col-sm-4">Kreirano:</dt>
-                        <dd class="col-sm-8">
-                            @Model.DatumKreiranja.ToString("dd.MM.yyyy HH:mm")
-                        </dd>
+                        <div class="info-item">
+                            <span class="info-label">Kreirano:</span>
+                            <span class="info-value">@Model.DatumKreiranja.ToString("dd.MM.yyyy HH:mm")</span>
+                        </div>
 
                         @if (Model.PoslednaIzmena.HasValue)
                         {
-                            <dt class="col-sm-4">Izmenjeno:</dt>
-                            <dd class="col-sm-8">
-                                @Model.PoslednaIzmena.Value.ToString("dd.MM.yyyy HH:mm")
-                            </dd>
-                        }
-                    </dl>
-                </div>
-            </div>
-        </div>
-
-        <!-- Plan i napomene -->
-        <div class="col-md-6">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Plan i napomene</h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <h6 class="fw-bold">Plan treninga:</h6>
-                        @if (!string.IsNullOrEmpty(Model.PlanTreninga))
-                        {
-                            <div class="bg-light p-3 rounded">
-                                @Model.PlanTreninga
+                            <div class="info-item">
+                                <span class="info-label">Izmenjeno:</span>
+                                <span class="info-value">@Model.PoslednaIzmena.Value.ToString("dd.MM.yyyy HH:mm")</span>
                             </div>
-                        }
-                        else
-                        {
-                            <p class="text-muted fst-italic">Nema definisanog plana.</p>
-                        }
-                    </div>
-
-                    <div>
-                        <h6 class="fw-bold">Napomene:</h6>
-                        @if (!string.IsNullOrEmpty(Model.Napomene))
-                        {
-                            <div class="bg-light p-3 rounded">
-                                @Model.Napomene
-                            </div>
-                        }
-                        else
-                        {
-                            <p class="text-muted fst-italic">Nema napomena.</p>
                         }
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Lista vežbi -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="fas fa-list-ol me-2"></i>
-                        Vežbe (@(Model.Vezbe?.Count ?? 0))
-                    </h5>
-                    <div>
-                        <a asp-action="Create" asp-route-treningId="@Model.IdTrening"
-                           class="btn btn-light btn-sm">
-                            <i class="fas fa-plus me-1"></i> Dodaj vežbu
-                        </a>
-                        <a asp-action="SabloniVezbi" asp-route-treningId="@Model.IdTrening"
-                           class="btn btn-outline-light btn-sm">
-                            <i class="fas fa-magic me-1"></i> Šabloni
-                        </a>
+            <!-- Plan i napomene -->
+            <div class="col-lg-6">
+                <div class="plan-card">
+                    <div class="card-header-modern plan-header">
+                        <div class="header-title">
+                            <div class="header-icon">
+                                <i class="fas fa-clipboard-list"></i>
+                            </div>
+                            Plan i napomene
+                        </div>
+                    </div>
+                    <div class="card-body-modern">
+                        <div class="plan-section">
+                            <h6 class="plan-title">Plan treninga:</h6>
+                            @if (!string.IsNullOrEmpty(Model.PlanTreninga))
+                            {
+                                <div class="plan-content">
+                                    @Model.PlanTreninga
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="plan-empty">
+                                    <i class="fas fa-clipboard me-2"></i>
+                                    Nema definisanog plana
+                                </div>
+                            }
+                        </div>
+
+                        <div class="plan-section">
+                            <h6 class="plan-title">Napomene:</h6>
+                            @if (!string.IsNullOrEmpty(Model.Napomene))
+                            {
+                                <div class="plan-content">
+                                    @Model.Napomene
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="plan-empty">
+                                    <i class="fas fa-sticky-note me-2"></i>
+                                    Nema napomena
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
-                <div class="card-body">
-                    @if (Model.Vezbe != null && Model.Vezbe.Any())
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th style="width: 50px;">#</th>
-                                        <th>Naziv vežbe</th>
-                                        <th>Serije</th>
-                                        <th>Ponavljanja</th>
-                                        <th>Težina (kg)</th>
-                                        <th>Trajanje</th>
-                                        <th>Napomene</th>
-                                        <th style="width: 120px;">Akcije</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var vezba in Model.Vezbe.OrderBy(v => v.Redosled))
-                                    {
+            </div>
+        </div>
+
+        <!-- Lista vežbi -->
+        <div class="row">
+            <div class="col-12">
+                <div class="exercises-card">
+                    <div class="card-header-modern exercises-header">
+                        <div class="header-title">
+                            <div class="header-icon">
+                                <i class="fas fa-list-ol"></i>
+                            </div>
+                            Vježbe (@(Model.Vezbe?.Count ?? 0))
+                        </div>
+                    </div>
+                    <div class="card-body-modern">
+                        @if (Model.Vezbe != null && Model.Vezbe.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table-modern">
+                                    <thead>
                                         <tr>
-                                            <td>
-                                                <span class="badge bg-secondary">@vezba.Redosled</span>
-                                            </td>
-                                            <td>
-                                                <strong>@vezba.NazivVezbe</strong>
-                                            </td>
-                                            <td>
-                                                @if (vezba.Serije > 0)
-                                                {
-                                                    <span class="badge bg-info">@vezba.Serije</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">-</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (vezba.Ponavljanja > 0)
-                                                {
-                                                    <span class="badge bg-primary">@vezba.Ponavljanja</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">-</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (vezba.Tezina.HasValue)
-                                                {
-                                                    <strong>@vezba.Tezina.Value kg</strong>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">-</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (vezba.Trajanje.HasValue)
-                                                {
-                                                    <span class="badge bg-warning text-dark">
-                                                        @vezba.Trajanje.Value.ToString(@"mm\:ss")
-                                                    </span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">-</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (!string.IsNullOrEmpty(vezba.Napomene))
-                                                {
-                                                    <small class="text-muted">@vezba.Napomene</small>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">-</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                <div class="btn-group btn-group-sm">
-                                                    <a asp-action="Edit" asp-route-id="@vezba.IdVezba"
-                                                       class="btn btn-outline-warning" title="Uredi">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                    <form asp-action="Delete" asp-route-id="@vezba.IdVezba"
-                                                          method="post" class="d-inline"
-                                                          onsubmit="return confirm('Da li ste sigurni da želite da obrišete ovu vežbu?')">
-                                                        <button type="submit" class="btn btn-outline-danger" title="Obriši">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
+                                            <th style="width: 50px;">#</th>
+                                            <th>Naziv vežbe</th>
+                                            <th>Serije</th>
+                                            <th>Ponavljanja</th>
+                                            <th>Težina (kg)</th>
+                                            <th>Trajanje</th>
+                                            <th>Napomene</th>
+                                            <th style="width: 100px;">Akcije</th>
                                         </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-4">
-                            <i class="fas fa-clipboard fa-3x text-muted mb-3"></i>
-                            <h5 class="text-muted">Nema definisanih vežbi</h5>
-                            <p class="text-muted">Dodajte vežbe da biste kreirali plan treninga.</p>
-                            <a asp-action="Create" asp-route-treningId="@Model.IdTrening"
-                               class="btn btn-success">
-                                <i class="fas fa-plus me-1"></i> Dodaj prvu vežbu
-                            </a>
-                        </div>
-                    }
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var vezba in Model.Vezbe.OrderBy(v => v.Redosled))
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <span class="exercise-badge badge-order">@vezba.Redosled</span>
+                                                </td>
+                                                <td>
+                                                    <strong>@vezba.NazivVezbe</strong>
+                                                </td>
+                                                <td>
+                                                    @if (vezba.Serije > 0)
+                                                    {
+                                                        <span class="exercise-badge badge-sets">@vezba.Serije</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (vezba.Ponavljanja > 0)
+                                                    {
+                                                        <span class="exercise-badge badge-reps">@vezba.Ponavljanja</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (vezba.Tezina.HasValue)
+                                                    {
+                                                        <strong>@vezba.Tezina.Value kg</strong>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (vezba.Trajanje.HasValue)
+                                                    {
+                                                        <span class="exercise-badge badge-duration">
+                                                            @vezba.Trajanje.Value.ToString(@"mm\:ss")
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(vezba.Napomene))
+                                                    {
+                                                        <small class="text-muted">@vezba.Napomene</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <div class="exercise-actions">
+                                                        <a asp-action="Edit" asp-route-id="@vezba.IdVezba"
+                                                           class="btn-exercise btn-edit" title="Uredi">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <form asp-action="Delete" asp-route-id="@vezba.IdVezba"
+                                                              method="post" class="d-inline"
+                                                              onsubmit="return confirm('Da li ste sigurni da želite da obrišete ovu vežbu?')">
+                                                            <button type="submit" class="btn-exercise btn-delete" title="Obriši">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="empty-exercises">
+                                <div class="empty-icon">
+                                    <i class="fas fa-clipboard"></i>
+                                </div>
+                                <h5 class="empty-title">Nema definisanih vežbi</h5>
+                                <p class="empty-text">Dodajte vežbe da biste kreirali plan treninga.</p>
+                                <a asp-action="Create" asp-route-treningId="@Model.IdTrening" class="action-btn btn-add">
+                                    <i class="fas fa-plus"></i>
+                                    Dodaj prvu vježbu
+                                </a>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Navigacione dugmad -->
-    <div class="mt-4 d-flex gap-2">
-        <a asp-action="Index" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-1"></i> Nazad na listu
-        </a>
-        <a asp-action="UpravljajStatusom" asp-route-id="@Model.IdTrening"
-           class="btn btn-warning">
-            <i class="fas fa-cog me-1"></i> Upravljaj statusom
-        </a>
-        @if (Model.Status == StatusTreninga.Planiran)
-        {
-            <a asp-action="SabloniVezbi" asp-route-treningId="@Model.IdTrening"
-               class="btn btn-info">
-                <i class="fas fa-magic me-1"></i> Koristi šablone
+        <!-- Navigacione dugmad -->
+        <div class="navigation-section">
+            <a asp-action="Index" class="nav-btn">
+                <i class="fas fa-arrow-left"></i>
+                Nazad na listu
             </a>
-        }
+            <a asp-action="UpravljajStatusom" asp-route-id="@Model.IdTrening" class="nav-btn btn-primary">
+                <i class="fas fa-edit"></i>
+                Uredi trening
+            </a>
+            @if (Model.Status == StatusTreninga.Planiran)
+            {
+                <a asp-action="SabloniVezbi" asp-route-treningId="@Model.IdTrening" class="nav-btn btn-info">
+                    <i class="fas fa-magic"></i>
+                    Koristi šablone
+                </a>
+            }
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Delete confirmation enhanced
+            var deleteForms = document.querySelectorAll('form[onsubmit]');
+
+            deleteForms.forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    var exerciseName = this.closest('tr').querySelector('strong').textContent;
+                    var confirmed = confirm('Da li ste sigurni da želite da obrišete vežbu "' + exerciseName + '"?\n\nOva akcija je nepovratna!');
+
+                    if (confirmed) {
+                        var deleteBtn = this.querySelector('.btn-delete');
+                        if (deleteBtn) {
+                            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                            deleteBtn.disabled = true;
+                        }
+                        this.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}
