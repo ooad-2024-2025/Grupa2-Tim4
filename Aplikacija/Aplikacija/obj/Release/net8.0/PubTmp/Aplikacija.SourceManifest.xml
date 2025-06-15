@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<sitemanifest>
+  <IisApp path="C:\Users\user\Documents\GitHub\Grupa2-Tim4\Aplikacija\Aplikacija\obj\Release\net8.0\PubTmp\Out\" />
+  <dbfullsql path="C:\Users\user\Documents\GitHub\Grupa2-Tim4\Aplikacija\Aplikacija\obj\Release\net8.0\PubTmp\EFSQLScripts\Aplikacija.Data.ApplicationDbContext.sql" />
+</sitemanifest>
