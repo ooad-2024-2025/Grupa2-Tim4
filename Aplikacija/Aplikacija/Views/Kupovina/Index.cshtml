@@ -2,52 +2,598 @@
     ViewData["Title"] = "Kupovina - Narudžbe";
 }
 
-<div class="container mt-5">
-    <h2 class="text-dark fw-bold text-center mb-4">Sve narudžbe</h2>
+<style>
+    .orders-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 0 2rem 0;
+        margin-top: -20px;
+        position: relative;
+        overflow: hidden;
+        min-height: 180px;
+    }
 
-    @if (ViewBag.Narudzbe != null)
-    {
-        <table class="table table-bordered table-striped shadow-sm">
-            <thead class="table-dark">
-                <tr>
-                    <th>Datum</th>
-                    <th>Korisnik</th>
-                    <th>Proizvodi</th>
-                    <th>Ukupno</th>
-                    <th>Akcija</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var narudzba in ViewBag.Narudzbe)
-                {
-                    <tr>
-                        <td>@narudzba.Datum.ToString("dd.MM.yyyy")</td>
-                        <td>@narudzba.Korisnik</td>
-                        <td>
-                            <ul class="mb-0">
-                                @foreach (var stavka in narudzba.Stavke)
-                                {
-                                    <li>@stavka.Naziv x @stavka.Kolicina</li>
-                                }
-                            </ul>
-                        </td>
-                        <td>@string.Format("{0:0.00} KM", narudzba.Ukupno)</td>
-                        <td>
-                            <form asp-controller="Kupovina" asp-action="DeleteByRacun" asp-route-racun="@narudzba.Racun" method="post" onsubmit="return confirm('Jeste li sigurni da želite obrisati ovu narudžbu?');">
-                                <button type="submit" class="btn btn-danger btn-sm" title="Obriši">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        .orders-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+    .hero-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(circle at 40% 60%, rgba(255,255,255,0.1) 2px, transparent 2px);
+        background-size: 50px 50px;
+        z-index: 1;
+        animation: ordersPattern 30s linear infinite;
     }
-    else
-    {
-        <div class="alert alert-info text-center">
-            Nema dostupnih narudžbi.
-        </div>
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        padding: 1rem 0;
     }
+
+    .hero-title {
+        font-size: 3.2rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+        animation: fadeInUp 1s ease-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+    }
+
+    .hero-icon {
+        width: 85px;
+        height: 85px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #667eea;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        animation: ordersPulse 3s ease-in-out infinite;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border: 3px solid white;
+    }
+
+    .hero-subtitle {
+        font-size: 1.3rem;
+        opacity: 1;
+        margin-top: 1rem;
+        animation: fadeInUp 1s ease-out 0.3s both;
+        color: white;
+        font-weight: 600;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .content-container {
+        background: #f8f9fa;
+        padding: 3rem 0;
+        margin-top: -50px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .orders-table-wrapper {
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        animation: fadeInUp 1s ease-out 0.6s both;
+        position: relative;
+    }
+
+        .orders-table-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 30%, #f55f3a 60%, #ff7b54 100%);
+            z-index: 1;
+        }
+
+    .table-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        margin-top: 8px;
+        position: relative;
+    }
+
+    .table-header-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem auto;
+        font-size: 1.5rem;
+        animation: tableHeaderSpin 4s ease-in-out infinite;
+    }
+
+    .table-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .modern-table {
+        width: 100%;
+        margin: 0;
+        background: white;
+    }
+
+    .table-head {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+        .table-head th {
+            padding: 1.5rem 1.25rem;
+            border: none;
+            font-weight: 700;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+            position: relative;
+            text-align: center;
+        }
+
+            .table-head th:not(:last-child)::after {
+                content: '';
+                position: absolute;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 1px;
+                height: 20px;
+                background: #dee2e6;
+            }
+
+    .table-body tr {
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+        .table-body tr:hover {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            transform: scale(1.01);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+    .table-body td {
+        padding: 1.5rem 1.25rem;
+        border: none;
+        border-bottom: 1px solid #f1f3f4;
+        vertical-align: middle;
+        font-size: 0.95rem;
+        color: #495057;
+        text-align: center;
+    }
+
+    .date-cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .date-icon {
+        color: #667eea;
+    }
+
+    .user-cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .products-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        max-width: 200px;
+    }
+
+    .product-item {
+        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        padding: 0.5rem 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 15px;
+        border-left: 3px solid #ff9800;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #e65100;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .product-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(255, 152, 0, 0.3);
+        }
+
+    .product-icon {
+        color: #ff9800;
+        font-size: 0.8rem;
+    }
+
+    .total-cell {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #e74c3c;
+        background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+        border-radius: 15px;
+        padding: 0.75rem 1rem;
+        display: inline-block;
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2);
+        animation: totalGlow 2s ease-in-out infinite alternate;
+    }
+
+    .action-cell {
+        padding: 1rem !important;
+    }
+
+    .delete-btn {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        color: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .delete-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .delete-btn:hover::before {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.6);
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #7f8c8d;
+        background: white;
+        margin: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        margin-bottom: 2rem;
+        opacity: 0.5;
+        color: #bdc3c7;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #2c3e50;
+    }
+
+    .empty-text {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #7f8c8d;
+    }
+
+    .stats-bar {
+        background: white;
+        padding: 1.5rem 2rem;
+        border-top: 1px solid #f1f3f4;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .stats-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #7f8c8d;
+        font-size: 0.95rem;
+    }
+
+    .stats-icon {
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.9rem;
+    }
+
+    .stats-number {
+        color: #f55f3a;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes ordersPulse {
+        0%, 100% {
+            transform: scale(1) rotate(0deg);
+        }
+
+        50% {
+            transform: scale(1.05) rotate(5deg);
+        }
+    }
+
+    @@keyframes ordersPattern {
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: 50px 50px;
+        }
+    }
+
+    @@keyframes tableHeaderSpin {
+        0%, 100% {
+            transform: rotate(0deg) scale(1);
+        }
+
+        50% {
+            transform: rotate(10deg) scale(1.05);
+        }
+    }
+
+    @@keyframes totalGlow {
+        from {
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2);
+        }
+
+        to {
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.5);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+            flex-direction: column;
+        }
+
+        .hero-icon {
+            width: 70px;
+            height: 70px;
+            font-size: 1.8rem;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+        }
+
+        .modern-table {
+            font-size: 0.85rem;
+        }
+
+        .table-head th,
+        .table-body td {
+            padding: 1rem 0.75rem;
+        }
+
+        .user-cell {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .products-list {
+            max-width: 150px;
+        }
+
+        .stats-bar {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+
+<!-- Hero sekcija -->
+<div class="orders-hero">
+    <div class="hero-pattern"></div>
+    <div class="container hero-content">
+        <h1 class="hero-title">
+            <div class="hero-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            Sve narudžbe
+        </h1>
+        <p class="hero-subtitle">Pregled svih narudžbi u sistemu</p>
+    </div>
+</div>
+
+<!-- Content container -->
+<div class="content-container">
+    <div class="container">
+
+        @if (ViewBag.Narudzbe != null)
+        {
+            <div class="orders-table-wrapper">
+
+                <!-- Table Header -->
+                <div class="table-header">
+                    <div class="table-header-icon">
+                        <i class="fas fa-table"></i>
+                    </div>
+                    <h3 class="table-title">Lista narudžbi</h3>
+                </div>
+
+                <!-- Table -->
+                <table class="modern-table">
+                    <thead class="table-head">
+                        <tr>
+                            <th><i class="fas fa-calendar-alt me-2"></i>Datum</th>
+                            <th><i class="fas fa-user me-2"></i>Korisnik</th>
+                            <th><i class="fas fa-box me-2"></i>Proizvodi</th>
+                            <th><i class="fas fa-money-bill-wave me-2"></i>Ukupno</th>
+                            <th><i class="fas fa-cog me-2"></i>Akcija</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-body">
+                        @foreach (var narudzba in ViewBag.Narudzbe)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="date-cell">
+                                        <i class="fas fa-calendar-alt date-icon"></i>
+                                        @narudzba.Datum.ToString("dd.MM.yyyy")
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar">
+                                            @narudzba.Korisnik.Substring(0, Math.Min(2, narudzba.Korisnik.Length)).ToUpper()
+                                        </div>
+                                        <span class="user-name">@narudzba.Korisnik</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <ul class="products-list">
+                                        @foreach (var stavka in narudzba.Stavke)
+                                        {
+                                            <li class="product-item">
+                                                <i class="fas fa-shopping-bag product-icon"></i>
+                                                @stavka.Naziv x @stavka.Kolicina
+                                            </li>
+                                        }
+                                    </ul>
+                                </td>
+                                <td>
+                                    <span class="total-cell">
+                                        @string.Format("{0:0.00} KM", narudzba.Ukupno)
+                                    </span>
+                                </td>
+                                <td class="action-cell">
+                                    <form asp-controller="Kupovina" asp-action="DeleteByRacun" asp-route-racun="@narudzba.Racun" method="post" onsubmit="return confirm('Jeste li sigurni da želite obrisati ovu narudžbu?');">
+                                        <button type="submit" class="delete-btn" title="Obriši narudžbu">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <!-- Stats Bar -->
+                <div class="stats-bar">
+                    <div class="stats-item">
+                        <div class="stats-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <span>Ukupno narudžbi: <span class="stats-number">@ViewBag.Narudzbe.Count</span></span>
+                    </div>
+                    <div class="stats-item">
+                        <div class="stats-icon">
+                            <i class="fas fa-euro-sign"></i>
+                        </div>
+                        <span>Ukupna vrijednost: <span class="stats-number">@string.Format("{0:0.00} KM", ((IEnumerable<dynamic>)ViewBag.Narudzbe).Sum(x => (decimal)x.Ukupno))</span></span>
+                    </div>
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-clipboard"></i>
+                </div>
+                <h4 class="empty-title">Nema dostupnih narudžbi</h4>
+                <p class="empty-text">
+                    Trenutno nema registrovanih narudžbi u sistemu.<br>
+                    Narudžbe će se pojaviti ovdje čim korisnici počnu da kupuju.
+                </p>
+            </div>
+        }
+
+    </div>
 </div>

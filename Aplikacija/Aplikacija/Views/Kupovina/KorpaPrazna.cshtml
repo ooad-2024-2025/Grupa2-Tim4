@@ -2,30 +2,512 @@
     ViewData["Title"] = "Korpa je prazna";
 }
 
-<div class="container text-center my-5 py-5">
-    <div class="mb-4">
-        <img src="~/images/empty-cart.jpg" alt="Prazna korpa" style="max-width: 150px;" />
-    </div>
-
-    <h2 class="text-muted mb-3">Vaša korpa je prazna</h2>
-    <p class="text-secondary mb-4">Izgleda da još niste dodali nijedan proizvod.</p>
-
-    <a asp-controller="Kupovina" asp-action="Create" class="btn btn-lg custom-orange px-4 py-2 fs-5">
-        🛍 Povratak u Shop
-    </a>
-</div>
-
 <style>
-    .custom-orange {
-        border: 2px solid #f55f3a;
-        color: #f55f3a;
-        background-color: transparent;
-        transition: background-color 0.3s, color 0.3s;
-        border-radius: 0.5rem;
+    .empty-cart-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 0 2rem 0;
+        margin-top: -20px;
+        position: relative;
+        overflow: hidden;
+        min-height: 180px;
     }
 
-        .custom-orange:hover {
-            background-color: #f55f3a;
-            color: white;
+        .empty-cart-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
         }
+
+    .hero-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(circle at 25% 75%, rgba(255,255,255,0.1) 2px, transparent 2px);
+        background-size: 60px 60px;
+        z-index: 1;
+        animation: emptyPattern 20s linear infinite;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        padding: 1rem 0;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+        animation: fadeInUp 1s ease-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+    }
+
+    .hero-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #667eea;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        animation: emptyCartPulse 3s ease-in-out infinite;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border: 3px solid white;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 1;
+        margin-top: 1rem;
+        animation: fadeInUp 1s ease-out 0.3s both;
+        color: white;
+        font-weight: 600;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .content-container {
+        background: #f8f9fa;
+        padding: 3rem 0;
+        margin-top: -50px;
+        position: relative;
+        z-index: 3;
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .empty-cart-card {
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        padding: 4rem 3rem;
+        text-align: center;
+        animation: fadeInUp 1s ease-out 0.6s both;
+        position: relative;
+        overflow: hidden;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+        .empty-cart-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 30%, #f55f3a 60%, #ff7b54 100%);
+            z-index: 1;
+        }
+
+    .empty-illustration {
+        position: relative;
+        margin-bottom: 3rem;
+        animation: floatAnimation 4s ease-in-out infinite;
+    }
+
+    .cart-image {
+        max-width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 50%;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        border: 5px solid #f8f9fa;
+        position: relative;
+        z-index: 2;
+    }
+
+    .illustration-bg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 250px;
+        height: 250px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(245, 95, 58, 0.1) 100%);
+        border-radius: 50%;
+        z-index: 1;
+        animation: backgroundPulse 3s ease-in-out infinite;
+    }
+
+    .empty-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        animation: fadeInUp 1s ease-out 0.9s both;
+        position: relative;
+    }
+
+        .empty-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #f55f3a 0%, #ff7b54 100%);
+            border-radius: 2px;
+        }
+
+    .empty-description {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        margin-bottom: 3rem;
+        line-height: 1.6;
+        animation: fadeInUp 1s ease-out 1.2s both;
+    }
+
+    .shop-btn {
+        background: linear-gradient(45deg, #f55f3a, #ff7b54);
+        border: none;
+        padding: 1.5rem 3rem;
+        font-size: 1.3rem;
+        font-weight: 700;
+        border-radius: 50px;
+        color: white;
+        text-decoration: none;
+        transition: all 0.4s ease;
+        box-shadow: 0 8px 25px rgba(245, 95, 58, 0.4);
+        display: inline-flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        animation: fadeInUp 1s ease-out 1.5s both;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .shop-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .shop-btn:hover::before {
+            left: 100%;
+        }
+
+        .shop-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(245, 95, 58, 0.6);
+            color: white;
+            text-decoration: none;
+            background: linear-gradient(45deg, #ff7b54, #f55f3a);
+        }
+
+        .shop-btn:active {
+            transform: translateY(-2px);
+        }
+
+    .features-section {
+        margin-top: 4rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 2rem;
+        animation: fadeInUp 1s ease-out 1.8s both;
+    }
+
+    .feature-item {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 2rem 1.5rem;
+        border-radius: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: #f55f3a;
+        }
+
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        margin: 0 auto 1rem auto;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .feature-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+
+    .feature-text {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        line-height: 1.5;
+    }
+
+    .decorative-elements {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        overflow: hidden;
+    }
+
+    .floating-icon {
+        position: absolute;
+        color: rgba(102, 126, 234, 0.1);
+        font-size: 2rem;
+        animation: floatRandom 8s ease-in-out infinite;
+    }
+
+        .floating-icon:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-icon:nth-child(2) {
+            top: 20%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .floating-icon:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        .floating-icon:nth-child(4) {
+            bottom: 15%;
+            right: 10%;
+            animation-delay: 6s;
+        }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes emptyCartPulse {
+        0%, 100% {
+            transform: scale(1) rotate(0deg);
+        }
+
+        50% {
+            transform: scale(1.05) rotate(5deg);
+        }
+    }
+
+    @@keyframes emptyPattern {
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: 60px 60px;
+        }
+    }
+
+    @@keyframes floatAnimation {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+
+    @@keyframes backgroundPulse {
+        0%, 100% {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        50% {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+    }
+
+    @@keyframes floatRandom {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+        }
+
+        25% {
+            transform: translateY(-10px) rotate(5deg);
+        }
+
+        50% {
+            transform: translateY(-5px) rotate(-3deg);
+        }
+
+        75% {
+            transform: translateY(-15px) rotate(3deg);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.2rem;
+            flex-direction: column;
+        }
+
+        .hero-icon {
+            width: 70px;
+            height: 70px;
+            font-size: 1.8rem;
+        }
+
+        .empty-cart-card {
+            padding: 3rem 2rem;
+            margin: 0 1rem;
+        }
+
+        .empty-title {
+            font-size: 2rem;
+        }
+
+        .empty-description {
+            font-size: 1.1rem;
+        }
+
+        .shop-btn {
+            padding: 1.25rem 2.5rem;
+            font-size: 1.1rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .features-section {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .cart-image {
+            max-width: 150px;
+            height: 150px;
+        }
+
+        .illustration-bg {
+            width: 200px;
+            height: 200px;
+        }
+    }
 </style>
+
+<!-- Hero sekcija -->
+<div class="empty-cart-hero">
+    <div class="hero-pattern"></div>
+    <div class="container hero-content">
+        <h1 class="hero-title">
+            <div class="hero-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            Korpa je prazna
+        </h1>
+        <p class="hero-subtitle">Dodajte proizvode u vašu korpu</p>
+    </div>
+</div>
+
+<!-- Content container -->
+<div class="content-container">
+    <div class="container">
+
+        <div class="empty-cart-card">
+
+            <!-- Decorative floating elements -->
+            <div class="decorative-elements">
+                <i class="fas fa-shopping-bag floating-icon"></i>
+                <i class="fas fa-heart floating-icon"></i>
+                <i class="fas fa-star floating-icon"></i>
+                <i class="fas fa-gift floating-icon"></i>
+            </div>
+
+            <!-- Empty cart illustration -->
+            <div class="empty-illustration">
+                <div class="illustration-bg"></div>
+                <img src="~/images/empty-cart.jpg" alt="Prazna korpa" class="cart-image" />
+            </div>
+
+            <!-- Main content -->
+            <h2 class="empty-title">Vaša korpa je prazna</h2>
+            <p class="empty-description">
+                Izgleda da još niste dodali nijedan proizvod u vašu korpu.<br>
+                Istražite našu ponudu i pronađite nešto što će vam se svidjeti!
+            </p>
+
+            <!-- Shop button -->
+            <a asp-controller="Kupovina" asp-action="Create" class="shop-btn">
+                <i class="fas fa-shopping-bag"></i>
+                Povratak u Shop
+            </a>
+
+            <!-- Features section -->
+            <div class="features-section">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <h6 class="feature-title">Brza dostava</h6>
+                    <p class="feature-text">Besplatna dostava za narudžbe preko 50 KM</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h6 class="feature-title">Kvalitet</h6>
+                    <p class="feature-text">Samo najbolji proizvodi za vaš fitness lifestyle</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h6 class="feature-title">Podrška</h6>
+                    <p class="feature-text">24/7 customer support za sva vaša pitanja</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

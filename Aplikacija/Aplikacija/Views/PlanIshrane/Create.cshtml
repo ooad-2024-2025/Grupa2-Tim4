@@ -1,44 +1,667 @@
 ﻿@model Aplikacija.Models.PlanIshrane
+@{
+    ViewData["Title"] = "Kreiraj plan ishrane";
+}
 
-<form asp-action="Create" method="post">
-
-
-    <!-- Cilj plana -->
-    <div class="form-group">
-        <label asp-for="Ciljevi"></label>
-        <select asp-for="Ciljevi" asp-items="ViewBag.TipCiljaOptions" class="form-control">
-            <option value="">-- Izaberite cilj --</option>
-        </select>
-        <span asp-validation-for="Ciljevi" class="text-danger"></span>
-    </div>
-
-    <!-- Kilaža -->
-    <div class="form-group">
-        <label asp-for="Kilaza"></label>
-        <input asp-for="Kilaza" class="form-control" type="number" step="0.1" min="30" max="300" />
-        <span asp-validation-for="Kilaza" class="text-danger"></span>
-    </div>
-
-    <!-- Visina -->
-    <div class="form-group">
-        <label asp-for="Visina"></label>
-        <input asp-for="Visina" class="form-control" type="number" min="100" max="250" />
-        <span asp-validation-for="Visina" class="text-danger"></span>
-    </div>
-
-    <!-- Godine -->
-    <div class="form-group">
-        <label asp-for="Godine"></label>
-        <input asp-for="Godine" class="form-control" type="number" min="10" max="100" />
-        <span asp-validation-for="Godine" class="text-danger"></span>
-    </div>
-
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-warning">
-            @TempData["ErrorMessage"]
-        </div>
+<style>
+    .nutrition-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 0 2rem 0;
+        margin-top: -20px;
+        position: relative;
+        overflow: hidden;
+        min-height: 180px;
     }
 
-    <button type="submit" class="btn btn-primary">Kreiraj Plan</button>
-</form>
+        .nutrition-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+    .hero-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.1) 2px, transparent 2px);
+        background-size: 55px 55px;
+        z-index: 1;
+        animation: nutritionPattern 25s linear infinite;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        padding: 1rem 0;
+    }
+
+    .hero-title {
+        font-size: 3.2rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+        animation: fadeInUp 1s ease-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+    }
+
+    .hero-icon {
+        width: 85px;
+        height: 85px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #667eea;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        animation: nutritionPulse 3s ease-in-out infinite;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border: 3px solid white;
+    }
+
+    .hero-subtitle {
+        font-size: 1.3rem;
+        opacity: 1;
+        margin-top: 1rem;
+        animation: fadeInUp 1s ease-out 0.3s both;
+        color: white;
+        font-weight: 600;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .content-container {
+        background: #f8f9fa;
+        padding: 3rem 0;
+        margin-top: -50px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .nutrition-form-card {
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        border: none;
+        overflow: hidden;
+        animation: fadeInUp 1s ease-out 0.6s both;
+        position: relative;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+        .nutrition-form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 30%, #f55f3a 60%, #ff7b54 100%);
+            z-index: 1;
+        }
+
+    .form-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        margin-top: 8px;
+        position: relative;
+    }
+
+    .form-header-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem auto;
+        font-size: 2rem;
+        animation: formHeaderFloat 4s ease-in-out infinite;
+    }
+
+    .form-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .form-description {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin-top: 0.5rem;
+    }
+
+    .form-body {
+        padding: 3rem 2.5rem;
+    }
+
+    .form-section {
+        margin-bottom: 3rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid #ecf0f1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+    .section-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.1rem;
+    }
+
+    .modern-form-group {
+        margin-bottom: 2.5rem;
+        position: relative;
+    }
+
+    .modern-label {
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .label-icon {
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(135deg, #f55f3a 0%, #ff7b54 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.9rem;
+    }
+
+    .modern-input,
+    .modern-select {
+        width: 100%;
+        padding: 1.25rem 1.5rem;
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+        font-weight: 500;
+    }
+
+        .modern-input:focus,
+        .modern-select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+    .modern-select {
+        cursor: pointer;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1rem;
+        appearance: none;
+    }
+
+    .input-group {
+        position: relative;
+    }
+
+    .input-suffix {
+        position: absolute;
+        right: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #7f8c8d;
+        font-weight: 600;
+        font-size: 0.9rem;
+        pointer-events: none;
+    }
+
+    .validation-error {
+        color: #e74c3c;
+        font-size: 0.875rem;
+        margin-top: 0.75rem;
+        display: block;
+        animation: shakeError 0.5s ease-out;
+        font-weight: 500;
+    }
+
+    .error-alert {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        border: 2px solid #ffc107;
+        color: #856404;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        animation: slideInDown 0.5s ease-out;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .error-icon {
+        font-size: 1.5rem;
+        color: #f39c12;
+    }
+
+    .submit-section {
+        background: linear-gradient(135f, #f8f9fa 0%, #e9ecef 100%);
+        padding: 2.5rem;
+        text-align: center;
+        margin: -1px;
+        border-radius: 0 0 25px 25px;
+    }
+
+    .submit-btn {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border: none;
+        padding: 1.5rem 4rem;
+        font-size: 1.3rem;
+        font-weight: 700;
+        border-radius: 50px;
+        color: white;
+        transition: all 0.4s ease;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+            background: linear-gradient(45deg, #764ba2, #667eea);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-2px);
+        }
+
+    .info-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .info-card {
+        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        border: 2px solid #ff9800;
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 152, 0, 0.3);
+        }
+
+    .info-card-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem auto;
+        color: white;
+        font-size: 1.2rem;
+    }
+
+    .info-card-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #e65100;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-card-text {
+        font-size: 0.85rem;
+        color: #bf360c;
+        line-height: 1.4;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes nutritionPulse {
+        0%, 100% {
+            transform: scale(1) rotate(0deg);
+        }
+
+        50% {
+            transform: scale(1.05) rotate(3deg);
+        }
+    }
+
+    @@keyframes nutritionPattern {
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: 55px 55px;
+        }
+    }
+
+    @@keyframes formHeaderFloat {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+        }
+
+        50% {
+            transform: translateY(-10px) rotate(5deg);
+        }
+    }
+
+    @@keyframes shakeError {
+        0%, 100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-5px);
+        }
+
+        75% {
+            transform: translateX(5px);
+        }
+    }
+
+    @@keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+            flex-direction: column;
+        }
+
+        .hero-icon {
+            width: 70px;
+            height: 70px;
+            font-size: 1.8rem;
+        }
+
+        .form-body {
+            padding: 2rem 1.5rem;
+        }
+
+        .modern-input,
+        .modern-select {
+            padding: 1rem 1.25rem;
+        }
+
+        .submit-btn {
+            padding: 1.25rem 3rem;
+            font-size: 1.1rem;
+            width: 100%;
+        }
+
+        .info-cards {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Hero sekcija -->
+<div class="nutrition-hero">
+    <div class="hero-pattern"></div>
+    <div class="container hero-content">
+        <h1 class="hero-title">
+            <div class="hero-icon">
+                <i class="fas fa-apple-alt"></i>
+            </div>
+            Kreiraj plan ishrane
+        </h1>
+        <p class="hero-subtitle">Personalizovan plan ishrane prema vašim ciljevima</p>
+    </div>
+</div>
+
+<!-- Content container -->
+<div class="content-container">
+    <div class="container">
+
+        <div class="nutrition-form-card">
+
+            <!-- Form Header -->
+            <div class="form-header">
+                <div class="form-header-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h4 class="form-title">Plan ishrane</h4>
+                <p class="form-description">Unesite vaše podatke za kreiranje personalnog plana</p>
+            </div>
+
+            <!-- Form Body -->
+            <div class="form-body">
+
+                <!-- Info Cards -->
+                <div class="info-cards">
+                    <div class="info-card">
+                        <div class="info-card-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h6 class="info-card-title">Personalizovano</h6>
+                        <p class="info-card-text">Plan prilagođen vašim ciljevima</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h6 class="info-card-title">Efikasno</h6>
+                        <p class="info-card-text">Brže postizanje željenih rezultata</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-card-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h6 class="info-card-title">Zdravo</h6>
+                        <p class="info-card-text">Balansirana i zdrava ishrana</p>
+                    </div>
+                </div>
+
+                <form asp-action="Create" method="post">
+
+                    <!-- Error Message -->
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="error-alert">
+                            <i class="fas fa-exclamation-triangle error-icon"></i>
+                            <span>@TempData["ErrorMessage"]</span>
+                        </div>
+                    }
+
+                    <!-- Goal Section -->
+                    <div class="form-section">
+                        <h5 class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-target"></i>
+                            </div>
+                            Vaš cilj
+                        </h5>
+
+                        <div class="modern-form-group">
+                            <label asp-for="Ciljevi" class="modern-label">
+                                <div class="label-icon">
+                                    <i class="fas fa-bullseye"></i>
+                                </div>
+                                <span>Cilj plana</span>
+                            </label>
+                            <select asp-for="Ciljevi" asp-items="ViewBag.TipCiljaOptions" class="modern-select">
+                                <option value="">-- Izaberite vaš cilj --</option>
+                            </select>
+                            <span asp-validation-for="Ciljevi" class="validation-error"></span>
+                        </div>
+                    </div>
+
+                    <!-- Physical Data Section -->
+                    <div class="form-section">
+                        <h5 class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            Fizički podaci
+                        </h5>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="modern-form-group">
+                                    <label asp-for="Kilaza" class="modern-label">
+                                        <div class="label-icon">
+                                            <i class="fas fa-weight"></i>
+                                        </div>
+                                        <span>Kilaža</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <input asp-for="Kilaza" class="modern-input" type="number" step="0.1" min="30" max="300" placeholder="Unesite vašu kilažu" />
+                                        <span class="input-suffix">kg</span>
+                                    </div>
+                                    <span asp-validation-for="Kilaza" class="validation-error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="modern-form-group">
+                                    <label asp-for="Visina" class="modern-label">
+                                        <div class="label-icon">
+                                            <i class="fas fa-ruler-vertical"></i>
+                                        </div>
+                                        <span>Visina</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <input asp-for="Visina" class="modern-input" type="number" min="100" max="250" placeholder="Unesite vašu visinu" />
+                                        <span class="input-suffix">cm</span>
+                                    </div>
+                                    <span asp-validation-for="Visina" class="validation-error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="modern-form-group">
+                                    <label asp-for="Godine" class="modern-label">
+                                        <div class="label-icon">
+                                            <i class="fas fa-calendar"></i>
+                                        </div>
+                                        <span>Godine</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <input asp-for="Godine" class="modern-input" type="number" min="10" max="100" placeholder="Unesite vaše godine" />
+                                        <span class="input-suffix">god</span>
+                                    </div>
+                                    <span asp-validation-for="Godine" class="validation-error"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- Submit Section -->
+            <div class="submit-section">
+                <button type="submit" form="nutrition-form" class="submit-btn">
+                    <i class="fas fa-magic me-2"></i>Kreiraj plan
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Add form id to the form element
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form[asp-action="Create"]');
+        if (form) {
+            form.id = 'nutrition-form';
+        }
+    });
+</script>

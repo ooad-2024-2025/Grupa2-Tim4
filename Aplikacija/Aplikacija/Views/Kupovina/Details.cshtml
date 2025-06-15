@@ -1,48 +1,714 @@
 ﻿@model Aplikacija.Models.Kupovina
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalji kupovine";
 }
 
-<h1>Details</h1>
+<style>
+    .purchase-details-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 0 2rem 0;
+        margin-top: -20px;
+        position: relative;
+        overflow: hidden;
+        min-height: 180px;
+    }
 
-<div>
-    <h4>Kupovina</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DatumKupovine)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DatumKupovine)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Artikal)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Artikal)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cijena)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cijena)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Racun)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Racun)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Korisnik)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Korisnik.Email)
-        </dd>
-    </dl>
+        .purchase-details-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+    .hero-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.1) 2px, transparent 2px);
+        background-size: 45px 45px;
+        z-index: 1;
+        animation: detailsPattern 25s linear infinite;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        padding: 1rem 0;
+    }
+
+    .hero-title {
+        font-size: 3.2rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+        animation: fadeInUp 1s ease-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+    }
+
+    .hero-icon {
+        width: 85px;
+        height: 85px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #667eea;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        animation: detailsPulse 3s ease-in-out infinite;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border: 3px solid white;
+    }
+
+    .hero-subtitle {
+        font-size: 1.3rem;
+        opacity: 1;
+        margin-top: 1rem;
+        animation: fadeInUp 1s ease-out 0.3s both;
+        color: white;
+        font-weight: 600;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .content-container {
+        background: #f8f9fa;
+        padding: 3rem 0;
+        margin-top: -50px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .purchase-card {
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        border: none;
+        overflow: hidden;
+        animation: fadeInUp 1s ease-out 0.6s both;
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+        .purchase-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 30%, #f55f3a 60%, #ff7b54 100%);
+            z-index: 1;
+        }
+
+    .card-header-custom {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        margin-top: 8px;
+        position: relative;
+    }
+
+    .receipt-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem auto;
+        font-size: 2rem;
+        animation: receiptFloat 4s ease-in-out infinite;
+    }
+
+    .purchase-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .card-body-custom {
+        padding: 3rem 2.5rem;
+    }
+
+    .details-section {
+        margin-bottom: 3rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid #ecf0f1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+    .section-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.1rem;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 20px;
+        border-left: 5px solid #667eea;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .detail-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(245, 95, 58, 0.08) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .detail-item:hover {
+            transform: translateX(15px) translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-left-color: #f55f3a;
+        }
+
+            .detail-item:hover::before {
+                opacity: 1;
+            }
+
+    .detail-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.4rem;
+        margin-right: 2rem;
+        flex-shrink: 0;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        position: relative;
+        z-index: 2;
+        transition: all 0.3s ease;
+    }
+
+    .detail-item:hover .detail-icon {
+        background: linear-gradient(135deg, #f55f3a 0%, #ff7b54 100%);
+        box-shadow: 0 6px 20px rgba(245, 95, 58, 0.4);
+    }
+
+    .detail-content {
+        flex: 1;
+        position: relative;
+        z-index: 2;
+    }
+
+    .detail-label {
+        font-size: 1rem;
+        color: #7f8c8d;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .detail-value {
+        font-size: 1.3rem;
+        color: #2c3e50;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .price-highlight {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 30px;
+        font-weight: 800;
+        font-size: 1.4rem;
+        display: inline-block;
+        box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        animation: priceGlow 2s ease-in-out infinite alternate;
+    }
+
+    .receipt-number {
+        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: inline-block;
+        box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
+        font-family: 'Courier New', monospace;
+        letter-spacing: 1px;
+    }
+
+    .user-badge {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: inline-block;
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+    }
+
+    .product-showcase {
+        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        border: 2px solid #ff9800;
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .product-showcase::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient( 45deg, transparent, transparent 10px, rgba(255, 152, 0, 0.1) 10px, rgba(255, 152, 0, 0.1) 20px );
+            animation: productShine 15s linear infinite;
+        }
+
+    .product-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem auto;
+        font-size: 2rem;
+        color: white;
+        box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
+        position: relative;
+        z-index: 2;
+    }
+
+    .product-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #e65100;
+        margin: 0;
+        position: relative;
+        z-index: 2;
+    }
+
+    .actions-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        animation: fadeInUp 1s ease-out 0.9s both;
+    }
+
+    .modern-btn {
+        padding: 1.3rem 3rem;
+        border-radius: 50px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        font-size: 1.1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+
+    .btn-back {
+        background: transparent;
+        color: #6c757d;
+        border: 3px solid #6c757d;
+    }
+
+        .btn-back:hover {
+            background: #6c757d;
+            color: white;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(108, 117, 125, 0.4);
+            text-decoration: none;
+        }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(243, 156, 18, 0.5);
+    }
+
+        .btn-edit:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(243, 156, 18, 0.7);
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            color: white;
+            text-decoration: none;
+        }
+
+    .stats-mini-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #667eea;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes detailsPulse {
+        0%, 100% {
+            transform: scale(1) rotate(0deg);
+        }
+
+        50% {
+            transform: scale(1.05) rotate(3deg);
+        }
+    }
+
+    @@keyframes detailsPattern {
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: 45px 45px;
+        }
+    }
+
+    @@keyframes receiptFloat {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+        }
+
+        50% {
+            transform: translateY(-10px) rotate(5deg);
+        }
+    }
+
+    @@keyframes priceGlow {
+        from {
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        to {
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.8);
+        }
+    }
+
+    @@keyframes productShine {
+        0% {
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+
+        100% {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+            flex-direction: column;
+        }
+
+        .hero-icon {
+            width: 70px;
+            height: 70px;
+            font-size: 1.8rem;
+        }
+
+        .detail-item {
+            flex-direction: column;
+            text-align: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .detail-icon {
+            margin-right: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .actions-container {
+            padding: 2rem;
+            flex-direction: column;
+        }
+
+        .modern-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .stats-mini-section {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Hero sekcija -->
+<div class="purchase-details-hero">
+    <div class="hero-pattern"></div>
+    <div class="container hero-content">
+        <h1 class="hero-title">
+            <div class="hero-icon">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            Detalji kupovine
+        </h1>
+        <p class="hero-subtitle">Pregled informacija o transakciji</p>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdKupovina">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<!-- Content container -->
+<div class="content-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-12">
+
+                <!-- Purchase Details Card -->
+                <div class="card purchase-card">
+
+                    <div class="card-header-custom">
+                        <div class="receipt-icon">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <h4 class="purchase-title">
+                            <i class="fas fa-shopping-bag"></i>
+                            Detalji kupovine
+                        </h4>
+                    </div>
+
+                    <div class="card-body-custom">
+
+                        <!-- Purchase Information Section -->
+                        <div class="details-section">
+                            <h5 class="section-title">
+                                <div class="section-icon">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                Informacije o transakciji
+                            </h5>
+
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">
+                                        <i class="fas fa-clock"></i>
+                                        @Html.DisplayNameFor(model => model.DatumKupovine)
+                                    </div>
+                                    <div class="detail-value">@Html.DisplayFor(model => model.DatumKupovine)</div>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">
+                                        <i class="fas fa-euro-sign"></i>
+                                        @Html.DisplayNameFor(model => model.Cijena)
+                                    </div>
+                                    <div class="detail-value">
+                                        <span class="price-highlight">@Html.DisplayFor(model => model.Cijena) KM</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-file-invoice"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">
+                                        <i class="fas fa-hashtag"></i>
+                                        @Html.DisplayNameFor(model => model.Racun)
+                                    </div>
+                                    <div class="detail-value">
+                                        <span class="receipt-number">@Html.DisplayFor(model => model.Racun)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">
+                                        <i class="fas fa-at"></i>
+                                        @Html.DisplayNameFor(model => model.Korisnik)
+                                    </div>
+                                    <div class="detail-value">
+                                        <span class="user-badge">@Html.DisplayFor(model => model.Korisnik.Email)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Product Section -->
+                        <div class="details-section">
+                            <h5 class="section-title">
+                                <div class="section-icon">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                Proizvod
+                            </h5>
+
+                            <div class="product-showcase">
+                                <div class="product-icon">
+                                    <i class="fas fa-shopping-bag"></i>
+                                </div>
+                                <h6 class="product-name">@Html.DisplayFor(model => model.Artikal)</h6>
+                            </div>
+                        </div>
+
+                        <!-- Quick Stats -->
+                        <div class="stats-mini-section">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="stat-label">Status</div>
+                                <div class="stat-value">Kompletirana</div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="stat-label">Sigurnost</div>
+                                <div class="stat-value">Verifikovana</div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="stat-label">Ocjena</div>
+                                <div class="stat-value">Izvrsno</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Actions Footer -->
+                    <div class="actions-container">
+                        <a asp-action="Index" class="modern-btn btn-back">
+                            <i class="fas fa-arrow-left"></i>
+                            Nazad na listu
+                        </a>
+
+                        <a asp-action="Edit" asp-route-id="@Model?.IdKupovina" class="modern-btn btn-edit">
+                            <i class="fas fa-edit"></i>
+                            Uredi kupovinu
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>

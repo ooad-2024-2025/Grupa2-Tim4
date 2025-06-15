@@ -1,64 +1,394 @@
 ﻿@model Aplikacija.Models.Korisnik
-
 @{
     ViewData["Title"] = "Dodaj novog korisnika";
 }
 
-<h1 class="fw-bold text-center" style="color: #d35400;">Dodavanje novog korisnika</h1>
+<style>
+    .create-user-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0 1rem 0;
+        margin-top: -20px;
+        position: relative;
+        overflow: hidden;
+    }
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow-lg rounded">
-            <div class="card-body">
-                <form asp-action="Create" method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        .create-user-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
 
-                    <div class="form-group mb-3">
-                        <label asp-for="Ime" class="form-label"></label>
-                        <input asp-for="Ime" class="form-control" />
-                        <span asp-validation-for="Ime" class="text-danger"></span>
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    .form-container {
+        background: #f8f9fa;
+        padding: 3rem 0;
+        margin-top: -50px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border: none;
+        overflow: hidden;
+        animation: fadeInUp 1s ease-out 0.6s both;
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, #f55f3a 0%, #ff7b54 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        margin: -1px -1px 0 -1px;
+    }
+
+    .form-header-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem auto;
+        font-size: 1.5rem;
+    }
+
+    .form-header h4 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .form-body {
+        padding: 3rem 2.5rem;
+    }
+
+    .modern-form-group {
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .modern-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.75rem;
+        display: block;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .modern-input {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+        .modern-input:focus {
+            outline: none;
+            border-color: #f55f3a;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(245, 95, 58, 0.1);
+            transform: translateY(-2px);
+        }
+
+    .modern-select {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+        cursor: pointer;
+    }
+
+        .modern-select:focus {
+            outline: none;
+            border-color: #f55f3a;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(245, 95, 58, 0.1);
+        }
+
+    .input-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        font-size: 1rem;
+        pointer-events: none;
+        margin-top: 1.5rem;
+    }
+
+    .modern-input:focus + .input-icon {
+        color: #f55f3a;
+    }
+
+    .validation-error {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: block;
+        animation: shakeError 0.5s ease-out;
+    }
+
+    .validation-summary {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+
+    .modern-submit-btn {
+        background: linear-gradient(45deg, #f55f3a, #ff7b54);
+        border: none;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        color: white;
+        width: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(245, 95, 58, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+        .modern-submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 95, 58, 0.6);
+            background: linear-gradient(45deg, #ff7b54, #f55f3a);
+        }
+
+        .modern-submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+    .back-link {
+        background: #6c757d;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-block;
+        margin-top: 1.5rem;
+    }
+
+        .back-link:hover {
+            background: #495057;
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+
+    .form-progress {
+        height: 4px;
+        background: linear-gradient(90deg, #f55f3a 0%, #ff7b54 100%);
+        width: 0%;
+        transition: width 0.3s ease;
+        border-radius: 2px;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes shakeError {
+        0%, 100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-5px);
+        }
+
+        75% {
+            transform: translateX(5px);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .form-body {
+            padding: 2rem 1.5rem;
+        }
+
+        .modern-input,
+        .modern-select {
+            padding: 0.875rem 1rem;
+        }
+
+        .form-container {
+            padding: 2rem 0;
+        }
+    }
+</style>
+
+<!-- Hero sekcija -->
+<div class="create-user-hero">
+    <div class="container hero-content">
+        <h1 class="hero-title">Dodavanje novog korisnika</h1>
+        <p class="hero-subtitle">Kreiranje korisničkog naloga u sistemu</p>
+    </div>
+</div>
+
+<!-- Form container -->
+<div class="form-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+
+                <div class="card form-card">
+                    <div class="form-header">
+                        <div class="form-header-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <h4>Novi korisnik</h4>
+                        <div class="form-progress" id="formProgress"></div>
                     </div>
 
-                    <div class="form-group mb-3">
-                        <label asp-for="Prezime" class="form-label"></label>
-                        <input asp-for="Prezime" class="form-control" />
-                        <span asp-validation-for="Prezime" class="text-danger"></span>
-                    </div>
+                    <div class="form-body">
+                        <form asp-action="Create" method="post" id="createUserForm">
 
-                    <div class="form-group mb-3">
-                        <label class="form-label">Korisničko ime</label>
-                        <input name="username" class="form-control" />
-                    </div>
+                            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
 
-                    <div class="form-group mb-3">
-                        <label class="form-label">Lozinka</label>
-                        <input name="password" type="password" class="form-control" />
-                    </div>
+                            <div class="modern-form-group">
+                                <label asp-for="Ime" class="modern-label"></label>
+                                <input asp-for="Ime" class="modern-input" placeholder="Unesite ime" />
+                                <i class="fas fa-user input-icon"></i>
+                                <span asp-validation-for="Ime" class="validation-error"></span>
+                            </div>
 
-                    <div class="form-group mb-3">
-                        <label asp-for="Email" class="form-label"></label>
-                        <input asp-for="Email" class="form-control" type="email" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
+                            <div class="modern-form-group">
+                                <label asp-for="Prezime" class="modern-label"></label>
+                                <input asp-for="Prezime" class="modern-input" placeholder="Unesite prezime" />
+                                <i class="fas fa-user input-icon"></i>
+                                <span asp-validation-for="Prezime" class="validation-error"></span>
+                            </div>
 
-                    <div class="form-group mb-4">
-                        <label asp-for="Tip" class="form-label"></label>
-                        <select asp-for="Tip" asp-items="Html.GetEnumSelectList<TipKorisnika>()" class="form-control"></select>
-                        <span asp-validation-for="Tip" class="text-danger"></span>
-                    </div>
+                            <div class="modern-form-group">
+                                <label class="modern-label">Korisničko ime</label>
+                                <input name="username" class="modern-input" placeholder="Unesite korisničko ime" />
+                                <i class="fas fa-at input-icon"></i>
+                            </div>
 
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-lg text-white" style="background-color: #d35400; border: none;">Dodaj korisnika</button>
+                            <div class="modern-form-group">
+                                <label class="modern-label">Lozinka</label>
+                                <input name="password" type="password" class="modern-input" placeholder="Unesite lozinku" />
+                                <i class="fas fa-lock input-icon"></i>
+                            </div>
+
+                            <div class="modern-form-group">
+                                <label asp-for="Email" class="modern-label"></label>
+                                <input asp-for="Email" class="modern-input" type="email" placeholder="Unesite email adresu" />
+                                <i class="fas fa-envelope input-icon"></i>
+                                <span asp-validation-for="Email" class="validation-error"></span>
+                            </div>
+
+                            <div class="modern-form-group">
+                                <label asp-for="Tip" class="modern-label"></label>
+                                <select asp-for="Tip" asp-items="Html.GetEnumSelectList<TipKorisnika>()" class="modern-select">
+                                    <option value="">Izaberite tip korisnika</option>
+                                </select>
+                                <i class="fas fa-user-tag input-icon"></i>
+                                <span asp-validation-for="Tip" class="validation-error"></span>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="modern-submit-btn">
+                                    <i class="fas fa-plus-circle me-2"></i>Dodaj korisnika
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
+
+                <div class="text-center">
+                    <a asp-action="Index" class="back-link">
+                        <i class="fas fa-arrow-left me-2"></i>Nazad na listu korisnika
+                    </a>
+                </div>
+
             </div>
-        </div>
-
-        <div class="text-center mt-3">
-            <a asp-action="Index" class="btn btn-secondary">Nazad na listu korisnika</a>
         </div>
     </div>
 </div>
+
+<script>
+    // Form progress animation
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('.modern-input, .modern-select');
+        const progressBar = document.getElementById('formProgress');
+
+        function updateProgress() {
+            let filledInputs = 0;
+            inputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    filledInputs++;
+                }
+            });
+
+            const progress = (filledInputs / inputs.length) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        inputs.forEach(input => {
+            input.addEventListener('input', updateProgress);
+            input.addEventListener('change', updateProgress);
+        });
+
+        // Initial progress check
+        updateProgress();
+    });
+</script>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

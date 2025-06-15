@@ -1,55 +1,523 @@
 ﻿@model Aplikacija.Models.Korisnik
-
 @{
     ViewData["Title"] = "Detalji korisnika";
     var userRole = User.IsInRole("Admin") || User.IsInRole("Recepcioner") || User.IsInRole("Trener");
 }
 
-<div class="container mt-5">
-    <div class="card shadow rounded-4 border-0">
-        <div class="card-header bg-white border-bottom-0 text-center py-4">
-            <h3 class="fw-bold text-dark mb-1">👤 Profil korisnika</h3>
-            <p class="text-muted mb-0">Osnovni podaci o korisniku</p>
-        </div>
-        <div class="card-body px-5 py-4">
-            <div class="row mb-4">
-                <div class="col-md-4 text-muted">👨‍💼 <strong>Ime:</strong></div>
-                <div class="col-md-8 fw-semibold">@Model.Ime</div>
-            </div>
+<style>
+    .details-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0 1rem 0;
+        margin-top: -20px;
+        position: relative;
+        overflow: hidden;
+    }
 
-            <div class="row mb-4">
-                <div class="col-md-4 text-muted">👨‍💼 <strong>Prezime:</strong></div>
-                <div class="col-md-8 fw-semibold">@Model.Prezime</div>
-            </div>
+        .details-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
 
-            <div class="row mb-4">
-                <div class="col-md-4 text-muted">🔐 <strong>Korisničko ime:</strong></div>
-                <div class="col-md-8 fw-semibold">@Model.UserName</div>
-            </div>
+    .hero-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 2px);
+        background-size: 50px 50px;
+        z-index: 1;
+    }
 
-            <div class="row mb-4">
-                <div class="col-md-4 text-muted">📧 <strong>Email adresa:</strong></div>
-                <div class="col-md-8 fw-semibold">@Model.Email</div>
-            </div>
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
 
-            @if (userRole)
-            {
-                <div class="row mb-4">
-                    <div class="col-md-4 text-muted">🧾 <strong>Tip korisnika:</strong></div>
-                    <div class="col-md-8 fw-semibold">@Model.Tip</div>
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    .profile-container {
+        background: #f8f9fa;
+        padding: 3rem 0;
+        margin-top: -50px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+        border: none;
+        overflow: hidden;
+        animation: fadeInUp 1s ease-out 0.6s both;
+        position: relative;
+    }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f55f3a 100%);
+            z-index: 1;
+        }
+
+    .profile-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 3rem 2rem 2rem 2rem;
+        text-align: center;
+        position: relative;
+        margin-top: 6px;
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem auto;
+        font-size: 3rem;
+        color: white;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        animation: profilePulse 3s ease-in-out infinite;
+    }
+
+    .profile-name {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-role {
+        font-size: 1.1rem;
+        color: #7f8c8d;
+        font-weight: 500;
+    }
+
+    .profile-body {
+        padding: 2.5rem;
+    }
+
+    .detail-section {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #ecf0f1;
+        position: relative;
+    }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, #f55f3a 0%, #ff7b54 100%);
+        }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        background: #f8f9fa;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .detail-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(245, 95, 58, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .detail-item:hover {
+            transform: translateX(10px);
+            border-left-color: #f55f3a;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+            .detail-item:hover::before {
+                opacity: 1;
+            }
+
+    .detail-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        margin-right: 1.5rem;
+        flex-shrink: 0;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        position: relative;
+        z-index: 2;
+    }
+
+    .detail-content {
+        flex: 1;
+        position: relative;
+        z-index: 2;
+    }
+
+    .detail-label {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .detail-value {
+        font-size: 1.1rem;
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .role-badge {
+        background: linear-gradient(135deg, #f55f3a 0%, #ff7b54 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-block;
+        box-shadow: 0 4px 15px rgba(245, 95, 58, 0.3);
+    }
+
+    .actions-footer {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .modern-btn {
+        padding: 0.875rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-back {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+    }
+
+        .btn-back:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #f55f3a 0%, #ff7b54 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(245, 95, 58, 0.3);
+    }
+
+        .btn-edit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 95, 58, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+    .stats-section {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #f55f3a;
+        display: block;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes profilePulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .profile-header {
+            padding: 2rem 1.5rem;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            font-size: 2.5rem;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+        }
+
+        .profile-body {
+            padding: 2rem 1.5rem;
+        }
+
+        .detail-item {
+            flex-direction: column;
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .detail-icon {
+            margin-right: 0;
+            margin-bottom: 1rem;
+        }
+
+        .actions-footer {
+            padding: 1.5rem;
+            flex-direction: column;
+        }
+
+        .modern-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<!-- Hero sekcija -->
+<div class="details-hero">
+    <div class="hero-pattern"></div>
+    <div class="container hero-content">
+        <h1 class="hero-title">Profil korisnika</h1>
+        <p class="hero-subtitle">Pregled svih informacija o korisniku</p>
+    </div>
+</div>
+
+<!-- Profile container -->
+<div class="profile-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+
+                <div class="card profile-card">
+
+                    <!-- Profile Header -->
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h2 class="profile-name">@Model.Ime @Model.Prezime</h2>
+                        @if (userRole)
+                        {
+                            <div class="profile-role">
+                                <span class="role-badge">@Model.Tip</span>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Profile Body -->
+                    <div class="profile-body">
+
+                        <!-- Personal Information Section -->
+                        <div class="detail-section">
+                            <h4 class="section-title">
+                                <i class="fas fa-id-card me-2"></i>Lični podaci
+                            </h4>
+
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">Ime</div>
+                                    <div class="detail-value">@Model.Ime</div>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">Prezime</div>
+                                    <div class="detail-value">@Model.Prezime</div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Account Information Section -->
+                        <div class="detail-section">
+                            <h4 class="section-title">
+                                <i class="fas fa-cog me-2"></i>Informacije o nalogu
+                            </h4>
+
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-at"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">Korisničko ime</div>
+                                    <div class="detail-value">@Model.UserName</div>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">Email adresa</div>
+                                    <div class="detail-value">@Model.Email</div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Quick Stats -->
+                        <div class="stats-section">
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <span class="stat-number">
+                                            <i class="fas fa-calendar-check"></i>
+                                        </span>
+                                        <span class="stat-label">Aktivan</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <span class="stat-number">
+                                            <i class="fas fa-shield-alt"></i>
+                                        </span>
+                                        <span class="stat-label">Verifikovan</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <span class="stat-number">
+                                            <i class="fas fa-star"></i>
+                                        </span>
+                                        <span class="stat-label">Premium</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Actions Footer -->
+                    <div class="actions-footer">
+                        <a asp-controller="Home" asp-action="Index" class="modern-btn btn-back">
+                            <i class="fas fa-home"></i>
+                            Nazad na početnu
+                        </a>
+
+                        @if (User.IsInRole("Admin") || User.IsInRole("Recepcioner"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="modern-btn btn-edit">
+                                <i class="fas fa-edit"></i>
+                                Uredi korisnika
+                            </a>
+                        }
+                    </div>
+
                 </div>
-            }
-        </div>
-        <div class="card-footer bg-light d-flex justify-content-between px-4 py-3">
-            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
-                Nazad na početnu
-            </a>
-            @if (User.IsInRole("Admin") || User.IsInRole("Recepcioner"))
-            {
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning text-white rounded-pill px-4">
-                    ✏️ Uredi
-                </a>
-            }
+
+            </div>
         </div>
     </div>
 </div>

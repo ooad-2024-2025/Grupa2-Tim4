@@ -1,46 +1,461 @@
 ﻿@model Aplikacija.Models.Korisnik
-
 @{
     ViewData["Title"] = "Obriši korisnika";
 }
 
-<h1 class="mb-4 text-danger"><i class="fas fa-trash-alt me-2"></i>Obriši korisnika</h1>
+<style>
+    .delete-hero {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        padding: 3rem 0 1rem 0;
+        margin-top: -20px;
+        position: relative;
+        overflow: hidden;
+    }
 
-<div class="alert alert-warning border-warning shadow-sm">
-    <h5><i class="fas fa-exclamation-triangle me-2"></i>Jeste li sigurni da želite obrisati ovog korisnika?</h5>
-    <p class="mb-0">Ova radnja je nepovratna!</p>
+        .delete-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .hero-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        animation: pulse 2s infinite;
+    }
+
+    .content-container {
+        background: #f8f9fa;
+        padding: 3rem 0;
+        margin-top: -50px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .warning-card {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        border: 2px solid #ffc107;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    .warning-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .warning-icon {
+        font-size: 2rem;
+        color: #f39c12;
+        margin-right: 1rem;
+        animation: bounce 2s infinite;
+    }
+
+    .warning-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #d68910;
+        margin: 0;
+    }
+
+    .warning-text {
+        font-size: 1.1rem;
+        color: #b7950b;
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .user-details-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border: none;
+        overflow: hidden;
+        animation: fadeInUp 1s ease-out 0.6s both;
+    }
+
+    .card-header-custom {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        padding: 1.5rem 2rem;
+        border: none;
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    .card-body-custom {
+        padding: 2.5rem;
+    }
+
+    .detail-row {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f1f3f4;
+        transition: all 0.3s ease;
+    }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row:hover {
+            background: #f8f9fa;
+            margin: 0 -2.5rem;
+            padding: 1rem 2.5rem;
+            border-radius: 10px;
+        }
+
+    .detail-label {
+        font-weight: 700;
+        color: #2c3e50;
+        width: 150px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+        .detail-label i {
+            margin-right: 0.5rem;
+            color: #e74c3c;
+            width: 20px;
+            text-align: center;
+        }
+
+    .detail-value {
+        font-size: 1.1rem;
+        color: #495057;
+        flex: 1;
+        padding-left: 1rem;
+    }
+
+    .actions-container {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        animation: fadeInUp 1s ease-out 0.9s both;
+    }
+
+    .danger-btn {
+        background: linear-gradient(45deg, #e74c3c, #c0392b);
+        border: none;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        color: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-right: 1rem;
+    }
+
+        .danger-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.6);
+            background: linear-gradient(45deg, #c0392b, #a93226);
+        }
+
+    .cancel-btn {
+        background: linear-gradient(45deg, #6c757d, #5a6268);
+        border: none;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        color: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .cancel-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.6);
+            background: linear-gradient(45deg, #5a6268, #495057);
+            color: white;
+            text-decoration: none;
+        }
+
+    .confirmation-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .confirmation-modal {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        max-width: 400px;
+        text-align: center;
+        animation: modalSlideIn 0.3s ease-out;
+    }
+
+    .modal-icon {
+        font-size: 4rem;
+        color: #e74c3c;
+        margin-bottom: 1rem;
+        animation: pulse 1s infinite;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    @@keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+
+        40% {
+            transform: translateY(-10px);
+        }
+
+        60% {
+            transform: translateY(-5px);
+        }
+    }
+
+    @@keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.7);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .hero-icon {
+            font-size: 2.5rem;
+        }
+
+        .warning-card,
+        .card-body-custom,
+        .actions-container {
+            padding: 1.5rem;
+        }
+
+        .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .detail-label {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-value {
+            padding-left: 0;
+        }
+
+        .danger-btn,
+        .cancel-btn {
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+    }
+</style>
+
+<!-- Hero sekcija -->
+<div class="delete-hero">
+    <div class="container hero-content">
+        <div class="hero-icon">
+            <i class="fas fa-trash-alt"></i>
+        </div>
+        <h1 class="hero-title">Obriši korisnika</h1>
+    </div>
 </div>
 
-<div class="card shadow-sm border-danger mt-4">
-    <div class="card-header bg-danger text-white">
-        <strong>Detalji korisnika</strong>
-    </div>
-    <div class="card-body">
-        <dl class="row mb-0">
-            <dt class="col-sm-3">Ime</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.Ime)</dd>
+<!-- Content container -->
+<div class="content-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
 
-            <dt class="col-sm-3">Prezime</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.Prezime)</dd>
+                <!-- Warning Card -->
+                <div class="warning-card">
+                    <div class="warning-header">
+                        <i class="fas fa-exclamation-triangle warning-icon"></i>
+                        <h5 class="warning-title">Jeste li sigurni da želite obrisati ovog korisnika?</h5>
+                    </div>
+                    <p class="warning-text">Ova radnja je nepovratna i sve povezane podatke će biti trajno uklonjeni!</p>
+                </div>
 
-            <dt class="col-sm-3">Korisničko ime</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.UserName)</dd>
+                <!-- User Details Card -->
+                <div class="card user-details-card">
+                    <div class="card-header-custom">
+                        <i class="fas fa-user me-2"></i>Detalji korisnika
+                    </div>
+                    <div class="card-body-custom">
 
-            <dt class="col-sm-3">Email</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-user"></i>Ime
+                            </div>
+                            <div class="detail-value">@Html.DisplayFor(model => model.Ime)</div>
+                        </div>
 
-            <dt class="col-sm-3">Tip korisnika</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.Tip)</dd>
-        </dl>
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-user"></i>Prezime
+                            </div>
+                            <div class="detail-value">@Html.DisplayFor(model => model.Prezime)</div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-at"></i>Korisničko ime
+                            </div>
+                            <div class="detail-value">@Html.DisplayFor(model => model.UserName)</div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-envelope"></i>Email
+                            </div>
+                            <div class="detail-value">@Html.DisplayFor(model => model.Email)</div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fas fa-user-tag"></i>Tip korisnika
+                            </div>
+                            <div class="detail-value">@Html.DisplayFor(model => model.Tip)</div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="actions-container">
+                    <form asp-action="Delete" method="post" class="d-flex flex-wrap gap-2 justify-content-center" id="deleteForm">
+                        <input type="hidden" asp-for="Id" />
+                        <button type="button" class="danger-btn" onclick="showConfirmation()">
+                            <i class="fas fa-trash-alt me-2"></i>Obriši korisnika
+                        </button>
+                        <a asp-action="Index" class="cancel-btn">
+                            <i class="fas fa-arrow-left me-2"></i>Nazad na listu
+                        </a>
+                    </form>
+                </div>
+
+            </div>
+        </div>
     </div>
 </div>
 
-<form asp-action="Delete" method="post" class="mt-4 d-flex gap-2">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">
-        <i class="fas fa-trash-alt me-1"></i> Obriši
-    </button>
-    <a asp-action="Index" class="btn btn-secondary">
-        <i class="fas fa-arrow-left me-1"></i> Nazad na listu
-    </a>
-</form>
+<!-- Confirmation Modal -->
+<div class="confirmation-overlay" id="confirmationOverlay">
+    <div class="confirmation-modal">
+        <div class="modal-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h5 class="mb-3">Potvrda brisanja</h5>
+        <p class="mb-4">Da li stvarno želite da obrišete ovog korisnika? Ova akcija se ne može poništiti.</p>
+        <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                <i class="fas fa-trash me-1"></i>Da, obriši
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="hideConfirmation()">
+                <i class="fas fa-times me-1"></i>Otkaži
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showConfirmation() {
+        document.getElementById('confirmationOverlay').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function hideConfirmation() {
+        document.getElementById('confirmationOverlay').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    function confirmDelete() {
+        document.getElementById('deleteForm').submit();
+    }
+
+    // Close modal on outside click
+    document.getElementById('confirmationOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            hideConfirmation();
+        }
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            hideConfirmation();
+        }
+    });
+</script>

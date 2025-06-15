@@ -3,62 +3,586 @@
     ViewData["Title"] = "Kupovina";
 }
 
-<h1 class="fw-bold text-center my-4">Ponuda proizvoda</h1>
+<style>
+    .shopping-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 0 3rem 0;
+        margin-top: -20px;
+        position: relative;
+        overflow: hidden;
+        min-height: 200px;
+    }
 
-<div class="container">
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        @for (int i = 0; i < Model.Count; i++)
-        {
-            var proizvod = Model[i];
-            <div class="col">
-                <div class="card h-100 shadow-sm text-center">
-                    <img src="@proizvod.Slika" class="card-img-top" style="height: 250px; object-fit: cover;" />
-                    <div class="card-body">
-                        <h5 class="card-title">@proizvod.Naziv</h5>
-                        <p class="card-text text-decoration-underline">@string.Format("{0:0.00} KM", proizvod.Cijena)</p>
-                        <button class="btn btn-sm text-white dodaj-u-korpu"
-                                style="background-color: #f55f3a;"
+        .shopping-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+    .hero-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.1) 2px, transparent 2px);
+        background-size: 50px 50px;
+        z-index: 1;
+        animation: shoppingPattern 25s linear infinite;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        padding: 2rem 0;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+        animation: fadeInUp 1s ease-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .hero-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #667eea;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        animation: shopPulse 3s ease-in-out infinite;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        border: 3px solid white;
+    }
+
+    .hero-subtitle {
+        font-size: 1.3rem;
+        opacity: 1;
+        margin-top: 1rem;
+        animation: fadeInUp 1s ease-out 0.3s both;
+        color: white;
+        font-weight: 600;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .products-container {
+        background: #f8f9fa;
+        padding: 3rem 0;
+        margin-top: -50px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .product-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s ease;
+        position: relative;
+        animation: fadeInUp 1s ease-out 0.6s both;
+    }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+    .product-image {
+        position: relative;
+        overflow: hidden;
+        height: 280px;
+    }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+    .product-card:hover .product-image img {
+        transform: scale(1.1);
+    }
+
+    .product-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(102, 126, 234, 0.8), rgba(245, 95, 58, 0.8));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .product-card:hover .product-overlay {
+        opacity: 1;
+    }
+
+    .product-info {
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .product-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        line-height: 1.4;
+    }
+
+    .product-price {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #f55f3a;
+        margin-bottom: 1.5rem;
+        display: block;
+    }
+
+    .add-to-cart-btn {
+        background: linear-gradient(45deg, #f55f3a, #ff7b54);
+        border: none;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        color: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(245, 95, 58, 0.4);
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .add-to-cart-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .add-to-cart-btn:hover::before {
+            left: 100%;
+        }
+
+        .add-to-cart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 95, 58, 0.6);
+        }
+
+    .cart-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        margin-top: 2rem;
+        animation: fadeInUp 1s ease-out 0.9s both;
+        position: relative;
+    }
+
+    .cart-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f1f3f4;
+    }
+
+    .cart-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+    }
+
+    .cart-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin: 0;
+    }
+
+    .cart-badge {
+        background: #f55f3a;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: auto;
+    }
+
+    .cart-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 2rem 0;
+        min-height: 100px;
+    }
+
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        background: #f8f9fa;
+        border-radius: 15px;
+        border-left: 4px solid #f55f3a;
+        transition: all 0.3s ease;
+        animation: slideInRight 0.5s ease-out;
+    }
+
+        .cart-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+    .cart-item-info {
+        flex: 1;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .cart-item-price {
+        background: #f55f3a;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .cart-empty {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: #7f8c8d;
+    }
+
+    .empty-cart-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .cart-total {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .total-label {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.9;
+    }
+
+    .total-amount {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #f55f3a;
+    }
+
+    .checkout-btn {
+        background: linear-gradient(45deg, #28a745, #20c997);
+        border: none;
+        padding: 1.25rem 3rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border-radius: 50px;
+        color: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        width: 100%;
+    }
+
+        .checkout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.6);
+        }
+
+        .checkout-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+    .modern-toast {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: #dc3545;
+        color: white;
+        padding: 1.5rem 2rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(220, 53, 69, 0.4);
+        display: none;
+        align-items: center;
+        gap: 1rem;
+        z-index: 10000;
+        animation: toastSlideIn 0.3s ease-out;
+    }
+
+    .toast-icon {
+        font-size: 1.5rem;
+    }
+
+    .toast-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes shopPulse {
+        0%, 100% {
+            transform: scale(1) rotate(0deg);
+        }
+
+        50% {
+            transform: scale(1.05) rotate(5deg);
+        }
+    }
+
+    @@keyframes shoppingPattern {
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: 50px 50px;
+        }
+    }
+
+    @@keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes toastSlideIn {
+        from {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.2rem;
+            flex-direction: column;
+        }
+
+        .hero-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+
+        .products-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .cart-section {
+            padding: 2rem 1.5rem;
+        }
+
+        .cart-item {
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .total-amount {
+            font-size: 2rem;
+        }
+
+        .modern-toast {
+            bottom: 1rem;
+            right: 1rem;
+            left: 1rem;
+        }
+    }
+</style>
+
+<!-- Hero sekcija -->
+<div class="shopping-hero">
+    <div class="hero-pattern"></div>
+    <div class="container hero-content">
+        <h1 class="hero-title">
+            <div class="hero-icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            Ponuda proizvoda
+        </h1>
+        <p class="hero-subtitle">Pronađite najbolje proizvode za vaš fitness lifestyle</p>
+    </div>
+</div>
+
+<!-- Products container -->
+<div class="products-container">
+    <div class="container">
+
+        <!-- Products Grid -->
+        <div class="products-grid">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var proizvod = Model[i];
+                <div class="product-card" style="animation-delay: @((i * 0.1))s;">
+                    <div class="product-image">
+                        <img src="@proizvod.Slika" alt="@proizvod.Naziv" />
+                        <div class="product-overlay">
+                            <i class="fas fa-eye me-2"></i>Pogledaj detalje
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h5 class="product-title">@proizvod.Naziv</h5>
+                        <span class="product-price">@string.Format("{0:0.00} KM", proizvod.Cijena)</span>
+                        <button class="add-to-cart-btn dodaj-u-korpu"
                                 data-naziv="@proizvod.Naziv"
                                 data-cijena="@proizvod.Cijena.ToString(System.Globalization.CultureInfo.InvariantCulture)">
-                            Dodaj u korpu
+                            <i class="fas fa-shopping-cart me-2"></i>Dodaj u korpu
                         </button>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-
-    <div class="mt-5">
-        <h4>Korpa:</h4>
-        <ul id="korpa-lista" class="list-group mb-3"></ul>
-        <div class="border-top pt-3">
-            <h5>Ukupno: <span id="ukupna-cijena" class="text-orange fw-bold">0.00 KM</span></h5>
+            }
         </div>
-        <form id="kupovina-form" method="post" action="@Url.Action("PotvrdiNarudzbu", "Kupovina")" onsubmit="return provjeriKorpu();">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="json" id="korpa-json" />
-            <button type="submit" class="btn btn-success">Kupi</button>
-        </form>
-    </div>
 
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-        <div id="greskaToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body" id="greskaToastBody"></div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Zatvori"></button>
+        <!-- Shopping Cart Section -->
+        <div class="cart-section">
+            <div class="cart-header">
+                <div class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h4 class="cart-title">Vaša korpa</h4>
+                <span class="cart-badge" id="cart-count">0 artikala</span>
             </div>
+
+            <ul id="korpa-lista" class="cart-list">
+                <div class="cart-empty">
+                    <div class="empty-cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h5>Korpa je prazna</h5>
+                    <p>Dodajte proizvode u korpu da biste nastavili sa kupovinom</p>
+                </div>
+            </ul>
+
+            <div class="cart-total">
+                <div class="total-label">Ukupna cijena:</div>
+                <div class="total-amount" id="ukupna-cijena">0.00 KM</div>
+            </div>
+
+            <form id="kupovina-form" method="post" action="@Url.Action("PotvrdiNarudzbu", "Kupovina")" onsubmit="return provjeriKorpu();">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="json" id="korpa-json" />
+                <button type="submit" class="checkout-btn" id="checkout-button" disabled>
+                    <i class="fas fa-credit-card me-2"></i>Završi kupovinu
+                </button>
+            </form>
         </div>
+
     </div>
+</div>
+
+<!-- Modern Toast -->
+<div class="modern-toast" id="greskaToast">
+    <i class="fas fa-exclamation-triangle toast-icon"></i>
+    <span id="greskaToastBody"></span>
+    <button class="toast-close" onclick="hideToast()">
+        <i class="fas fa-times"></i>
+    </button>
 </div>
 
 @section Scripts {
     <script>
-        console.log("Script učitan."); 
+        console.log("Script učitan.");
 
         const korpa = {};
+        let totalItems = 0;
 
         document.querySelectorAll(".dodaj-u-korpu").forEach((btn, index) => {
-            console.log("Registrujem dugme broj: ", index); 
+            console.log("Registrujem dugme broj: ", index);
 
             btn.addEventListener("click", function () {
                 const naziv = this.dataset.naziv;
@@ -66,45 +590,86 @@
 
                 console.log(`Kliknuto dugme za proizvod: ${naziv}, cijena: ${cijena}`);
 
+                // Add button animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+
                 if (korpa[naziv]) {
                     korpa[naziv].kolicina += 1;
                 } else {
                     korpa[naziv] = { cijena: cijena, kolicina: 1 };
                 }
 
-                console.log("Trenutno stanje korpe: ", korpa); 
+                totalItems++;
+                console.log("Trenutno stanje korpe: ", korpa);
 
                 osvjeziKorpu();
+                showAddedToCartFeedback(this);
             });
         });
 
+        function showAddedToCartFeedback(button) {
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check me-2"></i>Dodano!';
+            button.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
+
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = 'linear-gradient(45deg, #f55f3a, #ff7b54)';
+            }, 1500);
+        }
+
         function osvjeziKorpu() {
-            console.log("Pozvana funkcija osvjeziKorpu()"); 
+            console.log("Pozvana funkcija osvjeziKorpu()");
 
             const lista = document.getElementById("korpa-lista");
             const ukupnaCijenaEl = document.getElementById("ukupna-cijena");
+            const cartCount = document.getElementById("cart-count");
+            const checkoutBtn = document.getElementById("checkout-button");
 
             lista.innerHTML = "";
             let total = 0;
+            totalItems = 0;
 
-            for (let naziv in korpa) {
-                const item = korpa[naziv];
-                const li = document.createElement("li");
-                li.className = "list-group-item d-flex justify-content-between align-items-center border-bottom";
-                li.textContent = `${naziv} x ${item.kolicina}`;
+            if (Object.keys(korpa).length === 0) {
+                // Show empty cart message
+                lista.innerHTML = `
+                    <div class="cart-empty">
+                        <div class="empty-cart-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h5>Korpa je prazna</h5>
+                        <p>Dodajte proizvode u korpu da biste nastavili sa kupovinom</p>
+                    </div>
+                `;
+                checkoutBtn.disabled = true;
+            } else {
+                checkoutBtn.disabled = false;
 
-                const span = document.createElement("span");
-                span.className = "badge rounded-pill";
-                span.style.backgroundColor = "darkorange";
-                span.textContent = (item.kolicina * item.cijena).toFixed(2) + " KM";
+                for (let naziv in korpa) {
+                    const item = korpa[naziv];
+                    const li = document.createElement("li");
+                    li.className = "cart-item";
 
-                li.appendChild(span);
-                lista.appendChild(li);
+                    li.innerHTML = `
+                        <div class="cart-item-info">
+                            <strong>${naziv}</strong> x ${item.kolicina}
+                        </div>
+                        <div class="cart-item-price">
+                            ${(item.kolicina * item.cijena).toFixed(2)} KM
+                        </div>
+                    `;
 
-                total += item.kolicina * item.cijena;
+                    lista.appendChild(li);
+                    total += item.kolicina * item.cijena;
+                    totalItems += item.kolicina;
+                }
             }
 
             ukupnaCijenaEl.textContent = total.toFixed(2) + " KM";
+            cartCount.textContent = totalItems + (totalItems === 1 ? " artikal" : " artikala");
             document.getElementById("korpa-json").value = JSON.stringify(korpa);
         }
 
@@ -120,12 +685,24 @@
 
         function prikaziGresku(poruka) {
             const body = document.getElementById("greskaToastBody");
-            body.textContent = poruka;
+            const toast = document.getElementById("greskaToast");
 
-            const toastElement = document.getElementById("greskaToast");
-            const toast = new bootstrap.Toast(toastElement);
-            toast.show();
+            body.textContent = poruka;
+            toast.style.display = "flex";
+
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                hideToast();
+            }, 5000);
         }
+
+        function hideToast() {
+            const toast = document.getElementById("greskaToast");
+            toast.style.display = "none";
+        }
+
+        // Initialize cart on page load
+        osvjeziKorpu();
     </script>
 
     @if (!string.IsNullOrEmpty(ViewBag.Greska as string))

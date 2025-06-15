@@ -1,64 +1,591 @@
 ﻿@model Aplikacija.Models.Korisnik
-
 @{
     ViewData["Title"] = "Uredi korisnika";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow border-0">
-                <div class="card-header text-white" style="background-color: #f55f3a;">
-                    <h4 class="mb-0">Uredi korisnika</h4>
-                </div>
-                <div class="card-body">
-                    <form asp-action="Edit">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                        <input type="hidden" asp-for="Id" />
+<style>
+    .edit-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0 1rem 0;
+        margin-top: -20px;
+        position: relative;
+        overflow: hidden;
+    }
 
-                        <div class="mb-3">
-                            <label asp-for="Ime" class="form-label"></label>
-                            <input asp-for="Ime" class="form-control" />
-                            <span asp-validation-for="Ime" class="text-danger"></span>
+        .edit-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+    .hero-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(circle at 25% 75%, rgba(255,255,255,0.1) 2px, transparent 2px);
+        background-size: 60px 60px;
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    .form-container {
+        background: #f8f9fa;
+        padding: 3rem 0;
+        margin-top: -50px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .edit-card {
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+        border: none;
+        overflow: hidden;
+        animation: fadeInUp 1s ease-out 0.6s both;
+        position: relative;
+    }
+
+        .edit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #f55f3a 0%, #ff7b54 50%, #667eea 100%);
+            z-index: 1;
+        }
+
+    .form-header {
+        background: linear-gradient(135deg, #f55f3a 0%, #ff7b54 100%);
+        color: white;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        margin-top: 6px;
+        position: relative;
+    }
+
+    .header-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem auto;
+        font-size: 2rem;
+        animation: editPulse 3s ease-in-out infinite;
+    }
+
+    .form-header h4 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.5rem;
+    }
+
+    .form-body {
+        padding: 3rem 2.5rem;
+    }
+
+    .form-section {
+        margin-bottom: 3rem;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 2rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #ecf0f1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, #f55f3a 0%, #ff7b54 100%);
+        }
+
+    .section-icon {
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.9rem;
+    }
+
+    .modern-form-group {
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .modern-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .label-icon {
+        color: #f55f3a;
+        font-size: 1rem;
+    }
+
+    .modern-input {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+        position: relative;
+    }
+
+        .modern-input:focus {
+            outline: none;
+            border-color: #f55f3a;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(245, 95, 58, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .modern-input:read-only {
+            background: #e9ecef;
+            cursor: not-allowed;
+            color: #6c757d;
+        }
+
+            .modern-input:read-only:focus {
+                border-color: #ced4da;
+                box-shadow: none;
+                transform: none;
+            }
+
+    .modern-select {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+        cursor: pointer;
+    }
+
+        .modern-select:focus {
+            outline: none;
+            border-color: #f55f3a;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(245, 95, 58, 0.1);
+        }
+
+    .readonly-badge {
+        position: absolute;
+        top: -8px;
+        right: 10px;
+        background: #6c757d;
+        color: white;
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+
+    .validation-error {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: block;
+        animation: shakeError 0.5s ease-out;
+    }
+
+    .validation-summary {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        border: 2px solid #f5c6cb;
+        color: #721c24;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        animation: slideInDown 0.5s ease-out;
+    }
+
+    .actions-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 2.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .modern-btn {
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-back {
+        background: transparent;
+        color: #6c757d;
+        border: 2px solid #6c757d;
+    }
+
+        .btn-back:hover {
+            background: #6c757d;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
+            text-decoration: none;
+        }
+
+    .btn-save {
+        background: linear-gradient(135deg, #f55f3a 0%, #ff7b54 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(245, 95, 58, 0.4);
+    }
+
+        .btn-save:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 95, 58, 0.6);
+            background: linear-gradient(135deg, #ff7b54 0%, #f55f3a 100%);
+        }
+
+    .admin-only-section {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        border: 2px solid #ffc107;
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+        position: relative;
+    }
+
+    .admin-badge {
+        position: absolute;
+        top: -10px;
+        left: 20px;
+        background: #ffc107;
+        color: #212529;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-progress {
+        height: 4px;
+        background: linear-gradient(90deg, #f55f3a 0%, #ff7b54 100%);
+        width: 0%;
+        transition: width 0.3s ease;
+        border-radius: 2px;
+        margin-top: 1rem;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes editPulse {
+        0%, 100% {
+            transform: scale(1) rotate(0deg);
+        }
+
+        50% {
+            transform: scale(1.05) rotate(2deg);
+        }
+    }
+
+    @@keyframes shakeError {
+        0%, 100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-5px);
+        }
+
+        75% {
+            transform: translateX(5px);
+        }
+    }
+
+    @@keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .form-body {
+            padding: 2rem 1.5rem;
+        }
+
+        .modern-input,
+        .modern-select {
+            padding: 0.875rem 1rem;
+        }
+
+        .actions-container {
+            padding: 2rem 1.5rem;
+            flex-direction: column;
+        }
+
+        .modern-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .admin-only-section {
+            padding: 1.5rem;
+        }
+    }
+</style>
+
+<!-- Hero sekcija -->
+<div class="edit-hero">
+    <div class="hero-pattern"></div>
+    <div class="container hero-content">
+        <h1 class="hero-title">Uredi korisnika</h1>
+        <p class="hero-subtitle">Izmijeni informacije o korisniku</p>
+    </div>
+</div>
+
+<!-- Form container -->
+<div class="form-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+
+                <div class="card edit-card">
+
+                    <!-- Form Header -->
+                    <div class="form-header">
+                        <div class="header-icon">
+                            <i class="fas fa-user-edit"></i>
                         </div>
+                        <h4>Uredi korisnika</h4>
+                        <div class="form-progress" id="formProgress"></div>
+                    </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Prezime" class="form-label"></label>
-                            <input asp-for="Prezime" class="form-control" />
-                            <span asp-validation-for="Prezime" class="text-danger"></span>
-                        </div>
+                    <!-- Form Body -->
+                    <div class="form-body">
+                        <form asp-action="Edit" id="editUserForm">
 
-                        <div class="mb-3">
-                            <label asp-for="UserName" class="form-label">Korisničko ime</label>
-                            <input asp-for="UserName" class="form-control" readonly />
-                            <span asp-validation-for="UserName" class="text-danger"></span>
-                        </div>
+                            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+                            <input type="hidden" asp-for="Id" />
 
-                        <div class="mb-3">
-                            <label asp-for="Email" class="form-label"></label>
-                            <input asp-for="Email" class="form-control" readonly />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
+                            <!-- Personal Information Section -->
+                            <div class="form-section">
+                                <h5 class="section-title">
+                                    <div class="section-icon">
+                                        <i class="fas fa-id-card"></i>
+                                    </div>
+                                    Lični podaci
+                                </h5>
 
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <div class="mb-3">
-                                <label asp-for="Tip" class="form-label"></label>
-                                <select asp-for="Tip" class="form-select" asp-items="Html.GetEnumSelectList<TipKorisnika>()"></select>
-                                <span asp-validation-for="Tip" class="text-danger"></span>
+                                <div class="modern-form-group">
+                                    <label asp-for="Ime" class="modern-label">
+                                        <i class="fas fa-user label-icon"></i>
+                                        <span>Ime</span>
+                                    </label>
+                                    <input asp-for="Ime" class="modern-input" placeholder="Unesite ime" />
+                                    <span asp-validation-for="Ime" class="validation-error"></span>
+                                </div>
+
+                                <div class="modern-form-group">
+                                    <label asp-for="Prezime" class="modern-label">
+                                        <i class="fas fa-user label-icon"></i>
+                                        <span>Prezime</span>
+                                    </label>
+                                    <input asp-for="Prezime" class="modern-input" placeholder="Unesite prezime" />
+                                    <span asp-validation-for="Prezime" class="validation-error"></span>
+                                </div>
                             </div>
-                        }
 
-                        <div class="d-flex justify-content-between">
-                            <a asp-action="Index" class="btn btn-outline-secondary">Nazad</a>
-                            <input type="submit" value="Sačuvaj promjene" class="btn btn-primary" />
-                        </div>
-                    </form>
+                            <!-- Account Information Section -->
+                            <div class="form-section">
+                                <h5 class="section-title">
+                                    <div class="section-icon">
+                                        <i class="fas fa-cog"></i>
+                                    </div>
+                                    Informacije o nalogu
+                                </h5>
+
+                                <div class="modern-form-group">
+                                    <label asp-for="UserName" class="modern-label">
+                                        <i class="fas fa-at label-icon"></i>
+                                        <span>Korisničko ime</span>
+                                    </label>
+                                    <div style="position: relative;">
+                                        <input asp-for="UserName" class="modern-input" readonly />
+                                        <div class="readonly-badge">Readonly</div>
+                                    </div>
+                                    <span asp-validation-for="UserName" class="validation-error"></span>
+                                </div>
+
+                                <div class="modern-form-group">
+                                    <label asp-for="Email" class="modern-label">
+                                        <i class="fas fa-envelope label-icon"></i>
+                                        <span>Email</span>
+                                    </label>
+                                    <div style="position: relative;">
+                                        <input asp-for="Email" class="modern-input" readonly />
+                                        <div class="readonly-badge">Readonly</div>
+                                    </div>
+                                    <span asp-validation-for="Email" class="validation-error"></span>
+                                </div>
+                            </div>
+
+                            <!-- Admin Only Section -->
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <div class="admin-only-section">
+                                    <div class="admin-badge">
+                                        <i class="fas fa-crown me-1"></i>Admin Only
+                                    </div>
+
+                                    <div class="modern-form-group" style="margin-bottom: 0;">
+                                        <label asp-for="Tip" class="modern-label">
+                                            <i class="fas fa-user-tag label-icon"></i>
+                                            <span>Tip korisnika</span>
+                                        </label>
+                                        <select asp-for="Tip" class="modern-select" asp-items="Html.GetEnumSelectList<TipKorisnika>()">
+                                            <option value="">Izaberite tip korisnika</option>
+                                        </select>
+                                        <span asp-validation-for="Tip" class="validation-error"></span>
+                                    </div>
+                                </div>
+                            }
+
+                        </form>
+                    </div>
+
+                    <!-- Actions Footer -->
+                    <div class="actions-container">
+                        <a asp-action="Index" class="modern-btn btn-back">
+                            <i class="fas fa-arrow-left"></i>
+                            Nazad
+                        </a>
+
+                        <button type="submit" form="editUserForm" class="modern-btn btn-save">
+                            <i class="fas fa-save"></i>
+                            Sačuvaj promjene
+                        </button>
+                    </div>
+
                 </div>
+
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    // Form progress animation
+    document.addEventListener('DOMContentLoaded', function() {
+        const editableInputs = document.querySelectorAll('.modern-input:not([readonly]), .modern-select');
+        const progressBar = document.getElementById('formProgress');
+
+        function updateProgress() {
+            let filledInputs = 0;
+            editableInputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    filledInputs++;
+                }
+            });
+
+            const progress = (filledInputs / editableInputs.length) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        editableInputs.forEach(input => {
+            input.addEventListener('input', updateProgress);
+            input.addEventListener('change', updateProgress);
+        });
+
+        // Initial progress check
+        updateProgress();
+    });
+</script>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

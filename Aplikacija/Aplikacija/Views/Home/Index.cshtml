@@ -2,54 +2,295 @@
     ViewData["Title"] = "O nama";
 }
 
-<div class="text-center mt-5">
-    <h1 class="display-5 fw-bold">O nama</h1>
-    <p class="text-muted">
-        Dobrodošli u naš fitness centar – mjesto gdje zdravlje, energija i motivacija postaju stil života!
-        Naša misija je da svakom članu pružimo podršku na putu ka boljoj formi kroz moderne treninge i individualne planove ishrane.
-        Bilo da ste početnik ili iskusni sportista, naš stručni tim je tu da vam pomogne da postignete svoje ciljeve u pozitivnom i motivišućem okruženju.
-    </p>
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 0;
+        margin-top: -20px;
+        position: relative;
+        overflow: hidden;
+    }
 
-    @if (User.Identity.IsAuthenticated)
-    {
-        if (User.IsInRole("Admin"))
-        {
-            <a class="btn btn-warning text-white mt-3 px-4 py-2"
-               style="background-color: #f55f3a; border: none;"
-               asp-controller="PrijavaZaZaposljavanje" asp-action="Index">
-                Kandidati za posao
-            </a>
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
         }
-        else
-        {
-            <a class="btn btn-warning text-white mt-3 px-4 py-2"
-               style="background-color: #f55f3a; border: none;"
-               asp-controller="PrijavaZaZaposljavanje" asp-action="Create">
-                Prijava za posao
-            </a>
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .hero-description {
+        font-size: 1.2rem;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    .modern-btn {
+        background: linear-gradient(45deg, #f55f3a, #ff7b54);
+        border: none;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(245, 95, 58, 0.4);
+        animation: fadeInUp 1s ease-out 0.6s both;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .modern-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 95, 58, 0.6);
+            background: linear-gradient(45deg, #ff7b54, #f55f3a);
+            color: white;
+        }
+
+    .gallery-section {
+        padding: 5rem 0;
+        background: #f8f9fa;
+    }
+
+    .gallery-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    .image-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s ease;
+        height: 100%;
+    }
+
+        .image-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .image-card:hover img {
+            transform: scale(1.05);
+        }
+
+    .image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(245, 95, 58, 0.8), rgba(102, 126, 234, 0.8));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    .image-card:hover .image-overlay {
+        opacity: 1;
+    }
+
+    .main-image {
+        height: 500px;
+    }
+
+    .side-image {
+        height: 240px;
+    }
+
+    .stats-section {
+        background: white;
+        padding: 3rem 0;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 2rem 1rem;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #f55f3a;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
     }
 
-    <div class="container mt-5">
-        <div class="row g-3">
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            padding: 0 1rem;
+        }
+
+        .main-image {
+            height: 300px;
+            margin-bottom: 1rem;
+        }
+
+        .side-image {
+            height: 200px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+        }
+    }
+</style>
+
+<!-- Hero sekcija -->
+<div class="hero-section">
+    <div class="container hero-content text-center">
+        <h1 class="hero-title">O nama</h1>
+        <p class="hero-description">
+            Dobrodošli u naš fitness centar – mjesto gdje zdravlje, energija i motivacija postaju stil života!
+            Naša misija je da svakom članu pružimo podršku na putu ka boljoj formi kroz moderne treninge i individualne planove ishrane.
+            Bilo da ste početnik ili iskusni sportista, naš stručni tim je tu da vam pomogne da postignete svoje ciljeve u pozitivnom i motivišućem okruženju.
+        </p>
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            if (User.IsInRole("Admin"))
+            {
+                <a class="modern-btn text-white"
+                   asp-controller="PrijavaZaZaposljavanje" asp-action="Index">
+                    <i class="fas fa-users me-2"></i>Kandidati za posao
+                </a>
+            }
+            else
+            {
+                <a class="modern-btn text-white"
+                   asp-controller="PrijavaZaZaposljavanje" asp-action="Create">
+                    <i class="fas fa-briefcase me-2"></i>Prijava za posao
+                </a>
+            }
+        }
+    </div>
+</div>
+
+<!-- Galerija slika -->
+<div class="gallery-section">
+    <div class="gallery-container">
+        <div class="row g-4">
             <!-- Velika slika lijevo -->
-            <div class="col-md-6">
-                <div class="h-100">
-                    <img src="~/images/teretana4.jpg" class="img-fluid rounded shadow-sm w-100 h-100 object-fit-cover" alt="Glavna slika">
+            <div class="col-lg-7 col-md-6">
+                <div class="image-card main-image">
+                    <img src="~/images/teretana4.jpg" alt="Naš fitness centar">
+                    <div class="image-overlay">
+                        <span>Moderni fitnes centar</span>
+                    </div>
                 </div>
             </div>
 
             <!-- Dvije manje slike desno -->
-            <div class="col-md-6 d-flex flex-column justify-content-between">
-                <div class="mb-2" style="height: 49%;">
-                    <img src="~/images/teretana2.jpg" class="img-fluid rounded shadow-sm w-100 h-100 object-fit-cover" alt="Slika 2">
-                </div>
-                <div style="height: 49%;">
-                    <img src="~/images/teretana3.jpg" class="img-fluid rounded shadow-sm w-100 h-100 object-fit-cover" alt="Slika 3">
+            <div class="col-lg-5 col-md-6">
+                <div class="row g-4 h-100">
+                    <div class="col-12">
+                        <div class="image-card side-image">
+                            <img src="~/images/teretana2.jpg" alt="Oprema za vježbanje">
+                            <div class="image-overlay">
+                                <span>Profesionalna oprema</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="image-card side-image">
+                            <img src="~/images/teretana3.jpg" alt="Grupni treninzi">
+                            <div class="image-overlay">
+                                <span>Grupni treninzi</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-
+<!-- Statistike -->
+<div class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Zadovoljnih članova</span>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <span class="stat-number">5</span>
+                    <span class="stat-label">Godina iskustva</span>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <span class="stat-number">15</span>
+                    <span class="stat-label">Stručnih trenera</span>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Dostupnost</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

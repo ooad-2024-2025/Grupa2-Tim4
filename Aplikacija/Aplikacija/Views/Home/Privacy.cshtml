@@ -2,53 +2,365 @@
     ViewData["Title"] = "Politika privatnosti";
 }
 
-<div class="container mt-5">
-    <div class="card shadow border-0">
-        <div class="card-header text-white" style="background-color: #f55f3a;">
-            <h4 class="mb-0">@ViewData["Title"]</h4>
+<style>
+    .privacy-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 0 2rem 0;
+        margin-top: -20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .privacy-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+    .privacy-hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+    .privacy-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .privacy-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    .privacy-content {
+        background: white;
+        margin-top: -50px;
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 3;
+        overflow: hidden;
+    }
+
+    .content-wrapper {
+        padding: 4rem 2rem 2rem 2rem;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .intro-text {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #6c757d;
+        margin-bottom: 3rem;
+        text-align: center;
+        animation: fadeInUp 1s ease-out 0.6s both;
+    }
+
+    .privacy-section {
+        margin-bottom: 3rem;
+        animation: fadeInUp 1s ease-out 0.9s both;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        padding-left: 1.5rem;
+        position: relative;
+        border-left: 4px solid #f55f3a;
+    }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: #f55f3a;
+            border-radius: 50%;
+        }
+
+    .section-content {
+        color: #495057;
+        line-height: 1.7;
+        font-size: 1rem;
+    }
+
+    .modern-list {
+        list-style: none;
+        padding-left: 0;
+        margin: 1.5rem 0;
+    }
+
+        .modern-list li {
+            position: relative;
+            padding: 0.75rem 0 0.75rem 2.5rem;
+            margin-bottom: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+            .modern-list li:hover {
+                background: #e3f2fd;
+                border-left-color: #f55f3a;
+                transform: translateX(5px);
+            }
+
+            .modern-list li::before {
+                content: '✓';
+                position: absolute;
+                left: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #f55f3a;
+                font-weight: bold;
+                font-size: 1.1rem;
+            }
+
+    .highlight-box {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 1px solid #dee2e6;
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .highlight-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #f55f3a 0%, #ff7b54 100%);
+        }
+
+    .icon-section {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+
+    .section-icon {
+        background: linear-gradient(135deg, #f55f3a 0%, #ff7b54 100%);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+        box-shadow: 0 4px 15px rgba(245, 95, 58, 0.3);
+    }
+
+    .contact-cta {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2.5rem;
+        text-align: center;
+        margin-top: 3rem;
+        animation: fadeInUp 1s ease-out 1.2s both;
+    }
+
+    .cta-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .cta-text {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin-bottom: 0;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .privacy-title {
+            font-size: 2.2rem;
+        }
+
+        .privacy-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .content-wrapper {
+            padding: 3rem 1.5rem 2rem 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+        }
+
+        .modern-list li {
+            padding-left: 2rem;
+        }
+
+        .icon-section {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .contact-cta {
+            padding: 2rem 1.5rem;
+        }
+    }
+</style>
+
+<!-- Hero sekcija -->
+<div class="privacy-hero">
+    <div class="container privacy-hero-content">
+        <h1 class="privacy-title">@ViewData["Title"]</h1>
+        <p class="privacy-subtitle">Vaša privatnost je naš prioritet</p>
+    </div>
+</div>
+
+<!-- Sadržaj -->
+<div class="privacy-content">
+    <div class="content-wrapper">
+
+        <p class="intro-text">
+            U <strong>našem fitness centru</strong>, privatnost naših članova i posjetilaca je od izuzetne važnosti.
+            Ova politika privatnosti objašnjava kako prikupljamo, koristimo i štitimo vaše lične podatke.
+        </p>
+
+        <!-- Sekcija 1 -->
+        <div class="privacy-section">
+            <div class="icon-section">
+                <div class="section-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div>
+                    <h5 class="section-title">1. Koje podatke prikupljamo?</h5>
+                    <ul class="modern-list">
+                        <li>Ime i prezime</li>
+                        <li>Email adresa i korisničko ime</li>
+                        <li>Kontakt telefon</li>
+                        <li>Informacije o članstvu i korištenju usluga</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <p class="mb-4">
-                U <strong>našem fitness centru</strong>, privatnost naših članova i posjetilaca je od izuzetne važnosti. Ova politika privatnosti objašnjava kako prikupljamo, koristimo i štitimo vaše lične podatke.
-            </p>
 
-            <h5>1. Koje podatke prikupljamo?</h5>
-            <ul>
-                <li>Ime i prezime</li>
-                <li>Email adresa i korisničko ime</li>
-                <li>Kontakt telefon</li>
-                <li>Informacije o članstvu i korištenju usluga</li>
-            </ul>
+        <!-- Sekcija 2 -->
+        <div class="privacy-section">
+            <div class="icon-section">
+                <div class="section-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <div>
+                    <h5 class="section-title">2. Kako koristimo vaše podatke?</h5>
+                    <div class="section-content">
+                        <p>Prikupljene informacije koristimo isključivo za pružanje kvalitetne usluge, uključujući:</p>
+                        <ul class="modern-list">
+                            <li>Administraciju korisničkih naloga</li>
+                            <li>Rezervisanje termina i planova ishrane/treninga</li>
+                            <li>Unapređenje korisničkog iskustva</li>
+                            <li>Komunikaciju i podršku korisnicima</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <h5 class="mt-4">2. Kako koristimo vaše podatke?</h5>
-            <p>
-                Prikupljene informacije koristimo isključivo za pružanje kvalitetne usluge, uključujući:
-            </p>
-            <ul>
-                <li>Administraciju korisničkih naloga</li>
-                <li>Rezervisanje termina i planova ishrane/treninga</li>
-                <li>Unapređenje korisničkog iskustva</li>
-                <li>Komunikaciju i podršku korisnicima</li>
-            </ul>
+        <!-- Sekcija 3 -->
+        <div class="privacy-section">
+            <div class="icon-section">
+                <div class="section-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div>
+                    <h5 class="section-title">3. Sigurnost podataka</h5>
+                    <div class="highlight-box">
+                        <p class="section-content">
+                            Vaši podaci su zaštićeni sigurnosnim mjerama kako bi se spriječio neovlašteni pristup,
+                            izmjena ili zloupotreba. Koristimo najnovije sigurnosne protokole i redovno ažuriramo
+                            naše sisteme zaštite.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <h5 class="mt-4">3. Sigurnost podataka</h5>
-            <p>
-                Vaši podaci su zaštićeni sigurnosnim mjerama kako bi se spriječio neovlašteni pristup, izmjena ili zloupotreba.
-            </p>
+        <!-- Sekcija 4 -->
+        <div class="privacy-section">
+            <div class="icon-section">
+                <div class="section-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div>
+                    <h5 class="section-title">4. Dijeljenje podataka</h5>
+                    <div class="section-content">
+                        <p>
+                            Nikada ne dijelimo vaše podatke sa trećim stranama bez vašeg pristanka,
+                            osim kada je to zakonski obavezno.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <h5 class="mt-4">4. Dijeljenje podataka</h5>
-            <p>
-                Nikada ne dijelimo vaše podatke sa trećim stranama bez vašeg pristanka, osim kada je to zakonski obavezno.
-            </p>
+        <!-- Sekcija 5 -->
+        <div class="privacy-section">
+            <div class="icon-section">
+                <div class="section-icon">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div>
+                    <h5 class="section-title">5. Prava korisnika</h5>
+                    <div class="section-content">
+                        <p>
+                            U svakom trenutku imate pravo da zatražite uvid, ispravku ili brisanje
+                            svojih ličnih podataka. Vaša prava uključuju i pravo na prenosivost podataka
+                            i ograničavanje obrade.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <h5 class="mt-4">5. Prava korisnika</h5>
-            <p>
-                U svakom trenutku imate pravo da zatražite uvid, ispravku ili brisanje svojih ličnih podataka.
-            </p>
-
-            <p class="mt-4 mb-0">
-                Za dodatna pitanja ili zahtjeve u vezi sa privatnošću, možete nas kontaktirati putem emaila ili lično u našem centru.
+        <!-- Call to Action -->
+        <div class="contact-cta">
+            <h6 class="cta-title">Imate pitanja o privatnosti?</h6>
+            <p class="cta-text">
+                Za dodatna pitanja ili zahtjeve u vezi sa privatnošću, možete nas kontaktirati
+                putem emaila ili lično u našem centru.
             </p>
         </div>
+
     </div>
 </div>

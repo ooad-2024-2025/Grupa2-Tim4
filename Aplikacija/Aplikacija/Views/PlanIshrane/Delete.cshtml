@@ -1,53 +1,741 @@
 ﻿@model Aplikacija.Models.PlanIshrane
-
 @{
     ViewData["Title"] = "Obriši plan ishrane";
 }
 
-<h1 class="mb-4 text-danger"><i class="fas fa-trash-alt me-2"></i>Obriši plan ishrane</h1>
+<style>
+    .delete-nutrition-hero {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        padding: 4rem 0 2rem 0;
+        margin-top: -20px;
+        position: relative;
+        overflow: hidden;
+        min-height: 180px;
+    }
+    
+    .delete-nutrition-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1;
+    }
+    
+    .hero-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(circle at 35% 65%, rgba(255,255,255,0.1) 2px, transparent 2px);
+        background-size: 50px 50px;
+        z-index: 1;
+        animation: warningPattern 15s linear infinite;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        padding: 1rem 0;
+    }
+    
+    .hero-title {
+        font-size: 3.2rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+        animation: fadeInUp 1s ease-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+    }
+    
+    .hero-icon {
+        width: 85px;
+        height: 85px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #e74c3c;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        animation: dangerPulse 2s ease-in-out infinite;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border: 3px solid white;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.3rem;
+        opacity: 1;
+        margin-top: 1rem;
+        animation: fadeInUp 1s ease-out 0.3s both;
+        color: white;
+        font-weight: 600;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .content-container {
+        background: #f8f9fa;
+        padding: 3rem 0;
+        margin-top: -50px;
+        position: relative;
+        z-index: 3;
+    }
+    
+    .warning-section {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        border: 3px solid #ffc107;
+        border-radius: 20px;
+        padding: 3rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 15px 35px rgba(255, 193, 7, 0.4);
+        animation: fadeInUp 1s ease-out 0.6s both;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .warning-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(255, 193, 7, 0.1) 10px,
+            rgba(255, 193, 7, 0.1) 20px
+        );
+        animation: warningStripes 20s linear infinite;
+    }
+    
+    .warning-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .warning-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2rem;
+        gap: 1.5rem;
+    }
+    
+    .warning-icon {
+        font-size: 3.5rem;
+        color: #f39c12;
+        animation: warningShake 3s infinite;
+    }
+    
+    .warning-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #d68910;
+        margin: 0;
+        line-height: 1.2;
+    }
+    
+    .warning-text {
+        font-size: 1.3rem;
+        color: #b7950b;
+        margin: 0;
+        font-weight: 600;
+        line-height: 1.6;
+    }
+    
+    .nutrition-plan-card {
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        border: none;
+        overflow: hidden;
+        animation: fadeInUp 1s ease-out 0.9s both;
+        position: relative;
+        margin-bottom: 2rem;
+    }
+    
+    .nutrition-plan-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 8px;
+        background: linear-gradient(90deg, #e74c3c 0%, #c0392b 30%, #a93226 60%, #922b21 100%);
+        z-index: 1;
+    }
+    
+    .card-header-custom {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        margin-top: 8px;
+        position: relative;
+    }
+    
+    .nutrition-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem auto;
+        font-size: 2rem;
+        animation: nutritionSpin 4s ease-in-out infinite;
+    }
+    
+    .card-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .card-body-custom {
+        padding: 3rem 2.5rem;
+    }
+    
+    .plan-info-section {
+        margin-bottom: 3rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid #ecf0f1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
+    }
+    
+    .section-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.1rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .info-item {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 2rem;
+        border-radius: 20px;
+        border-left: 5px solid #e74c3c;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .info-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(231, 76, 60, 0.05) 0%, rgba(192, 57, 43, 0.05) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .info-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .info-item:hover::before {
+        opacity: 1;
+    }
+    
+    .info-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        position: relative;
+        z-index: 2;
+    }
+    
+    .info-label {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .info-value {
+        font-size: 1.2rem;
+        color: #2c3e50;
+        font-weight: 700;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .plan-content-section {
+        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        border: 2px solid #ff9800;
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin: 2rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .plan-content-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 15px,
+            rgba(255, 152, 0, 0.05) 15px,
+            rgba(255, 152, 0, 0.05) 30px
+        );
+        animation: planShine 25s linear infinite;
+    }
+    
+    .plan-content {
+        position: relative;
+        z-index: 2;
+        font-size: 1rem;
+        line-height: 1.8;
+        color: #e65100;
+        font-weight: 500;
+    }
+    
+    .plan-content strong {
+        color: #bf360c;
+        font-weight: 700;
+    }
+    
+    .actions-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        animation: fadeInUp 1s ease-out 1.2s both;
+    }
+    
+    .modern-btn {
+        padding: 1.3rem 3rem;
+        border-radius: 50px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        font-size: 1.1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+    
+    .btn-back {
+        background: transparent;
+        color: #6c757d;
+        border: 3px solid #6c757d;
+    }
+    
+    .btn-back:hover {
+        background: #6c757d;
+        color: white;
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px rgba(108, 117, 125, 0.4);
+        text-decoration: none;
+    }
+    
+    .btn-delete-plan {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(231, 76, 60, 0.5);
+    }
+    
+    .btn-delete-plan:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 35px rgba(231, 76, 60, 0.7);
+        background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+    }
+    
+    .confirmation-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .confirmation-modal {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        max-width: 450px;
+        text-align: center;
+        animation: modalSlideIn 0.3s ease-out;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-icon {
+        font-size: 5rem;
+        color: #e74c3c;
+        margin-bottom: 1.5rem;
+        animation: modalPulse 1s infinite;
+    }
+    
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #2c3e50;
+    }
+    
+    .modal-text {
+        color: #7f8c8d;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+    
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @@keyframes dangerPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    @@keyframes warningShake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    @@keyframes warningStripes {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    
+    @@keyframes warningPattern {
+        0% { background-position: 0 0; }
+        100% { background-position: 50px 50px; }
+    }
+    
+    @@keyframes nutritionSpin {
+        0%, 100% { transform: rotate(0deg) scale(1); }
+        50% { transform: rotate(5deg) scale(1.05); }
+    }
+    
+    @@keyframes planShine {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    
+    @@keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.7);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    @@keyframes modalPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+            flex-direction: column;
+        }
+        
+        .hero-icon {
+            width: 70px;
+            height: 70px;
+            font-size: 1.8rem;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .actions-container {
+            padding: 2rem;
+            flex-direction: column;
+        }
+        
+        .modern-btn {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .confirmation-modal {
+            padding: 2rem;
+            margin: 1rem;
+        }
+    }
+</style>
 
-<div class="alert alert-warning border-warning shadow-sm">
-    <h5><i class="fas fa-exclamation-triangle me-2"></i>Jeste li sigurni da želite obrisati ovaj plan?</h5>
-    <p class="mb-0">Ova radnja je nepovratna!</p>
+<!-- Hero sekcija -->
+<div class="delete-nutrition-hero">
+    <div class="hero-pattern"></div>
+    <div class="container hero-content">
+        <h1 class="hero-title">
+            <div class="hero-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            Obriši plan ishrane
+        </h1>
+        <p class="hero-subtitle">Potvrda brisanja plana ishrane</p>
+    </div>
 </div>
 
-<div class="card shadow-sm border-danger mt-4 rounded-4">
-    <div class="card-header bg-danger text-white">
-        <strong>Detalji plana ishrane</strong>
-    </div>
-    <div class="card-body">
-        <div class="row mb-3">
-            <div class="col-sm-3 fw-bold text-muted">🎯 Cilj:</div>
-            <div class="col-sm-9">@Model.Ciljevi</div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-sm-3 fw-bold text-muted">📅 Datum generisanja:</div>
-            <div class="col-sm-9">@Model.DatumGenerisanja.ToShortDateString()</div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-sm-3 fw-bold text-muted">⚖️ Kilaža:</div>
-            <div class="col-sm-9">@Model.Kilaza kg</div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-sm-3 fw-bold text-muted">👤 Godine:</div>
-            <div class="col-sm-9">@Model.Godine</div>
-        </div>
+<!-- Content container -->
+<div class="content-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-12">
+                
+                <!-- Warning Section -->
+                <div class="warning-section">
+                    <div class="warning-content">
+                        <div class="warning-header">
+                            <i class="fas fa-exclamation-triangle warning-icon"></i>
+                            <h3 class="warning-title">Jeste li sigurni da želite obrisati ovaj plan?</h3>
+                        </div>
+                        <p class="warning-text">
+                            Ova radnja je nepovratna! Svi podaci o planu ishrane će biti trajno uklonjeni iz sistema.
+                        </p>
+                    </div>
+                </div>
 
-        <div class="border-top pt-4 mt-4">
-            <h5 class="fw-bold mb-3 text-muted">🍽️ Detaljan plan ishrane</h5>
-            <div class="bg-light p-4 rounded-3">
-                @Html.Raw(Model.Plan.Replace("-", "<br><strong>•</strong>").Replace("Preporuka:", "<br><br><strong>Preporuka:</strong>"))
+                <!-- Nutrition Plan Details Card -->
+                <div class="card nutrition-plan-card">
+                    
+                    <div class="card-header-custom">
+                        <div class="nutrition-icon">
+                            <i class="fas fa-apple-alt"></i>
+                        </div>
+                        <h4 class="card-title">
+                            <i class="fas fa-utensils"></i>
+                            Detalji plana ishrane
+                        </h4>
+                    </div>
+                    
+                    <div class="card-body-custom">
+                        
+                        <!-- Plan Information Section -->
+                        <div class="plan-info-section">
+                            <h5 class="section-title">
+                                <div class="section-icon">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                Osnovni podaci
+                            </h5>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-bullseye"></i>
+                                    </div>
+                                    <div class="info-label">Cilj</div>
+                                    <div class="info-value">@Model.Ciljevi</div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <div class="info-label">Datum generisanja</div>
+                                    <div class="info-value">@Model.DatumGenerisanja.ToShortDateString()</div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-weight"></i>
+                                    </div>
+                                    <div class="info-label">Kilaža</div>
+                                    <div class="info-value">@Model.Kilaza kg</div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-birthday-cake"></i>
+                                    </div>
+                                    <div class="info-label">Godine</div>
+                                    <div class="info-value">@Model.Godine godina</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Plan Content Section -->
+                        <div class="plan-info-section">
+                            <h5 class="section-title">
+                                <div class="section-icon">
+                                    <i class="fas fa-list-alt"></i>
+                                </div>
+                                Detaljan plan ishrane
+                            </h5>
+                            
+                            <div class="plan-content-section">
+                                <div class="plan-content">
+                                    @Html.Raw(Model.Plan.Replace("-", "<br><strong>•</strong>").Replace("Preporuka:", "<br><br><strong>Preporuka:</strong>"))
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Actions Footer -->
+                    <div class="actions-container">
+                        <a asp-action="Index" class="modern-btn btn-back">
+                            <i class="fas fa-arrow-left"></i>
+                            Nazad na listu
+                        </a>
+                        
+                        <button type="button" class="modern-btn btn-delete-plan" onclick="showConfirmation()">
+                            <i class="fas fa-trash-alt"></i>
+                            Obriši plan
+                        </button>
+                    </div>
+
+                </div>
+
             </div>
         </div>
     </div>
 </div>
 
-<form asp-action="Delete" method="post" class="mt-4 d-flex gap-2">
+<!-- Confirmation Modal -->
+<div class="confirmation-overlay" id="confirmationOverlay">
+    <div class="confirmation-modal">
+        <div class="modal-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h5 class="modal-title">Potvrdite brisanje</h5>
+        <p class="modal-text">
+            Da li stvarno želite da obrišete ovaj plan ishrane? 
+            Ova akcija se ne može poništiti i svi podaci će biti trajno uklonjeni.
+        </p>
+        <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                <i class="fas fa-trash me-1"></i>Da, obriši
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="hideConfirmation()">
+                <i class="fas fa-times me-1"></i>Otkaži
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden Form -->
+<form asp-action="Delete" method="post" id="deleteForm" style="display: none;">
     <input type="hidden" asp-for="IdPlanishrane" />
-    <button type="submit" class="btn btn-danger">
-        <i class="fas fa-trash-alt me-1"></i> Obriši
-    </button>
-    <a asp-action="Index" class="btn btn-secondary">
-        <i class="fas fa-arrow-left me-1"></i> Nazad na listu
-    </a>
 </form>
+
+<script>
+    function showConfirmation() {
+        document.getElementById('confirmationOverlay').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function hideConfirmation() {
+        document.getElementById('confirmationOverlay').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+    
+    function confirmDelete() {
+        document.getElementById('deleteForm').submit();
+    }
+    
+    // Close modal on outside click
+    document.getElementById('confirmationOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            hideConfirmation();
+        }
+    });
+    
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            hideConfirmation();
+        }
+    });
+</script>
