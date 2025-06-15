@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Aplikacija")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+78c21d112564837b72efa99f212383b5e619c0ea")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cfea41dd7a683213e793881f79ff2af48d28373d")]
 [assembly: System.Reflection.AssemblyProductAttribute("Aplikacija")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Aplikacija")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

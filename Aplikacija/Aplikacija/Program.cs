@@ -7,6 +7,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.AuthenticationDisplayName = null;
+    options.AutomaticAuthentication = false;
+});
+
+builder.Services.Configure<IISOptions>(options =>
+{
+    options.ForwardClientCertificate = false;
+    options.AutomaticAuthentication = false;
+});
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -45,6 +56,18 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
+app.Use(async (context, next) =>
+{
+    // AGRESIVNO UKLONI WINDOWS AUTH
+    if (context.User.Identity.IsAuthenticated &&
+        (context.User.Identity.AuthenticationType == "Negotiate" ||
+         context.User.Identity.AuthenticationType == "NTLM" ||
+         context.User.Identity.Name?.Contains("\\") == true))
+    {
+        context.User = new System.Security.Claims.ClaimsPrincipal();
+    }
+    await next();
+});
 app.UseAuthorization();
 
 app.MapControllerRoute(

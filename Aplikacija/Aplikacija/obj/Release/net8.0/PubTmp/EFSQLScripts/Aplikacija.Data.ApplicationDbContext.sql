@@ -1655,3 +1655,19 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20250615131127_17taMigracija'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20250615131127_17taMigracija', N'8.0.16');
+END;
+GO
+
+COMMIT;
+GO
+
