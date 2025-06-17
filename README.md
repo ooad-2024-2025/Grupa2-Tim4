@@ -54,10 +54,10 @@ Password: OOADg2t4$
 
 Tip korisnika | Emal                  | Lozinka       |
 -------------------------------------------------------
-Admin         | samir@mail.com        | samir1#       |
-Korisnik      | azra@mail.com         | azra1#        |
-Recepcioner   | recepcioner@mail.coom | recepcioner1# |
-Trener        | hamza@mail.com        | hamza1#       |
+Admin         | samir@mail.com        | Samir1#       |
+Korisnik      | azra@mail.com         | Azra1#        |
+Recepcioner   | recepcioner@mail.coom | Recepcioner1# |
+Trener        | hamza@mail.com        | Hamza1#       |
 
 
 
