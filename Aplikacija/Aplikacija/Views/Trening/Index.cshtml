@@ -662,7 +662,7 @@
                                 <th>Član</th>
                                 <th>Trener</th>
                                 <th>Status</th>
-                                <th>Vežbe</th>
+                                <th>Vježbe</th>
                                 <th>Akcije</th>
                             </tr>
                         </thead>
@@ -724,7 +724,7 @@
                                         @if (item.Vezbe != null && item.Vezbe.Any())
                                         {
                                             <span class="badge-modern badge-vezbe">
-                                                <i class="fas fa-list-ol me-1"></i>@item.Vezbe.Count() vežbi
+                                                <i class="fas fa-list-ol me-1"></i>@item.Vezbe.Count() vježbi
                                             </span>
                                         }
                                         else
@@ -743,7 +743,7 @@
                                                 <i class="fas fa-cog"></i>
                                             </a>
                                             <a asp-action="Create" asp-route-treningId="@item.IdTrening"
-                                               class="btn-action btn-success-action" title="Dodaj vežbu">
+                                               class="btn-action btn-success-action" title="Dodaj vježbu">
                                                 <i class="fas fa-plus"></i>
                                             </a>
                                         </div>

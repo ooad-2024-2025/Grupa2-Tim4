@@ -315,7 +315,7 @@ namespace Aplikacija.Controllers
             // Ukloni prijavu iz tabele PrijaveNaTermine (OSTAJE ISTO)
             _context.PrijaveNaTermine.Remove(prijava);
 
-            // IZMENA - pronađi i ukloni trening na osnovu TerminId umesto složene logike
+            // IZMJENA - pronađi i ukloni trening na osnovu TerminId umesto složene logike
             var trening = await _context.Trening
                 .FirstOrDefaultAsync(t => t.ClanId == korisnik.Id && t.TerminId == terminId);
 

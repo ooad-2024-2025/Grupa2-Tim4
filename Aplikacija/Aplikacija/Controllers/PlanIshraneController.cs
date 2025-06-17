@@ -256,22 +256,22 @@ Preporučeni plan za gubitak težine:
 - Doručak: ovsena kaša sa bobičastim voćem i bademima
 - Užina: jogurt sa niskim procentom masti i orašasti plodovi
 - Ručak: pečena piletina sa brokolijem i kinoom
-- Užina: sveže iseckano povrće (mrkva, krastavac)
+- Užina: sveže isjeckano povrće (mrkva, krastavac)
 - Večera: grilovani losos sa salatom od rukole i paradajza
-Preporuka: unositi manje ugljenih hidrata i povećati unos proteina i povrća.
+Preporuka: unositi manje ugljikohidrata i povećati unos proteina i povrća.
 ",
 
                 TipCilja.OdrzavanjeTezine => @"
 Preporučeni plan za održavanje težine:
-- Doručak: integralni tost sa avokadom i kuvanim jajetom
-- Užina: sveže voće po izboru
-- Ručak: ćuretina sa integralnom rižom i blanširanim povrćem
-- Užina: orašasti plodovi i suvo grožđe
+- Doručak: integralni tost sa avokadom i kuhanim jajetom
+- Užina: svježe voće po izboru
+- Ručak: ćuretina sa integralnom rižom i rendanim povrćem
+- Užina: orašasti plodovi i suho grožđe
 - Večera: supa od povrća i pečeni krompir sa grilovanim tikvicama
 Preporuka: balansiran unos makronutrijenata sa naglaskom na stabilan unos kalorija.
 ",
 
-                TipCilja.PovecanjeMuski => @"
+                TipCilja.PovecanjeMisica => @"
 Preporučeni plan za povećanje mišićne mase:
 - Doručak: omlet sa špinatom i sirom, ovsena kaša sa bananom
 - Užina: proteinski šejk i bademi
@@ -283,22 +283,22 @@ Preporuka: povećati unos proteina i kalorija, redovan unos obroka.
 
                 TipCilja.PovecanjeEnergije => @"
 Plan za povećanje energije:
-- Doručak: smoothie od šumskog voća, banana i bademovog mleka
-- Užina: sveže voće i orašasti plodovi
+- Doručak: smoothie od šumskog voća, banana i bademovog mlijeka
+- Užina: svježe voće i orašasti plodovi
 - Ručak: losos sa integralnom rižom i zelenom salatom
 - Užina: humus sa štapićima celera i mrkve
 - Večera: pečena piletina sa povrćem na pari
-Preporuka: unositi hranu bogatu antioksidantima, zdravim mastima i ugljenim hidratima.
+Preporuka: unositi hranu bogatu antioksidantima, zdravim mastima i ugljikohidratima.
 ",
 
                 TipCilja.OpciZdravstveniCilj => @"
 Plan za opšti zdravstveni cilj:
-- Doručak: jogurt sa lanenim semenkama i bobičastim voćem
-- Užina: sveže voće i orašasti plodovi
+- Doručak: jogurt sa lanenim sjemenkama i bobičastim voćem
+- Užina: svježe voće i orašasti plodovi
 - Ručak: salata sa kinoom, avokadom i pečenim povrćem
-- Užina: integralni krekeri sa humusom
+- Užina: integralni keksići sa humusom
 - Večera: supa od povrća i pečena riba
-Preporuka: raznovrsna ishrana sa fokusom na sveže namirnice i balans hranljivih materija.
+Preporuka: raznovrsna ishrana sa fokusom na svježe namirnice i balans hranjivih materija.
 ",
 
                 _ => "Standardni plan ishrane sa uravnoteženim unosom svih nutrijenata."
@@ -320,7 +320,7 @@ Preporuka: raznovrsna ishrana sa fokusom na sveže namirnice i balans hranljivih
             {
                 TipCilja.GubljenjeTezine => (int)(bmr * 1.2 * 0.8),
                 TipCilja.OdrzavanjeTezine => (int)(bmr * 1.2),
-                TipCilja.PovecanjeMuski => (int)(bmr * 1.2 * 1.2),
+                TipCilja.PovecanjeMisica => (int)(bmr * 1.2 * 1.2),
                 TipCilja.PovecanjeEnergije => (int)(bmr * 1.3),
                 TipCilja.OpciZdravstveniCilj => (int)(bmr * 1.1),
                 _ => (int)(bmr * 1.2)
@@ -331,12 +331,12 @@ Preporuka: raznovrsna ishrana sa fokusom na sveže namirnice i balans hranljivih
         {
             return cilj switch
             {
-                TipCilja.GubljenjeTezine => "Kardio 4x nedeljno + lagano dizanje tegova",
-                TipCilja.OdrzavanjeTezine => "Umeren trening snage 3x nedeljno + lagani kardio",
-                TipCilja.PovecanjeMuski => "Intenzivni trening snage 5x nedeljno",
-                TipCilja.PovecanjeEnergije => "Kombinacija kardio i joge 3x nedeljno",
+                TipCilja.GubljenjeTezine => "Kardio 4x sedmično + lagano dizanje tegova",
+                TipCilja.OdrzavanjeTezine => "Umjeren trening snage 3x sedmično + lagani kardio",
+                TipCilja.PovecanjeMisica => "Intenzivni trening snage 5x sedmično",
+                TipCilja.PovecanjeEnergije => "Kombinacija kardio i joge 3x sedmično",
                 TipCilja.OpciZdravstveniCilj => "Lagani svakodnevni trening i istezanje",
-                _ => "Standardni režim vežbanja"
+                _ => "Standardni režim vježbanja"
             };
         }
 

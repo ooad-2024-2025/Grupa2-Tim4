@@ -251,8 +251,8 @@ namespace Aplikacija.Controllers
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Greška pri dodavanju vežbe: {ex.Message}");
-                    ModelState.AddModelError("", "Greška pri dodavanju vežbe.");
+                    System.Diagnostics.Debug.WriteLine($"Greška pri dodavanju vježbe: {ex.Message}");
+                    ModelState.AddModelError("", "Greška pri dodavanju vježbe.");
                 }
             }
 
@@ -328,8 +328,8 @@ namespace Aplikacija.Controllers
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Greška pri ažuriranju vežbe: {ex.Message}");
-                    ModelState.AddModelError("", "Greška pri ažuriranju vežbe.");
+                    System.Diagnostics.Debug.WriteLine($"Greška pri ažuriranju vježbe: {ex.Message}");
+                    ModelState.AddModelError("", "Greška pri ažuriranju vježbe.");
                 }
             }
 
@@ -388,12 +388,12 @@ namespace Aplikacija.Controllers
             {
                 _context.Vezbe.Remove(vezba);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Vežba je uspješno obrisana.";
+                TempData["SuccessMessage"] = "Vježba je uspješno obrisana.";
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Greška pri brisanju vežbe: {ex.Message}");
-                TempData["ErrorMessage"] = "Greška pri brisanju vežbe.";
+                System.Diagnostics.Debug.WriteLine($"Greška pri brisanju vježbe: {ex.Message}");
+                TempData["ErrorMessage"] = "Greška pri brisanju vježbe.";
             }
 
             return RedirectToAction(nameof(Details), new { id = treningId });
@@ -482,12 +482,12 @@ namespace Aplikacija.Controllers
             {
                 _context.Vezbe.Add(vezba);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = $"Vežba '{nazivVezbe}' je uspješno dodana.";
+                TempData["SuccessMessage"] = $"Vježba '{nazivVezbe}' je uspješno dodana.";
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Greška pri dodavanju šablon vežbe: {ex.Message}");
-                TempData["ErrorMessage"] = "Greška pri dodavanju vežbe.";
+                System.Diagnostics.Debug.WriteLine($"Greška pri dodavanju šablon vježbe: {ex.Message}");
+                TempData["ErrorMessage"] = "Greška pri dodavanju vježbe.";
             }
 
             return RedirectToAction(nameof(SabloniVezbi), new { treningId = treningId });

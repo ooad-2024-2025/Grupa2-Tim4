@@ -684,7 +684,7 @@
                     </tbody>
                 </table>
                 
-                <!-- Stats Bar -->
+                
                 <div class="stats-bar">
                     <div class="stats-item">
                         <div class="stats-icon">
@@ -715,7 +715,7 @@
             </div>
         }
 
-        <!-- Error Message -->
+        
         @if (TempData["ErrorMessage"] != null)
         {
             <div class="error-alert">
@@ -729,7 +729,7 @@
 
 @section Scripts {
     <script>
-        // Auto-hide success alerts after 5 seconds
+        
         window.setTimeout(function () {
             $(".success-alert").fadeTo(500, 0).slideUp(500, function () {
                 $(this).remove();

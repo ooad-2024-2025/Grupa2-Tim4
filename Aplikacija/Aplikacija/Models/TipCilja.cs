@@ -9,7 +9,7 @@ namespace Aplikacija.Models
         [Display(Name = "Održavanje težine")]
         OdrzavanjeTezine,
         [Display(Name = "Povećanje mišićne mase")]
-        PovecanjeMuski,
+        PovecanjeMisica,
         [Display(Name = "Povećanje energije")]
         PovecanjeEnergije,
         [Display(Name = "Opći zdravstveni cilj")]

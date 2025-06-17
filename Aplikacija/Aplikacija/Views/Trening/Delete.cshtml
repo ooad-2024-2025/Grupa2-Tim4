@@ -5,11 +5,11 @@
 
 <div class="container mt-5">
     <h1 class="mb-4 text-danger">
-        <i class="fas fa-trash-alt me-2"></i>Obriši vežbu
+        <i class="fas fa-trash-alt me-2"></i>Obriši vježbu
     </h1>
 
     <div class="alert alert-warning border-warning shadow-sm">
-        <h5><i class="fas fa-exclamation-triangle me-2"></i>Jeste li sigurni da želite obrisati ovu vežbu?</h5>
+        <h5><i class="fas fa-exclamation-triangle me-2"></i>Jeste li sigurni da želite obrisati ovu vježbu?</h5>
         <p class="mb-0">Ova radnja je nepovratna!</p>
     </div>
 
@@ -40,7 +40,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm border-danger">
                 <div class="card-header bg-danger text-white">
-                    <strong>Detalji vežbe za brisanje</strong>
+                    <strong>Detalji vježbe za brisanje</strong>
                 </div>
                 <div class="card-body">
                     <dl class="row mb-0">
@@ -106,7 +106,7 @@
     <form asp-action="Delete" method="post" class="mt-4 d-flex gap-2">
         <input type="hidden" asp-for="IdVezba" />
         <button type="submit" class="btn btn-danger">
-            <i class="fas fa-trash-alt me-1"></i> Obriši vežbu
+            <i class="fas fa-trash-alt me-1"></i> Obriši vježbu
         </button>
         <a asp-action="Details" asp-route-id="@Model.TreningId" class="btn btn-secondary">
             <i class="fas fa-arrow-left me-1"></i> Nazad na trening

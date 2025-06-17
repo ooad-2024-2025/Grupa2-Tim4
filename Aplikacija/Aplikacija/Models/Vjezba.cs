@@ -15,8 +15,8 @@ namespace Aplikacija.Models
         public int TreningId { get; set; }
 
         [Required]
-        [DisplayName("Naziv vežbe:")]
-        [StringLength(100, ErrorMessage = "Naziv vežbe ne može biti duži od 100 karaktera.")]
+        [DisplayName("Naziv vježbe:")]
+        [StringLength(100, ErrorMessage = "Naziv vježbe ne može biti duži od 100 karaktera.")]
         public string NazivVezbe { get; set; } = string.Empty;
 
         [Required]
@@ -43,8 +43,8 @@ namespace Aplikacija.Models
         public string? Napomene { get; set; }
 
         [Required]
-        [DisplayName("Redosled:")]
-        [Range(1, 50, ErrorMessage = "Redosled mora biti između 1 i 50.")]
+        [DisplayName("Redoslijed:")]
+        [Range(1, 50, ErrorMessage = "Redoslijed mora biti između 1 i 50.")]
         public int Redosled { get; set; }
 
         // Navigation property

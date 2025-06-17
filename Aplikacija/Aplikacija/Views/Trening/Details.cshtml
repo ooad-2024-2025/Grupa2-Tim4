@@ -885,7 +885,7 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 50px;">#</th>
-                                            <th>Naziv vežbe</th>
+                                            <th>Naziv vježbe</th>
                                             <th>Serije</th>
                                             <th>Ponavljanja</th>
                                             <th>Težina (kg)</th>
@@ -964,7 +964,7 @@
                                                         </a>
                                                         <form asp-action="Delete" asp-route-id="@vezba.IdVezba"
                                                               method="post" class="d-inline"
-                                                              onsubmit="return confirm('Da li ste sigurni da želite da obrišete ovu vežbu?')">
+                                                              onsubmit="return confirm('Da li ste sigurni da želite da obrišete ovu vježbu?')">
                                                             <button type="submit" class="btn-exercise btn-delete" title="Obriši">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
@@ -983,8 +983,8 @@
                                 <div class="empty-icon">
                                     <i class="fas fa-clipboard"></i>
                                 </div>
-                                <h5 class="empty-title">Nema definisanih vežbi</h5>
-                                <p class="empty-text">Dodajte vežbe da biste kreirali plan treninga.</p>
+                                <h5 class="empty-title">Nema definisanih vježbi</h5>
+                                <p class="empty-text">Dodajte vježbe da biste kreirali plan treninga.</p>
                                 <a asp-action="Create" asp-route-treningId="@Model.IdTrening" class="action-btn btn-add">
                                     <i class="fas fa-plus"></i>
                                     Dodaj prvu vježbu
@@ -1028,7 +1028,7 @@
                     e.preventDefault();
 
                     var exerciseName = this.closest('tr').querySelector('strong').textContent;
-                    var confirmed = confirm('Da li ste sigurni da želite da obrišete vežbu "' + exerciseName + '"?\n\nOva akcija je nepovratna!');
+                    var confirmed = confirm('Da li ste sigurni da želite da obrišete vježbu "' + exerciseName + '"?\n\nOva akcija je nepovratna!');
 
                     if (confirmed) {
                         var deleteBtn = this.querySelector('.btn-delete');
