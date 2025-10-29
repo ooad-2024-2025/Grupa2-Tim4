@@ -2,7 +2,7 @@
 #Projekat "Fitness Centar"
 
 ## O projektu
-Sistem fitness centra omogućava koeisnicima da rezervišu različite vrste te termine treninga,
+Sistem fitness centra omogućava korisnicima da rezervišu različite vrste te termine treninga,
 generišu svoj plan ishrane te pristupe online prodavnici proizvoda koje centar nudi.
 Korisnici imaju uvid u sve dostupne termine i treninge ne na osnovu svog cilja mogu izabrati 
 prilagođeni plan ishrane. Implementirana je kontrola pristupa gdje administrator, trener, recepcioner 
